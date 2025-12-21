@@ -1,4 +1,4 @@
-name: 🛒 Парсинг цен ProShoper
+"Парсинг цен ProShoper"
 
 on:
   schedule:
