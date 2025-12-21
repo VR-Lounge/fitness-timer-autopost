@@ -1,0 +1,68 @@
+name: 🛒 Парсинг цен ProShoper
+
+on:
+  schedule:
+    # Каждую среду в 10:00 МСК (07:00 UTC)
+    - cron: '0 7 * * 3'
+  workflow_dispatch:
+
+jobs:
+  scrape_prices:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout репозитория
+        uses: actions/checkout@v4
+
+      - name: Установка Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Установка зависимостей
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements-scraper.txt
+
+      - name: Парсинг цен из ProShoper
+        run: python scripts/scrape_proshoper.py
+
+      - name: Обновление цен в рецептах
+        run: python scripts/match_ingredients.py
+
+      - name: Отправка уведомления в Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python -c "
+          import requests, os, json
+          token = os.environ['TELEGRAM_BOT_TOKEN']
+          chat_id = os.environ['TELEGRAM_CHAT_ID']
+          
+          with open('grocery_prices.json', 'r', encoding='utf-8') as f:
+              data = json.load(f)
+          
+          count = len(data.get('products', []))
+          date = data.get('last_updated', 'неизвестно')
+          
+          message = f'''📊 Цены обновлены!
+🏪 Источник: Пятёрочка (ProShoper)
+📅 Дата: {date}
+✅ Товаров спарсено: {count}'''
+          
+          requests.post(
+              f'https://api.telegram.org/bot{token}/sendMessage',
+              json={'chat_id': chat_id, 'text': message}
+          )
+          "
+
+      - name: Коммит изменений
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add grocery_prices.json recipes_prices.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "🛒 Обновлены цены из ProShoper $(date +'%Y-%m-%d')"
+          git push
+
+
