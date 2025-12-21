@@ -1,0 +1,826 @@
+{
+  "омлет_с_шпинатом_и_томатами": {
+    "название": "Омлет с шпинатом и томатами",
+    "ingredients": [
+      {
+        "name": "Яйца",
+        "amount": "2 шт.",
+        "plu": null,
+        "price": 20,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Шпинат замороженный",
+        "amount": "50 г",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Томат",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Молоко",
+        "amount": "30 мл",
+        "plu": null,
+        "price": 3,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Соль/перец",
+        "amount": "",
+        "plu": null,
+        "price": 2,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 50,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "гречка_с_куриной_грудкой": {
+    "название": "Гречка с куриной грудкой",
+    "ingredients": [
+      {
+        "name": "Гречка",
+        "amount": "80 г сухой",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Куриная грудка",
+        "amount": "150 г",
+        "plu": null,
+        "price": 40,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Лук",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 5,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Морковь",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 5,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Растительное масло",
+        "amount": "1 ч. л.",
+        "plu": null,
+        "price": 5,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 65,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "творожная_запеканка_с_ягодами": {
+    "название": "Творожная запеканка с ягодами",
+    "ingredients": [
+      {
+        "name": "Творог 5%",
+        "amount": "150 г",
+        "plu": null,
+        "price": 30,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Яйцо",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Манка",
+        "amount": "15 г",
+        "plu": null,
+        "price": 2,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Ягоды замороженные",
+        "amount": "50 г",
+        "plu": null,
+        "price": 13,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 55,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "овсянка_с_бананом_и_орехами": {
+    "название": "Овсянка с бананом и орехами",
+    "ingredients": [
+      {
+        "name": "Овсяные хлопья",
+        "amount": "50 г",
+        "plu": null,
+        "price": 6,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Молоко",
+        "amount": "200 мл",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Банан",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Орехи",
+        "amount": "10 г",
+        "plu": null,
+        "price": 12,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 38,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "куриные_котлеты_на_пару_с_брокколи": {
+    "название": "Куриные котлеты на пару с брокколи",
+    "ingredients": [
+      {
+        "name": "Куриная грудка",
+        "amount": "200 г",
+        "plu": null,
+        "price": 50,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Яйцо",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Брокколи замороженная",
+        "amount": "150 г",
+        "plu": null,
+        "price": 20,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 80,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "рыбные_стейки_с_киноа": {
+    "название": "Рыбные стейки с киноа",
+    "ingredients": [
+      {
+        "name": "Стейк минтая/хека",
+        "amount": "200 г",
+        "plu": null,
+        "price": 70,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Киноа",
+        "amount": "60 г сухой",
+        "plu": null,
+        "price": 30,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Лимон",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Оливковое масло",
+        "amount": "1 ч. л.",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 125,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "белковый_смузи": {
+    "название": "Белковый смузи",
+    "ingredients": [
+      {
+        "name": "Кефир 1%",
+        "amount": "300 мл",
+        "plu": null,
+        "price": 18,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Творог 2",
+        "amount": "",
+        "plu": null,
+        "price": 17,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Банан",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 45,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "салат_с_тунцом_и_авокадо": {
+    "название": "Салат с тунцом и авокадо",
+    "ingredients": [
+      {
+        "name": "Тунец консервированный",
+        "amount": "1/2 банки",
+        "plu": null,
+        "price": 60,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Авокадо",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 45,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Салат/айсберг",
+        "amount": "50 г",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Томаты черри",
+        "amount": "50 г",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 130,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "фриттата_с_овощами": {
+    "название": "Фриттата с овощами",
+    "ingredients": [
+      {
+        "name": "Яйца",
+        "amount": "3 шт.",
+        "plu": null,
+        "price": 30,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Сладкий перец",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Кабачок",
+        "amount": "1/3 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Сыр",
+        "amount": "30 г",
+        "plu": null,
+        "price": 20,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Лук",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 5,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 80,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "куриная_грудка_с_бататом": {
+    "название": "Куриная грудка с бататом",
+    "ingredients": [
+      {
+        "name": "Куриная грудка",
+        "amount": "200 г",
+        "plu": null,
+        "price": 55,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Батат",
+        "amount": "250 г",
+        "plu": null,
+        "price": 40,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Оливковое масло",
+        "amount": "1 ч. л.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 105,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "творог_с_медом_и_орехами": {
+    "название": "Творог с мёдом и орехами",
+    "ingredients": [
+      {
+        "name": "Творог 5%",
+        "amount": "200 г",
+        "plu": null,
+        "price": 45,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Мёд",
+        "amount": "15 г",
+        "plu": null,
+        "price": 8,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Орехи",
+        "amount": "10 г",
+        "plu": null,
+        "price": 5,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 58,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "рис_с_индейкой_и_овощами": {
+    "название": "Рис с индейкой и овощами",
+    "ingredients": [
+      {
+        "name": "Филе индейки",
+        "amount": "150 г",
+        "plu": null,
+        "price": 60,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Рис",
+        "amount": "80 г сухой",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Овощная смесь замороженная",
+        "amount": "150 г",
+        "plu": null,
+        "price": 25,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Соевый соус",
+        "amount": "1 ст. л.",
+        "plu": null,
+        "price": 5,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 100,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "чечевичный_суп": {
+    "название": "Чечевичный суп",
+    "ingredients": [
+      {
+        "name": "Чечевица",
+        "amount": "70 г сухой",
+        "plu": null,
+        "price": 14,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Морковь",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 7,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Лук",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 6,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Томаты в собственном соку",
+        "amount": "150 г",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Специи/соль",
+        "amount": "",
+        "plu": null,
+        "price": 4,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 46,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "сырники_без_муки": {
+    "название": "Сырники без муки",
+    "ingredients": [
+      {
+        "name": "Творог 5%",
+        "amount": "100 г",
+        "plu": null,
+        "price": 22,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Яйцо",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Подсластитель/сахар",
+        "amount": "по вкусу",
+        "plu": null,
+        "price": 1,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Масло для жарки",
+        "amount": "1 ч. л.",
+        "plu": null,
+        "price": 2,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 35,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "теплый_салат_с_курицей": {
+    "название": "Тёплый салат с курицей",
+    "ingredients": [
+      {
+        "name": "Куриная грудка",
+        "amount": "150 г",
+        "plu": null,
+        "price": 40,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Микс салата",
+        "amount": "70 г",
+        "plu": null,
+        "price": 20,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Томаты черри",
+        "amount": "60 г",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Огурец",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 8,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Йогурт натуральный",
+        "amount": "50 г",
+        "plu": null,
+        "price": 7,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 85,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "запеченная_рыба_с_овощами": {
+    "название": "Запечённая рыба с овощами",
+    "ingredients": [
+      {
+        "name": "Филе минтая",
+        "amount": "200 г",
+        "plu": null,
+        "price": 55,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Кабачок",
+        "amount": "150 г",
+        "plu": null,
+        "price": 18,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Морковь",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 7,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Растительное масло",
+        "amount": "1 ч. л.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Соль/специи",
+        "amount": "",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 100,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "протеиновые_панкейки": {
+    "название": "Протеиновые панкейки",
+    "ingredients": [
+      {
+        "name": "Овсяные хлопья",
+        "amount": "40 г",
+        "plu": null,
+        "price": 6,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Яйцо",
+        "amount": "1 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Банан",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Творог",
+        "amount": "80 г",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Разрыхлитель",
+        "amount": "щепотка",
+        "plu": null,
+        "price": 2,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Йогурт",
+        "amount": "30 г",
+        "plu": null,
+        "price": 2,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 45,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "боул_с_киноа_и_курицей": {
+    "название": "Боул с киноа и курицей",
+    "ingredients": [
+      {
+        "name": "Киноа",
+        "amount": "50 г сухой",
+        "plu": null,
+        "price": 25,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Куриная грудка",
+        "amount": "150 г",
+        "plu": null,
+        "price": 40,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Огурец",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 8,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Томат",
+        "amount": "1/2 шт.",
+        "plu": null,
+        "price": 7,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Йогурт натуральный",
+        "amount": "50 г",
+        "plu": null,
+        "price": 10,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 90,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "греческий_йогурт_с_ягодами": {
+    "название": "Греческий йогурт с ягодами",
+    "ingredients": [
+      {
+        "name": "Йогурт греческий",
+        "amount": "170 г",
+        "plu": null,
+        "price": 35,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Ягоды замороженные",
+        "amount": "60 г",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 50,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  },
+  "омлет_рулет_с_семгой": {
+    "название": "Омлет-рулет с семгой",
+    "ingredients": [
+      {
+        "name": "Яйца",
+        "amount": "2 шт.",
+        "plu": null,
+        "price": 20,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Сёмга слабосолёная",
+        "amount": "50 г",
+        "plu": null,
+        "price": 70,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Сливочный сыр",
+        "amount": "30 г",
+        "plu": null,
+        "price": 15,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      },
+      {
+        "name": "Укроп",
+        "amount": "пучок/щепотка",
+        "plu": null,
+        "price": 5,
+        "last_updated": "2025-12-21",
+        "price_history": []
+      }
+    ],
+    "total_price": 110,
+    "store": "Пятёрочка",
+    "last_updated": "2025-12-21"
+  }
+}

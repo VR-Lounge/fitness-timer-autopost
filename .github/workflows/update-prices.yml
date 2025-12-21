@@ -1,0 +1,57 @@
+name: 📊 Обновление цен продуктов
+
+on:
+  schedule:
+    # Каждое воскресенье в 06:00 МСК (03:00 UTC)
+    - cron: '0 3 * * 0'
+
+  # Возможность ручного запуска
+  workflow_dispatch:
+
+jobs:
+  update_prices:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout репозитория
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐍 Установка Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Установка системных зависимостей
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-0 libx11-xcb1
+
+      - name: 📚 Установка Python зависимостей
+        run: |
+          pip install --upgrade pip
+          pip install pyaterochka-api requests
+          python -m camoufox fetch
+
+      - name: 🛒 Обновление цен
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python scripts/update_prices.py
+
+      - name: 💾 Commit обновлённых цен
+        run: |
+          git config --local user.name "GitHub Actions Bot"
+          git config --local user.email "actions@github.com"
+          git add recipes_prices.json
+
+          if git diff --staged --quiet; then
+            echo "Изменений нет, коммит не требуется"
+          else
+            git commit -m "🛒 Автообновление цен продуктов $(date +'%Y-%m-%d')"
+            git push
+          fi
+
+
