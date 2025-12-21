@@ -34,29 +34,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: |
-          python -c "
-          import requests, os, json
-          token = os.environ['TELEGRAM_BOT_TOKEN']
-          chat_id = os.environ['TELEGRAM_CHAT_ID']
-          
-          with open('grocery_prices.json', 'r', encoding='utf-8') as f:
-              data = json.load(f)
-          
-          count = len(data.get('products', []))
-          date = data.get('last_updated', 'неизвестно')
-          
-          message = f'''📊 Цены обновлены!
-🏪 Источник: Пятёрочка (ProShoper)
-📅 Дата: {date}
-✅ Товаров спарсено: {count}'''
-          
-          requests.post(
-              f'https://api.telegram.org/bot{token}/sendMessage',
-              json={'chat_id': chat_id, 'text': message}
-          )
-          "
-
+      run: python scripts/notify_telegram.py
       - name: Коммит изменений
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
