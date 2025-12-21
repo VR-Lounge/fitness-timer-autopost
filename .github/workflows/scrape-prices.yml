@@ -1,4 +1,4 @@
-"Парсинг цен ProShoper"
+name: "Парсинг цен ProShoper"
 
 on:
   schedule:
