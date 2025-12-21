@@ -1,12 +1,10 @@
-name: 🔥 Автопостинг FITNESS TIMER
+name: Автопостинг FITNESS TIMER
 
 # Запуск workflow
 on:
   schedule:
-    # Каждый день в 9:00 МСК (6:00 UTC)
-    - cron: '0 6 * * *'
-        # Каждый день в 17:00 МСК (14:00 UTC)
-            - cron: '0 14 * * *'
+    - cron: '0 6 * * *'  # Каждый день в 9:00 МСК (6:00 UTC)
+    - cron: '0 14 * * *'  # Каждый день в 17:00 МСК (14:00 UTC)
   # Возможность запустить вручную
   workflow_dispatch:
 
@@ -17,29 +15,27 @@ jobs:
     
     steps:
       # Шаг 1: Клонирование репозитория
-      - name: 📥 Клонирование репозитория
+      - name: Клонирование репозитория
         uses: actions/checkout@v4
       
       # Шаг 2: Установка Python
-      - name: 🐍 Установка Python 3.11
+      - name: Установка Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       
       # Шаг 3: Установка зависимостей
-      - name: 📦 Установка зависимостей
+      - name: Установка зависимостей
         run: |
-          pip install requests
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
       
-      # Шаг 4: Запуск скрипта автопостинга
-      - name: 🚀 Запуск автопостинга
+      # Шаг 4: Генерация и отправка поста
+      - name: Генерация и отправка поста
         env:
-          DEEPSEEK_API_KEY: \${{ secrets.DEEPSEEK_API_KEY }}
-          TELEGRAM_BOT_TOKEN: \${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: \${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python автопостинг.py
-      
-      # Шаг 5: Уведомление об успехе
-      - name: ✅ Готово
-        if: success()
-        run: echo "Пост успешно отправлен в канал @fitnesstimer!"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+        run: |
+          python scripts/автопостинг.py
