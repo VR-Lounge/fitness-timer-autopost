@@ -1,0 +1,5 @@
+# Зависимости для fitness-timer-autopost
+openai
+python-telegram-bot
+requests
+pillow
