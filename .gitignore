@@ -208,3 +208,6 @@ __marimo__/
 
 # Auto-reply state
 .auto_reply_state.json
+
+# Feedback file (можно закоммитить, если нужно версионирование)
+# feedback_timer.md
