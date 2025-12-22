@@ -135,13 +135,18 @@ def сохранить_состояние(update_id):
 def получить_новые_комментарии(last_update_id):
     """
     Получает новые комментарии из Telegram канала.
-    Использует getUpdates для получения сообщений.
+    Использует getUpdates для получения сообщений из канала и группы обсуждений.
+    
+    ВАЖНО: Для работы с комментариями к постам:
+    1. У канала должна быть включена группа обсуждений
+    2. Бот должен быть администратором группы обсуждений
+    3. Комментарии к постам приходят как сообщения в группу обсуждений
     """
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates"
     params = {
         'offset': last_update_id + 1,
         'timeout': 10,
-        'allowed_updates': ['message', 'channel_post', 'message_reaction']
+        'allowed_updates': ['message', 'channel_post']
     }
     
     try:
@@ -163,8 +168,8 @@ def получить_новые_комментарии(last_update_id):
             update_id = update.get('update_id', 0)
             max_update_id = max(max_update_id, update_id)
             
-            # Проверяем сообщения в канале (комментарии под постами)
-            message = update.get('message') or update.get('channel_post')
+            # Получаем сообщение (может быть из канала или группы обсуждений)
+            message = update.get('message')
             if not message:
                 continue
             
@@ -172,9 +177,35 @@ def получить_новые_комментарии(last_update_id):
             if message.get('from', {}).get('is_bot'):
                 continue
             
-            # Игнорируем сообщения не из нашего канала
-            chat_id = str(message.get('chat', {}).get('id', ''))
-            if chat_id != str(TELEGRAM_CHAT_ID):
+            chat = message.get('chat', {})
+            chat_id = str(chat.get('id', ''))
+            chat_type = chat.get('type', '')
+            
+            # Проверяем, что сообщение из нашего канала ИЛИ из группы обсуждений канала
+            # Группы обсуждений имеют type='supergroup' или 'group'
+            # Комментарии к постам обычно имеют reply_to_message, указывающее на пост в канале
+            
+            # Вариант 1: Сообщение из самого канала (прямо в канале)
+            is_from_channel = (chat_id == str(TELEGRAM_CHAT_ID))
+            
+            # Вариант 2: Сообщение из группы обсуждений (комментарий к посту)
+            # Комментарии к постам имеют reply_to_message с сообщением из канала
+            is_comment_to_post = False
+            reply_to = message.get('reply_to_message')
+            if reply_to:
+                # Если это ответ на сообщение из канала - это комментарий к посту
+                reply_chat = reply_to.get('chat', {})
+                if str(reply_chat.get('id', '')) == str(TELEGRAM_CHAT_ID):
+                    is_comment_to_post = True
+            
+            # Также проверяем, что это сообщение из группы (supergroup/group) - вероятно группа обсуждений
+            is_from_discussion_group = chat_type in ['supergroup', 'group']
+            
+            # Принимаем сообщение, если:
+            # - Оно из канала напрямую, ИЛИ
+            # - Это комментарий к посту (reply_to указывает на канал), ИЛИ
+            # - Это из группы обсуждений (supergroup/group) - предполагаем, что это наш канал
+            if not (is_from_channel or is_comment_to_post or is_from_discussion_group):
                 continue
             
             # Получаем текст сообщения
@@ -191,7 +222,8 @@ def получить_новые_комментарии(last_update_id):
                 'message_id': message.get('message_id'),
                 'text': text.strip(),
                 'from_user': message.get('from', {}).get('first_name', 'Пользователь'),
-                'date': message.get('date', 0)
+                'date': message.get('date', 0),
+                'is_comment': is_comment_to_post or is_from_discussion_group  # Флаг, что это комментарий
             })
         
         return комментарии, max_update_id
