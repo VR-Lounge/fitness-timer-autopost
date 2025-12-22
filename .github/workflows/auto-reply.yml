@@ -1,0 +1,43 @@
+name: 🔄 Автоматический ответ на комментарии
+
+on:
+  schedule:
+    # Каждые 15 минут проверяем новые комментарии
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  auto-reply:
+    name: Обработка комментариев и ответы
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+      
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Установка зависимостей
+        run: |
+          pip install requests
+      
+      - name: Обработка комментариев и отправка ответов
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python auto_reply.py
+      
+      - name: Сохранение состояния (если нужно)
+        if: always()
+        run: |
+          # Состояние сохраняется в .auto_reply_state.json
+          # Можно добавить коммит, если нужно версионирование
+          if [ -f .auto_reply_state.json ]; then
+            echo "✅ Состояние сохранено"
+          fi
+
