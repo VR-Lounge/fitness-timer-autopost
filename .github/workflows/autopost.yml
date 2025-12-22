@@ -3,8 +3,13 @@ name: Автопостинг FITNESS TIMER
 # Запуск workflow
 on:
   schedule:
-    - cron: '17 6 * * *'  # Каждый день в 9:17 МСК (6:17 UTC) - непопулярное время!    - cron: '0 14 * * *'  # Каждый день в 17:00 МСК (14:00 UTC)
-    - cron: '23 14 * * *'  # Каждый день в 17:23 МСК (14:23 UTC) - непопулярное время!  workflow_dispatch:
+    # Важно: GitHub не гарантирует точность до минуты для schedule (возможны задержки).
+    # 09:17 МСК = 06:17 UTC
+    - cron: '17 6 * * *'
+    # 17:23 МСК = 14:23 UTC
+    - cron: '23 14 * * *'
+  # Возможность запустить вручную
+  workflow_dispatch:
 
 jobs:
   autopost:
@@ -32,8 +37,8 @@ jobs:
       - name: Генерация и отправка поста
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          # В автопостинг.py ожидается TELEGRAM_CHAT_ID (ID канала/чата)
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
         run: |
           python автопостинг.py

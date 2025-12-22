@@ -1985,4 +1985,5 @@ def главная():
 
 
 if __name__ == "__main__":
-    главная()
+    успех = главная()
+    raise SystemExit(0 if успех else 1)
