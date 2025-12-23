@@ -274,6 +274,20 @@ def получить_новые_комментарии(last_update_id):
             
             print(f"✅ Принят комментарий: от {first_name} (@{username}), текст: {text[:50]}...")
             
+            # ДЕТАЛЬНОЕ ЛОГИРОВАНИЕ для отладки структуры комментария
+            print(f"🔍 ДЕТАЛЬНАЯ ДИАГНОСТИКА комментария:")
+            print(f"   - message_id: {message.get('message_id')}")
+            print(f"   - chat_id: {chat_id}")
+            print(f"   - chat_type: {chat_type}")
+            print(f"   - is_comment_to_post: {is_comment_to_post}")
+            print(f"   - reply_to присутствует: {reply_to is not None}")
+            if reply_to:
+                print(f"   - reply_to.chat.type: {reply_to.get('chat', {}).get('type')}")
+                print(f"   - reply_to.chat.id: {reply_to.get('chat', {}).get('id')}")
+                print(f"   - reply_to.message_id: {reply_to.get('message_id')}")
+                print(f"   - reply_to.message_thread_id: {reply_to.get('message_thread_id')}")
+            print(f"   - message.message_thread_id: {message.get('message_thread_id')}")
+            
             # Получаем message_thread_id (topic) для каналов с форумами
             message_thread_id = message.get('message_thread_id')
             if message_thread_id:
@@ -284,6 +298,24 @@ def получить_новые_комментарии(last_update_id):
             if reply_to and is_comment_to_post and reply_thread_id:
                 message_thread_id = reply_thread_id
                 print(f"📌 Используем message_thread_id из reply_to (приоритет): {reply_thread_id}")
+            
+            # ВАЖНО: Если message_thread_id всё ещё None, но это комментарий к посту,
+            # возможно, нужно получить его из исходного поста через API
+            if not message_thread_id and is_comment_to_post and reply_to:
+                reply_message_id = reply_to.get('message_id')
+                if reply_message_id:
+                    print(f"⚠️ message_thread_id не найден, но есть reply_to.message_id={reply_message_id}")
+                    print(f"   Попробуем получить информацию о посте через API...")
+                    # Получаем информацию о посте из канала
+                    try:
+                        get_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getChat"
+                        get_params = {'chat_id': TELEGRAM_CHAT_ID}
+                        get_response = requests.get(get_url, params=get_params, timeout=5)
+                        if get_response.status_code == 200:
+                            chat_info = get_response.json()
+                            print(f"   Информация о канале: {chat_info}")
+                    except Exception as e:
+                        print(f"   Ошибка получения информации о канале: {e}")
             
             комментарии.append({
                 'update_id': update_id,
