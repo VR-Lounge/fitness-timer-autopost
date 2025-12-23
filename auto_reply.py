@@ -146,7 +146,8 @@ def получить_новые_комментарии(last_update_id):
     params = {
         'offset': last_update_id + 1,
         'timeout': 10,
-        'allowed_updates': ['message', 'channel_post']
+        # ВАЖНО: НЕ включаем 'channel_post' - нам нужны только комментарии, а не посты канала!
+        'allowed_updates': ['message']  # Только сообщения из группы обсуждений
     }
     
     try:
@@ -168,7 +169,12 @@ def получить_новые_комментарии(last_update_id):
             update_id = update.get('update_id', 0)
             max_update_id = max(max_update_id, update_id)
             
-            # Получаем сообщение (может быть из канала или группы обсуждений)
+            # ВАЖНО: Игнорируем посты из канала (channel_post) - это не комментарии!
+            if update.get('channel_post'):
+                print(f"⏭️ Пропускаем пост из канала (channel_post)")
+                continue
+            
+            # Получаем сообщение (только из группы обсуждений или комментарии)
             message = update.get('message')
             if not message:
                 continue
@@ -181,31 +187,39 @@ def получить_новые_комментарии(last_update_id):
             chat_id = str(chat.get('id', ''))
             chat_type = chat.get('type', '')
             
-            # Проверяем, что сообщение из нашего канала ИЛИ из группы обсуждений канала
-            # Группы обсуждений имеют type='supergroup' или 'group'
-            # Комментарии к постам обычно имеют reply_to_message, указывающее на пост в канале
+            # КРИТИЧЕСКИ ВАЖНО: НЕ обрабатываем посты из самого канала!
+            # Посты из канала имеют chat_type='channel' и chat_id == TELEGRAM_CHAT_ID
+            # Мы обрабатываем ТОЛЬКО комментарии к постам!
             
-            # Вариант 1: Сообщение из самого канала (прямо в канале)
-            is_from_channel = (chat_id == str(TELEGRAM_CHAT_ID))
+            # Проверяем, что это НЕ пост из канала
+            if chat_type == 'channel' and chat_id == str(TELEGRAM_CHAT_ID):
+                print(f"⏭️ Пропускаем пост из канала (chat_type=channel)")
+                continue
             
-            # Вариант 2: Сообщение из группы обсуждений (комментарий к посту)
-            # Комментарии к постам имеют reply_to_message с сообщением из канала
+            # Комментарии к постам приходят из группы обсуждений (supergroup/group)
+            # И имеют reply_to_message, указывающее на пост в канале
             is_comment_to_post = False
             reply_to = message.get('reply_to_message')
             if reply_to:
                 # Если это ответ на сообщение из канала - это комментарий к посту
                 reply_chat = reply_to.get('chat', {})
-                if str(reply_chat.get('id', '')) == str(TELEGRAM_CHAT_ID):
+                reply_chat_type = reply_chat.get('type', '')
+                reply_chat_id = str(reply_chat.get('id', ''))
+                
+                # Комментарий к посту: reply_to указывает на канал
+                if reply_chat_type == 'channel' and reply_chat_id == str(TELEGRAM_CHAT_ID):
                     is_comment_to_post = True
+                    print(f"✅ Найден комментарий к посту (reply_to канал)")
             
-            # Также проверяем, что это сообщение из группы (supergroup/group) - вероятно группа обсуждений
+            # Также проверяем, что это сообщение из группы обсуждений (supergroup/group)
             is_from_discussion_group = chat_type in ['supergroup', 'group']
             
-            # Принимаем сообщение, если:
-            # - Оно из канала напрямую, ИЛИ
+            # Принимаем сообщение ТОЛЬКО если:
             # - Это комментарий к посту (reply_to указывает на канал), ИЛИ
-            # - Это из группы обсуждений (supergroup/group) - предполагаем, что это наш канал
-            if not (is_from_channel or is_comment_to_post or is_from_discussion_group):
+            # - Это из группы обсуждений (supergroup/group) - комментарии к постам
+            # НЕ принимаем посты из самого канала!
+            if not (is_comment_to_post or is_from_discussion_group):
+                print(f"⏭️ Пропускаем: не комментарий к посту (chat_type={chat_type}, chat_id={chat_id})")
                 continue
             
             # Получаем текст сообщения
