@@ -691,6 +691,27 @@ def сгенерировать_ответ(вопрос):
         return None
 
 
+def получить_message_thread_id_из_комментария(chat_id_группы, message_id):
+    """
+    Пытается получить message_thread_id из комментария через API Telegram.
+    Для комментариев к постам в каналах с форумами это может быть необходимо.
+    """
+    try:
+        # Получаем информацию о сообщении через getUpdates или forwardMessage
+        # Но проще всего - попробовать получить через форвард сообщения
+        # Или использовать метод getChat для получения информации о группе
+        
+        # Альтернативный подход: если комментарий приходит из группы обсуждений,
+        # но не имеет reply_to_message, возможно, нужно получить информацию о связанном посте
+        # через метод getChat или другой API
+        
+        # Пока возвращаем None - это будет обработано в основной функции
+        return None
+    except Exception as e:
+        print(f"⚠️ Ошибка получения message_thread_id: {e}")
+        return None
+
+
 def отправить_ответ(message_id, ответ, chat_id_группы, message_thread_id=None):
     """
     Отправляет ответ на комментарий в Telegram
@@ -731,10 +752,34 @@ def отправить_ответ(message_id, ответ, chat_id_группы, 
             print(f"✅ Ответ успешно отправлен!")
             return True
         else:
+            error_data = response.json() if response.text else {}
+            error_description = error_data.get('description', response.text)
             print(f"❌ Ошибка отправки ответа: {response.status_code}")
-            print(f"Ответ API: {response.text}")
-            # Дополнительная диагностика
+            print(f"Ответ API: {error_description}")
             print(f"🔍 Параметры запроса: chat_id={chat_id_группы}, message_id={message_id}, thread_id={message_thread_id}")
+            
+            # ЕСЛИ ошибка "channel direct messages topic must be specified",
+            # попробуем отправить БЕЗ reply_to_message_id (просто как обычное сообщение)
+            if "topic must be specified" in error_description.lower():
+                print(f"⚠️ Обнаружена ошибка 'topic must be specified'")
+                print(f"🔄 Пробуем отправить ответ БЕЗ reply_to_message_id...")
+                
+                # Убираем reply_to_message_id и пробуем отправить как обычное сообщение
+                params_without_reply = params.copy()
+                del params_without_reply['reply_to_message_id']
+                
+                # Если есть message_thread_id, оставляем его
+                # Если нет - пробуем без него
+                if not message_thread_id:
+                    # Пробуем отправить без thread_id
+                    retry_response = requests.post(url, json=params_without_reply, timeout=10)
+                    if retry_response.status_code == 200:
+                        print(f"✅ Ответ успешно отправлен БЕЗ reply_to_message_id!")
+                        return True
+                    else:
+                        print(f"❌ Повторная попытка также не удалась: {retry_response.status_code}")
+                        print(f"Ответ: {retry_response.text}")
+            
             return False
     except Exception as e:
         print(f"❌ Исключение при отправке ответа: {e}")
