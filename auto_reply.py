@@ -265,17 +265,22 @@ def получить_новые_комментарии(last_update_id):
             # Получаем текст сообщения
             text = message.get('text') or message.get('caption', '')
             if not text or len(text.strip()) < MIN_QUESTION_LENGTH:
+                print(f"⏭️ Пропускаем: текст слишком короткий ({len(text.strip()) if text else 0} символов, минимум {MIN_QUESTION_LENGTH})")
                 continue
             
             # Проверяем, что это не слишком длинное сообщение (возможно спам)
             if len(text) > MAX_QUESTION_LENGTH:
+                print(f"⏭️ Пропускаем: текст слишком длинный ({len(text)} символов, максимум {MAX_QUESTION_LENGTH})")
                 continue
+            
+            print(f"✅ Принят комментарий: от {first_name} (@{username}), текст: {text[:50]}...")
             
             комментарии.append({
                 'update_id': update_id,
                 'message_id': message.get('message_id'),
                 'text': text.strip(),
-                'from_user': message.get('from', {}).get('first_name', 'Пользователь'),
+                'from_user': first_name or 'Пользователь',
+                'username': username,
                 'date': message.get('date', 0),
                 'is_comment': is_comment_to_post or is_from_discussion_group,  # Флаг, что это комментарий
                 'chat_id': chat_id  # ВАЖНО: сохраняем chat_id группы обсуждений для отправки ответа
