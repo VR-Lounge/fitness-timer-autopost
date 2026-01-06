@@ -635,41 +635,59 @@ def получить_новые_комментарии(last_update_id):
     # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Пробуем получить ВСЕ обновления без фильтрации allowed_updates
     # для поиска комментариев, которые могут приходить в другом формате
     print(f"🔍 Пробуем получить обновления БЕЗ фильтрации allowed_updates...")
-    all_updates_params = {
-        'offset': max(0, last_update_id - 200),  # Проверяем последние 200 обновлений
-        'timeout': 5,
-        'limit': 200
-        # НЕ указываем allowed_updates - получаем ВСЕ типы обновлений
-    }
-    try:
-        all_updates_response = requests.get(url, params=all_updates_params, timeout=10)
-        if all_updates_response.status_code == 200:
-            all_updates_data = all_updates_response.json()
-            if all_updates_data.get('ok'):
-                all_updates = all_updates_data.get('result', [])
-                print(f"🔍 БЕЗ ФИЛЬТРАЦИИ: Получено {len(all_updates)} обновлений")
-                if len(all_updates) > 0:
-                    print(f"🔍 Анализируем все обновления на наличие комментариев...")
-                    for upd in all_updates:
-                        upd_id = upd.get('update_id', 0)
-                        if 'message' in upd:
-                            msg = upd.get('message', {})
-                            chat_type = msg.get('chat', {}).get('type', 'unknown')
-                            chat_id = msg.get('chat', {}).get('id', 'unknown')
-                            from_user = msg.get('from', {})
-                            username = from_user.get('username', 'unknown')
-                            first_name = from_user.get('first_name', 'unknown')
-                            text_preview = (msg.get('text') or msg.get('caption', ''))[:100]
-                            reply_to = msg.get('reply_to_message')
-                            has_reply = reply_to is not None
-                            # Проверяем, может ли это быть комментарий
-                            if chat_type in ['supergroup', 'group'] or has_reply:
-                                print(f"   ✅ update_id={upd_id}: chat_type={chat_type}, chat_id={chat_id}, from={first_name} (@{username}), reply_to={has_reply}")
-                                print(f"      text={text_preview}...")
-                                if 'творож' in text_preview.lower() or 'запекан' in text_preview.lower() or '187' in text_preview or '93' in text_preview:
-                                    print(f"      🎯 НАЙДЕН КОММЕНТАРИЙ О ТВОРОЖНОЙ ЗАПЕКАНКЕ!")
-    except Exception as e:
-        print(f"⚠️ Ошибка получения всех обновлений: {e}")
+    
+    # Пробуем несколько вариантов offset для поиска комментария
+    search_offsets = [
+        max(0, last_update_id - 500),  # Последние 500 обновлений
+        max(0, last_update_id - 1000),  # Последние 1000 обновлений
+        0  # Все обновления (если нужно)
+    ]
+    
+    found_comment = False
+    for search_offset in search_offsets:
+        if found_comment:
+            break
+        all_updates_params = {
+            'offset': search_offset,
+            'timeout': 5,
+            'limit': 100
+            # НЕ указываем allowed_updates - получаем ВСЕ типы обновлений
+        }
+        try:
+            print(f"🔍 Поиск в диапазоне offset={search_offset}...")
+            all_updates_response = requests.get(url, params=all_updates_params, timeout=10)
+            if all_updates_response.status_code == 200:
+                all_updates_data = all_updates_response.json()
+                if all_updates_data.get('ok'):
+                    all_updates = all_updates_data.get('result', [])
+                    print(f"🔍 БЕЗ ФИЛЬТРАЦИИ (offset={search_offset}): Получено {len(all_updates)} обновлений")
+                    if len(all_updates) > 0:
+                        print(f"🔍 Анализируем все обновления на наличие комментариев...")
+                        for upd in all_updates:
+                            upd_id = upd.get('update_id', 0)
+                            if 'message' in upd:
+                                msg = upd.get('message', {})
+                                chat_type = msg.get('chat', {}).get('type', 'unknown')
+                                chat_id = msg.get('chat', {}).get('id', 'unknown')
+                                from_user = msg.get('from', {})
+                                username = from_user.get('username', 'unknown')
+                                first_name = from_user.get('first_name', 'unknown')
+                                text_preview = (msg.get('text') or msg.get('caption', ''))[:100]
+                                reply_to = msg.get('reply_to_message')
+                                has_reply = reply_to is not None
+                                # Проверяем, может ли это быть комментарий
+                                if chat_type in ['supergroup', 'group'] or has_reply:
+                                    print(f"   ✅ update_id={upd_id}: chat_type={chat_type}, chat_id={chat_id}, from={first_name} (@{username}), reply_to={has_reply}")
+                                    print(f"      text={text_preview}...")
+                                    if 'творож' in text_preview.lower() or 'запекан' in text_preview.lower() or '187' in text_preview or '93' in text_preview:
+                                        print(f"      🎯 НАЙДЕН КОММЕНТАРИЙ О ТВОРОЖНОЙ ЗАПЕКАНКЕ!")
+                                        found_comment = True
+                                        # НЕ прерываем цикл - продолжаем искать все комментарии
+                    else:
+                        print(f"   ⚠️ Нет обновлений в диапазоне offset={search_offset}")
+                        break  # Если нет обновлений, не проверяем дальше
+        except Exception as e:
+            print(f"⚠️ Ошибка получения всех обновлений (offset={search_offset}): {e}")
     
     params = {
         'offset': last_update_id + 1,
