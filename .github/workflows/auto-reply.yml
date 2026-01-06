@@ -21,31 +21,32 @@ jobs:
           python-version: '3.11'
           cache: 'pip'  # Кэшируем pip для ускорения
       
-      - name: Загрузка состояния (cache)
-        uses: actions/cache@v4
-        id: cache-state
+      - name: Загрузка состояния (artifacts)
+        uses: actions/download-artifact@v4
         with:
-          path: |
-            .auto_reply_state.json
-            .answered_messages.json
-          key: auto-reply-state-${{ github.repository }}-v1
-          restore-keys: |
-            auto-reply-state-${{ github.repository }}-v1
-            auto-reply-state-${{ github.repository }}-
+          name: auto-reply-state
+          path: .
+        continue-on-error: true
       
       - name: Проверка загруженного состояния
         run: |
-          echo "🔍 Проверка состояния после загрузки cache..."
+          echo "🔍 Проверка состояния после загрузки artifacts..."
           if [ -f ".auto_reply_state.json" ]; then
             echo "✅ Файл .auto_reply_state.json найден"
+            echo "📄 Содержимое:"
             cat .auto_reply_state.json
           else
-            echo "⚠️ Файл .auto_reply_state.json не найден (cache не загружен или первый запуск)"
+            echo "⚠️ Файл .auto_reply_state.json не найден (первый запуск или artifacts не найдены)"
+            echo "📝 Создаём пустой файл для первого запуска..."
+            echo '{"last_update_id": 0}' > .auto_reply_state.json
           fi
           if [ -f ".answered_messages.json" ]; then
             echo "✅ Файл .answered_messages.json найден"
+            echo "📊 Размер: $(wc -l < .answered_messages.json) строк"
           else
             echo "⚠️ Файл .answered_messages.json не найден"
+            echo "📝 Создаём пустой файл..."
+            echo '[]' > .answered_messages.json
           fi
       
       - name: Установка зависимостей
@@ -71,30 +72,32 @@ jobs:
       - name: Проверка состояния перед сохранением
         if: always()
         run: |
-          echo "🔍 Проверка состояния перед сохранением в cache..."
+          echo "🔍 Проверка состояния перед сохранением в artifacts..."
           if [ -f ".auto_reply_state.json" ]; then
             echo "✅ Файл .auto_reply_state.json существует"
             echo "📄 Содержимое:"
             cat .auto_reply_state.json
           else
             echo "❌ Файл .auto_reply_state.json НЕ существует!"
+            echo "📝 Создаём файл с дефолтным значением..."
+            echo '{"last_update_id": 0}' > .auto_reply_state.json
           fi
           if [ -f ".answered_messages.json" ]; then
             echo "✅ Файл .answered_messages.json существует"
             echo "📊 Размер: $(wc -l < .answered_messages.json) строк"
           else
             echo "⚠️ Файл .answered_messages.json не существует"
+            echo "📝 Создаём пустой файл..."
+            echo '[]' > .answered_messages.json
           fi
       
-      - name: Сохранение состояния (cache)
-        uses: actions/cache@v4
+      - name: Сохранение состояния (artifacts)
+        uses: actions/upload-artifact@v4
         if: always()
         with:
+          name: auto-reply-state
           path: |
             .auto_reply_state.json
             .answered_messages.json
-          key: auto-reply-state-${{ github.repository }}-v1
-          restore-keys: |
-            auto-reply-state-${{ github.repository }}-v1
-            auto-reply-state-${{ github.repository }}-
+          retention-days: 90
 
