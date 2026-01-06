@@ -570,21 +570,23 @@ def получить_новые_комментарии(last_update_id):
         'allowed_updates': ['message']  # Только сообщения из группы обсуждений
     }
     
-    # ДИАГНОСТИКА: Проверяем, есть ли обновления вообще (без фильтрации)
+    # ДИАГНОСТИКА: Проверяем последние 100 обновлений для поиска комментариев
     try:
+        print(f"🔍 ДИАГНОСТИКА: Проверяем последние 100 обновлений (offset={max(0, last_update_id - 100)})...")
         diagnostic_params = {
-            'offset': last_update_id + 1,
+            'offset': max(0, last_update_id - 100),  # Проверяем последние 100 обновлений
             'timeout': 5,
-            'limit': 10  # Получаем последние 10 обновлений для диагностики
+            'limit': 100
         }
         diagnostic_response = requests.get(url, params=diagnostic_params, timeout=10)
         if diagnostic_response.status_code == 200:
             diagnostic_data = diagnostic_response.json()
             if diagnostic_data.get('ok'):
                 diagnostic_updates = diagnostic_data.get('result', [])
-                print(f"🔍 ДИАГНОСТИКА: Всего обновлений доступно (без фильтрации): {len(diagnostic_updates)}")
+                print(f"🔍 ДИАГНОСТИКА: Всего обновлений доступно (offset={diagnostic_params['offset']}): {len(diagnostic_updates)}")
                 if len(diagnostic_updates) > 0:
-                    for diag_update in diagnostic_updates[:3]:
+                    print(f"🔍 ДИАГНОСТИКА: Анализируем первые 10 обновлений:")
+                    for diag_update in diagnostic_updates[:10]:
                         diag_update_id = diag_update.get('update_id', 0)
                         has_message = 'message' in diag_update
                         has_channel_post = 'channel_post' in diag_update
@@ -595,10 +597,30 @@ def получить_новые_комментарии(last_update_id):
                             chat_id = msg.get('chat', {}).get('id', 'unknown')
                             from_user = msg.get('from', {})
                             username = from_user.get('username', 'unknown')
+                            first_name = from_user.get('first_name', 'unknown')
+                            is_bot = from_user.get('is_bot', False)
                             text_preview = (msg.get('text') or msg.get('caption', ''))[:50]
-                            print(f"     → chat_type={chat_type}, chat_id={chat_id}, from=@{username}, text={text_preview}...")
+                            reply_to = msg.get('reply_to_message')
+                            has_reply = reply_to is not None
+                            print(f"     → chat_type={chat_type}, chat_id={chat_id}, from={first_name} (@{username}), is_bot={is_bot}, reply_to={has_reply}, text={text_preview}...")
+                            if has_reply:
+                                reply_chat_type = reply_to.get('chat', {}).get('type', 'unknown')
+                                reply_chat_id = reply_to.get('chat', {}).get('id', 'unknown')
+                                print(f"       → reply_to: chat_type={reply_chat_type}, chat_id={reply_chat_id}")
+                else:
+                    print(f"⚠️ ДИАГНОСТИКА: Нет обновлений в диапазоне offset={diagnostic_params['offset']} до {last_update_id + 1}")
+                    print(f"⚠️ Это может означать:")
+                    print(f"   1. Комментарий был отправлен до update_id={last_update_id + 1} и уже обработан")
+                    print(f"   2. Бот не имеет доступа к группе обсуждений")
+                    print(f"   3. Комментарии приходят в другом формате")
+            else:
+                print(f"❌ ДИАГНОСТИКА: Telegram API вернул ошибку: {diagnostic_data.get('description')}")
+        else:
+            print(f"❌ ДИАГНОСТИКА: Ошибка HTTP {diagnostic_response.status_code}")
     except Exception as e:
         print(f"⚠️ Ошибка диагностики: {e}")
+        import traceback
+        print(f"   Traceback: {traceback.format_exc()}")
     
     try:
         print(f"🔍 Запрос getUpdates: offset={last_update_id + 1}, timeout=10")
