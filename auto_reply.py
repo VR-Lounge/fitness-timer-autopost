@@ -894,16 +894,35 @@ def получить_новые_комментарии(last_update_id):
                 print(f"⏭️ Пропускаем: не комментарий к посту (chat_type={chat_type}, chat_id={chat_id}, is_comment={is_comment_to_post}, is_group={is_from_discussion_group})")
                 continue
             
-            # Теперь проверяем, является ли это ботом (ПОСЛЕ того как определили, что это комментарий)
-            # Если это комментарий к посту от бота - можем обработать (иногда боты оставляют полезные комментарии)
+            # КРИТИЧЕСКИ ВАЖНО: Пропускаем комментарии от ботов
+            # Обрабатываем ТОЛЬКО комментарии от обычных подписчиков!
             if is_bot:
-                if is_comment_to_post:
-                    # Это комментарий к посту от бота - можем обработать
-                    print(f"⚠️ Комментарий от бота, но это комментарий к посту - обрабатываем")
-                else:
-                    # Это не комментарий к посту, а просто сообщение от бота - пропускаем
-                    print(f"⏭️ Пропускаем: сообщение от бота (не комментарий к посту)")
-                    continue
+                print(f"⏭️ Пропускаем: комментарий от бота - это административный комментарий")
+                continue
+            
+            # Дополнительная проверка: если пользователь - администратор канала, пропускаем
+            # Проверяем через getChatMember, является ли пользователь администратором
+            try:
+                user_id = from_user.get('id')
+                if user_id:
+                    # Проверяем, является ли пользователь администратором канала
+                    get_member_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getChatMember"
+                    get_member_params = {
+                        'chat_id': TELEGRAM_CHAT_ID,
+                        'user_id': user_id
+                    }
+                    member_response = requests.get(get_member_url, params=get_member_params, timeout=5)
+                    if member_response.status_code == 200:
+                        member_data = member_response.json()
+                        if member_data.get('ok'):
+                            member_status = member_data.get('result', {}).get('status', '')
+                            # Если пользователь - администратор или создатель канала - пропускаем
+                            if member_status in ['administrator', 'creator']:
+                                print(f"⏭️ Пропускаем: комментарий от администратора канала (статус: {member_status})")
+                                continue
+            except Exception as e:
+                # Если не удалось проверить статус - продолжаем обработку (лучше обработать, чем пропустить)
+                print(f"⚠️ Не удалось проверить статус пользователя: {e}, продолжаем обработку")
             
             # Получаем текст сообщения
             text = message.get('text') or message.get('caption', '')
