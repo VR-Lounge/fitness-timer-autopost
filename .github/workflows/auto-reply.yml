@@ -21,11 +21,40 @@ jobs:
           python-version: '3.11'
           cache: 'pip'  # Кэшируем pip для ускорения
       
+      - name: Получение ID последнего успешного запуска
+        id: get-last-run
+        run: |
+          echo "🔍 Ищем последний успешный запуск workflow..."
+          WORKFLOW_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/auto-reply.yml" | \
+            jq -r '.id')
+          
+          if [ -z "$WORKFLOW_ID" ] || [ "$WORKFLOW_ID" = "null" ]; then
+            echo "⚠️ Не удалось получить ID workflow"
+            echo "run_id=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          LAST_RUN=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$WORKFLOW_ID/runs?per_page=2&status=success" | \
+            jq -r '.workflow_runs[] | select(.id != ${{ github.run_id }}) | .id' | head -1)
+          
+          if [ -z "$LAST_RUN" ] || [ "$LAST_RUN" = "null" ]; then
+            echo "⚠️ Предыдущий успешный запуск не найден (первый запуск)"
+            echo "run_id=" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Найден предыдущий успешный запуск: $LAST_RUN"
+            echo "run_id=$LAST_RUN" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Загрузка состояния (artifacts)
         uses: actions/download-artifact@v4
+        if: steps.get-last-run.outputs.run_id != ''
         with:
           name: auto-reply-state
           path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.get-last-run.outputs.run_id }}
         continue-on-error: true
       
       - name: Проверка загруженного состояния
