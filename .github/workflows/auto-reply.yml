@@ -60,16 +60,25 @@ jobs:
       - name: Перемещение файлов состояния
         if: steps.get-last-run.outputs.run_id != ''
         run: |
+          echo "📁 Проверяем директорию state..."
           if [ -d "./state" ]; then
-            echo "📁 Найдена директория state, перемещаем файлы..."
+            echo "✅ Найдена директория state"
+            ls -la ./state/
             if [ -f "./state/.auto_reply_state.json" ]; then
               cp "./state/.auto_reply_state.json" ".auto_reply_state.json"
               echo "✅ Скопирован .auto_reply_state.json"
+              cat .auto_reply_state.json
+            else
+              echo "⚠️ Файл ./state/.auto_reply_state.json не найден"
             fi
             if [ -f "./state/.answered_messages.json" ]; then
               cp "./state/.answered_messages.json" ".answered_messages.json"
               echo "✅ Скопирован .answered_messages.json"
+            else
+              echo "⚠️ Файл ./state/.answered_messages.json не найден"
             fi
+          else
+            echo "⚠️ Директория ./state не найдена"
           fi
       
       - name: Проверка загруженного состояния
