@@ -584,6 +584,39 @@ def получить_новые_комментарии(last_update_id):
                             group_info = group_data.get('result', {})
                             print(f"   - Группа обсуждений доступна: {group_info.get('title', 'unknown')}")
                             print(f"   - Тип группы: {group_info.get('type', 'unknown')}")
+                            
+                            # КРИТИЧЕСКАЯ ПРОВЕРКА: Проверяем права бота в группе
+                            try:
+                                bot_info_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getChatMember"
+                                bot_info_params = {
+                                    'chat_id': linked_chat_id,
+                                    'user_id': TELEGRAM_BOT_TOKEN.split(':')[0]  # Получаем bot_id из токена
+                                }
+                                # Альтернативный способ: используем getMe для получения bot_id
+                                get_me_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getMe"
+                                get_me_response = requests.get(get_me_url, timeout=10)
+                                if get_me_response.status_code == 200:
+                                    me_data = get_me_response.json()
+                                    if me_data.get('ok'):
+                                        bot_id = me_data.get('result', {}).get('id')
+                                        print(f"   - Bot ID: {bot_id}")
+                                        bot_info_params['user_id'] = bot_id
+                                        bot_member_response = requests.get(bot_info_url, params=bot_info_params, timeout=10)
+                                        if bot_member_response.status_code == 200:
+                                            bot_member_data = bot_member_response.json()
+                                            if bot_member_data.get('ok'):
+                                                bot_member = bot_member_data.get('result', {})
+                                                bot_status = bot_member.get('status', 'unknown')
+                                                print(f"   - Статус бота в группе: {bot_status}")
+                                                if bot_status not in ['administrator', 'member']:
+                                                    print(f"   ⚠️ ВНИМАНИЕ: Бот не является участником группы! Статус: {bot_status}")
+                                                    print(f"   ⚠️ Бот должен быть добавлен в группу обсуждений как администратор или участник!")
+                                            else:
+                                                print(f"   ⚠️ Не удалось получить информацию о боте в группе: {bot_member_data.get('description')}")
+                                        else:
+                                            print(f"   ⚠️ Ошибка проверки прав бота: HTTP {bot_member_response.status_code}")
+                            except Exception as e:
+                                print(f"   ⚠️ Ошибка проверки прав бота: {e}")
                         else:
                             print(f"   ⚠️ Не удалось получить информацию о группе: {group_data.get('description')}")
                     else:
