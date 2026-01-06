@@ -162,5 +162,6 @@ jobs:
             .auto_reply_state.json
             .answered_messages.json
           retention-days: 90
-          if-no-files-found: warn
+          if-no-files-found: error
+          include-hidden-files: true
 
