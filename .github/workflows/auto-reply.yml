@@ -21,18 +21,80 @@ jobs:
           python-version: '3.11'
           cache: 'pip'  # Кэшируем pip для ускорения
       
+      - name: Загрузка состояния (cache)
+        uses: actions/cache@v4
+        id: cache-state
+        with:
+          path: |
+            .auto_reply_state.json
+            .answered_messages.json
+          key: auto-reply-state-${{ github.repository }}-v1
+          restore-keys: |
+            auto-reply-state-${{ github.repository }}-v1
+            auto-reply-state-${{ github.repository }}-
+      
+      - name: Проверка загруженного состояния
+        run: |
+          echo "🔍 Проверка состояния после загрузки cache..."
+          if [ -f ".auto_reply_state.json" ]; then
+            echo "✅ Файл .auto_reply_state.json найден"
+            cat .auto_reply_state.json
+          else
+            echo "⚠️ Файл .auto_reply_state.json не найден (cache не загружен или первый запуск)"
+          fi
+          if [ -f ".answered_messages.json" ]; then
+            echo "✅ Файл .answered_messages.json найден"
+          else
+            echo "⚠️ Файл .answered_messages.json не найден"
+          fi
+      
       - name: Установка зависимостей
         run: |
           pip install --upgrade pip --quiet
           pip install requests --quiet
+          # Для отправки email отчётов (встроено в Python, но убедимся)
+          python -c "import smtplib; import email" || echo "Email модули доступны"
       
       - name: Обработка комментариев и отправка ответов
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          ADMIN_TELEGRAM_CHAT_ID: ${{ secrets.ADMIN_TELEGRAM_CHAT_ID }}
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
         run: |
           python auto_reply.py
       
-      # Убрали лишний шаг для оптимизации времени выполнения
+      - name: Проверка состояния перед сохранением
+        if: always()
+        run: |
+          echo "🔍 Проверка состояния перед сохранением в cache..."
+          if [ -f ".auto_reply_state.json" ]; then
+            echo "✅ Файл .auto_reply_state.json существует"
+            echo "📄 Содержимое:"
+            cat .auto_reply_state.json
+          else
+            echo "❌ Файл .auto_reply_state.json НЕ существует!"
+          fi
+          if [ -f ".answered_messages.json" ]; then
+            echo "✅ Файл .answered_messages.json существует"
+            echo "📊 Размер: $(wc -l < .answered_messages.json) строк"
+          else
+            echo "⚠️ Файл .answered_messages.json не существует"
+          fi
+      
+      - name: Сохранение состояния (cache)
+        uses: actions/cache@v4
+        if: always()
+        with:
+          path: |
+            .auto_reply_state.json
+            .answered_messages.json
+          key: auto-reply-state-${{ github.repository }}-v1
+          restore-keys: |
+            auto-reply-state-${{ github.repository }}-v1
+            auto-reply-state-${{ github.repository }}-
 
