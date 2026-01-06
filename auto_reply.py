@@ -598,6 +598,46 @@ def получить_новые_комментарии(last_update_id):
         print(f"⚠️ Ошибка проверки доступа: {e}")
     
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates"
+    
+    # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Пробуем получить ВСЕ обновления без фильтрации allowed_updates
+    # для поиска комментариев, которые могут приходить в другом формате
+    print(f"🔍 Пробуем получить обновления БЕЗ фильтрации allowed_updates...")
+    all_updates_params = {
+        'offset': max(0, last_update_id - 200),  # Проверяем последние 200 обновлений
+        'timeout': 5,
+        'limit': 200
+        # НЕ указываем allowed_updates - получаем ВСЕ типы обновлений
+    }
+    try:
+        all_updates_response = requests.get(url, params=all_updates_params, timeout=10)
+        if all_updates_response.status_code == 200:
+            all_updates_data = all_updates_response.json()
+            if all_updates_data.get('ok'):
+                all_updates = all_updates_data.get('result', [])
+                print(f"🔍 БЕЗ ФИЛЬТРАЦИИ: Получено {len(all_updates)} обновлений")
+                if len(all_updates) > 0:
+                    print(f"🔍 Анализируем все обновления на наличие комментариев...")
+                    for upd in all_updates:
+                        upd_id = upd.get('update_id', 0)
+                        if 'message' in upd:
+                            msg = upd.get('message', {})
+                            chat_type = msg.get('chat', {}).get('type', 'unknown')
+                            chat_id = msg.get('chat', {}).get('id', 'unknown')
+                            from_user = msg.get('from', {})
+                            username = from_user.get('username', 'unknown')
+                            first_name = from_user.get('first_name', 'unknown')
+                            text_preview = (msg.get('text') or msg.get('caption', ''))[:100]
+                            reply_to = msg.get('reply_to_message')
+                            has_reply = reply_to is not None
+                            # Проверяем, может ли это быть комментарий
+                            if chat_type in ['supergroup', 'group'] or has_reply:
+                                print(f"   ✅ update_id={upd_id}: chat_type={chat_type}, chat_id={chat_id}, from={first_name} (@{username}), reply_to={has_reply}")
+                                print(f"      text={text_preview}...")
+                                if 'творож' in text_preview.lower() or 'запекан' in text_preview.lower() or '187' in text_preview or '93' in text_preview:
+                                    print(f"      🎯 НАЙДЕН КОММЕНТАРИЙ О ТВОРОЖНОЙ ЗАПЕКАНКЕ!")
+    except Exception as e:
+        print(f"⚠️ Ошибка получения всех обновлений: {e}")
+    
     params = {
         'offset': last_update_id + 1,
         'timeout': 10,
