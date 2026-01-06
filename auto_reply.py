@@ -561,6 +561,42 @@ def получить_новые_комментарии(last_update_id):
     2. Бот должен быть администратором группы обсуждений
     3. Комментарии к постам приходят как сообщения в группу обсуждений
     """
+    # ПРОВЕРКА ДОСТУПА: Проверяем, может ли бот видеть группу обсуждений
+    try:
+        # Получаем информацию о канале
+        channel_info_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getChat"
+        channel_info_params = {'chat_id': TELEGRAM_CHAT_ID}
+        channel_info_response = requests.get(channel_info_url, params=channel_info_params, timeout=10)
+        if channel_info_response.status_code == 200:
+            channel_data = channel_info_response.json()
+            if channel_data.get('ok'):
+                channel_info = channel_data.get('result', {})
+                linked_chat_id = channel_info.get('linked_chat_id')
+                print(f"🔍 ПРОВЕРКА ДОСТУПА: Канал {TELEGRAM_CHAT_ID}")
+                print(f"   - linked_chat_id (группа обсуждений): {linked_chat_id}")
+                if linked_chat_id:
+                    # Проверяем доступ к группе обсуждений
+                    group_info_params = {'chat_id': linked_chat_id}
+                    group_info_response = requests.get(channel_info_url, params=group_info_params, timeout=10)
+                    if group_info_response.status_code == 200:
+                        group_data = group_info_response.json()
+                        if group_data.get('ok'):
+                            group_info = group_data.get('result', {})
+                            print(f"   - Группа обсуждений доступна: {group_info.get('title', 'unknown')}")
+                            print(f"   - Тип группы: {group_info.get('type', 'unknown')}")
+                        else:
+                            print(f"   ⚠️ Не удалось получить информацию о группе: {group_data.get('description')}")
+                    else:
+                        print(f"   ⚠️ Ошибка доступа к группе: HTTP {group_info_response.status_code}")
+                else:
+                    print(f"   ⚠️ У канала нет привязанной группы обсуждений!")
+            else:
+                print(f"   ⚠️ Не удалось получить информацию о канале: {channel_data.get('description')}")
+        else:
+            print(f"   ⚠️ Ошибка доступа к каналу: HTTP {channel_info_response.status_code}")
+    except Exception as e:
+        print(f"⚠️ Ошибка проверки доступа: {e}")
+    
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates"
     params = {
         'offset': last_update_id + 1,
