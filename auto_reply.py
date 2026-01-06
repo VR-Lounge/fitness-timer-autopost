@@ -856,6 +856,15 @@ def получить_новые_комментарии(last_update_id):
                     reply_thread_id = reply_to.get('message_thread_id')
                     if reply_thread_id:
                         print(f"📌 Найден message_thread_id из исходного поста: {reply_thread_id}")
+                # Также комментарий к посту может быть ответом на другой комментарий в группе обсуждений
+                # (если это ответ на комментарий к посту в той же группе обсуждений)
+                elif chat_type in ['supergroup', 'group'] and reply_chat_type in ['supergroup', 'group'] and reply_chat_id == chat_id:
+                    # Это ответ на комментарий в той же группе обсуждений - тоже комментарий к посту!
+                    is_comment_to_post = True
+                    print(f"✅ Найден комментарий к посту (ответ на комментарий в группе обсуждений)")
+                    reply_thread_id = reply_to.get('message_thread_id') or message.get('message_thread_id')
+                    if reply_thread_id:
+                        print(f"📌 Найден message_thread_id: {reply_thread_id}")
             
             # Также проверяем, что это сообщение из группы обсуждений (supergroup/group)
             is_from_discussion_group = chat_type in ['supergroup', 'group']
