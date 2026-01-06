@@ -52,10 +52,25 @@ jobs:
         if: steps.get-last-run.outputs.run_id != ''
         with:
           name: auto-reply-state
-          path: .
+          path: ./state
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ steps.get-last-run.outputs.run_id }}
         continue-on-error: true
+      
+      - name: Перемещение файлов состояния
+        if: steps.get-last-run.outputs.run_id != ''
+        run: |
+          if [ -d "./state" ]; then
+            echo "📁 Найдена директория state, перемещаем файлы..."
+            if [ -f "./state/.auto_reply_state.json" ]; then
+              cp "./state/.auto_reply_state.json" ".auto_reply_state.json"
+              echo "✅ Скопирован .auto_reply_state.json"
+            fi
+            if [ -f "./state/.answered_messages.json" ]; then
+              cp "./state/.answered_messages.json" ".answered_messages.json"
+              echo "✅ Скопирован .answered_messages.json"
+            fi
+          fi
       
       - name: Проверка загруженного состояния
         run: |
