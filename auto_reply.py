@@ -566,8 +566,39 @@ def получить_новые_комментарии(last_update_id):
         'offset': last_update_id + 1,
         'timeout': 10,
         # ВАЖНО: НЕ включаем 'channel_post' - нам нужны только комментарии, а не посты канала!
+        # Но включаем все типы сообщений для диагностики
         'allowed_updates': ['message']  # Только сообщения из группы обсуждений
     }
+    
+    # ДИАГНОСТИКА: Проверяем, есть ли обновления вообще (без фильтрации)
+    try:
+        diagnostic_params = {
+            'offset': last_update_id + 1,
+            'timeout': 5,
+            'limit': 10  # Получаем последние 10 обновлений для диагностики
+        }
+        diagnostic_response = requests.get(url, params=diagnostic_params, timeout=10)
+        if diagnostic_response.status_code == 200:
+            diagnostic_data = diagnostic_response.json()
+            if diagnostic_data.get('ok'):
+                diagnostic_updates = diagnostic_data.get('result', [])
+                print(f"🔍 ДИАГНОСТИКА: Всего обновлений доступно (без фильтрации): {len(diagnostic_updates)}")
+                if len(diagnostic_updates) > 0:
+                    for diag_update in diagnostic_updates[:3]:
+                        diag_update_id = diag_update.get('update_id', 0)
+                        has_message = 'message' in diag_update
+                        has_channel_post = 'channel_post' in diag_update
+                        print(f"   - update_id={diag_update_id}: message={has_message}, channel_post={has_channel_post}")
+                        if has_message:
+                            msg = diag_update.get('message', {})
+                            chat_type = msg.get('chat', {}).get('type', 'unknown')
+                            chat_id = msg.get('chat', {}).get('id', 'unknown')
+                            from_user = msg.get('from', {})
+                            username = from_user.get('username', 'unknown')
+                            text_preview = (msg.get('text') or msg.get('caption', ''))[:50]
+                            print(f"     → chat_type={chat_type}, chat_id={chat_id}, from=@{username}, text={text_preview}...")
+    except Exception as e:
+        print(f"⚠️ Ошибка диагностики: {e}")
     
     try:
         print(f"🔍 Запрос getUpdates: offset={last_update_id + 1}, timeout=10")
