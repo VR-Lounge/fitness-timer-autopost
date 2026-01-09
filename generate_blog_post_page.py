@@ -708,7 +708,53 @@ def сгенерировать_html_страницу(пост):
             border: 1px solid rgba(122, 245, 255, 0.3);
             border-radius: 20px;
             font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.8);
+        }}
+        
+        .blog-post-tag:hover {{
+            background: rgba(122, 245, 255, 0.2);
+            border-color: #7af5ff;
             color: #7af5ff;
+            transform: translateY(-2px);
+        }}
+        
+        .blog-timer-block {{
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(122, 245, 255, 0.05);
+            border: 1px solid rgba(122, 245, 255, 0.2);
+            border-radius: 12px;
+        }}
+        
+        .blog-timer-block h3 {{
+            color: #7af5ff;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }}
+        
+        .blog-timer-block ul {{
+            margin: 15px 0;
+            padding-left: 25px;
+        }}
+        
+        .blog-timer-block li {{
+            margin: 8px 0;
+            color: rgba(255, 255, 255, 0.8);
+        }}
+        
+        .blog-timer-block a {{
+            color: #7af5ff;
+            text-decoration: none;
+        }}
+        
+        .blog-timer-block a:hover {{
+            text-decoration: underline;
         }}
         
         .blog-post-back {{
