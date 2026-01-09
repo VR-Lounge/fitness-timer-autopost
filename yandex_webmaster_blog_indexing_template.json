@@ -1,0 +1,69 @@
+{
+  "task_id": "yandex_webmaster_blog_indexing",
+  "task_name": "Индексация страниц блога в Яндекс.Вебмастер",
+  "timestamp": "2026-01-09T22:30:00Z",
+  "status": "completed|in_progress|error",
+  "webmaster_url": "https://webmaster.yandex.ru/",
+  "site": "www.tabatatimer.ru",
+  "sitemap_url": "https://www.tabatatimer.ru/sitemap.xml",
+  "sitemap_status": "added|already_exists|error",
+  "sitemap_check_date": "2026-01-09",
+  "pages_to_index": [
+    {
+      "url": "https://www.tabatatimer.ru/blog/silovaya-trenirovka-dlya-muzhchin-nabiraem-massu-z.html",
+      "title": "Силовая тренировка для мужчин: набираем массу за 4 недели",
+      "status": "added|already_exists|error",
+      "indexing_status": "in_search|pending|not_indexed|error",
+      "date_added": "2026-01-09"
+    },
+    {
+      "url": "https://www.tabatatimer.ru/blog/trenirovka-dlya-devushek-stroynoe-telo-za-30-dney.html",
+      "title": "Тренировка для девушек: стройное тело за 30 дней",
+      "status": "added|already_exists|error",
+      "indexing_status": "in_search|pending|not_indexed|error",
+      "date_added": "2026-01-09"
+    },
+    {
+      "url": "https://www.tabatatimer.ru/blog/pravilnoe-pitanie-dlya-trenirovok-chto-est-do-i-po.html",
+      "title": "Правильное питание для тренировок: что есть до и после",
+      "status": "added|already_exists|error",
+      "indexing_status": "in_search|pending|not_indexed|error",
+      "date_added": "2026-01-09"
+    },
+    {
+      "url": "https://www.tabatatimer.ru/blog/sredizemnomorskaya-dieta-nauchno-dokazannyy-put-k-.html",
+      "title": "Средиземноморская диета: научно доказанный путь к здоровью",
+      "status": "added|already_exists|error",
+      "indexing_status": "in_search|pending|not_indexed|error",
+      "date_added": "2026-01-09"
+    },
+    {
+      "url": "https://www.tabatatimer.ru/blog/nachni-segodnya-pochemu-ne-stoit-otkladyvat-trenir.html",
+      "title": "Начни сегодня: почему не стоит откладывать тренировки на завтра",
+      "status": "added|already_exists|error",
+      "indexing_status": "in_search|pending|not_indexed|error",
+      "date_added": "2026-01-09"
+    }
+  ],
+  "summary": {
+    "total_pages": 5,
+    "pages_added": 0,
+    "pages_already_exists": 0,
+    "pages_with_errors": 0,
+    "pages_in_search": 0,
+    "pages_pending": 0,
+    "pages_not_indexed": 0
+  },
+  "actions_taken": [
+    "Проверен sitemap.xml",
+    "Добавлены URL страниц в переобход",
+    "Проверен статус индексации"
+  ],
+  "errors": [],
+  "warnings": [],
+  "recommendations": [
+    "Проверить статус индексации через несколько дней",
+    "Убедиться, что все страницы добавлены в sitemap.xml"
+  ],
+  "next_check": "2026-01-12T12:00:00Z"
+}
