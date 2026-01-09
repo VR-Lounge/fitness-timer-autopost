@@ -14,17 +14,9 @@ jobs:
         with:
           fetch-depth: 1
       
-      - name: Установка AWS CLI
+      - name: Проверка AWS CLI
         run: |
-          if ! command -v aws &> /dev/null; then
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-          else
-            echo "✅ AWS CLI уже установлен"
-            sudo ./aws/install --update || echo "⚠️ Не удалось обновить AWS CLI, используем существующую версию"
-          fi
-          aws --version
+          aws --version || echo "⚠️ AWS CLI не найден, но должен быть установлен в runner"
       
       - name: Настройка AWS CLI для Яндекс Cloud
         env:
