@@ -23,6 +23,7 @@ jobs:
           cache: 'pip'
       
       - name: Установка зависимостей
+        working-directory: fitness-timer-autopost
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
@@ -32,13 +33,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: menshealth-state
-          path: .
+          path: fitness-timer-autopost
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.run_id }}
           allow-404: true
         continue-on-error: true
       
       - name: Копирование состояния
+        working-directory: fitness-timer-autopost
         if: steps.download-state.outcome == 'success'
         run: |
           if [ -f .menshealth_processed.json ]; then
@@ -48,6 +50,7 @@ jobs:
           fi
       
       - name: Запуск парсера Men's Health
+        working-directory: fitness-timer-autopost
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -55,12 +58,31 @@ jobs:
         run: |
           python3 menshealth_parser.py
       
+      - name: Генерация HTML страниц для блога
+        working-directory: fitness-timer-autopost
+        run: |
+          python3 generate_blog_post_page.py
+      
+      - name: Установка AWS CLI для Яндекс Cloud
+        run: |
+          pip install awscli
+      
+      - name: Загрузка файлов блога на Яндекс Cloud
+        working-directory: fitness-timer-autopost
+        env:
+          YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
+          YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
+        run: |
+          chmod +x upload_blog_to_yandex.sh
+          ./upload_blog_to_yandex.sh || echo "⚠️ Загрузка на Яндекс Cloud пропущена (переменные не настроены)"
+      
       - name: Сохранение состояния
         uses: actions/upload-artifact@v4
         with:
           name: menshealth-state
           path: |
-            .menshealth_processed.json
+            fitness-timer-autopost/.menshealth_processed.json
+            fitness-timer-autopost/.content_hashes.json
           include-hidden-files: true
           retention-days: 90
       
