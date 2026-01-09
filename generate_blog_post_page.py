@@ -16,8 +16,24 @@ from datetime import datetime
 from urllib.parse import quote
 
 # Путь к файлу с постами
-BLOG_POSTS_FILE = Path('../public_html/blog-posts.json')
-BLOG_POSTS_DIR = Path('../public_html/blog')
+# В GitHub Actions репозиторий клонируется в корень, поэтому используем относительный путь
+SCRIPT_DIR = Path(__file__).parent.absolute()
+# Проверяем, где мы находимся
+if (SCRIPT_DIR.parent / 'public_html').exists():
+    # Мы в fitness-timer-autopost, public_html на уровень выше
+    REPO_ROOT = SCRIPT_DIR.parent
+elif (SCRIPT_DIR / 'public_html').exists():
+    # Мы в корне репозитория
+    REPO_ROOT = SCRIPT_DIR
+else:
+    # Пробуем найти public_html относительно текущей директории
+    REPO_ROOT = Path.cwd()
+    if not (REPO_ROOT / 'public_html').exists():
+        # Последняя попытка - ищем в родительской директории
+        REPO_ROOT = REPO_ROOT.parent
+
+BLOG_POSTS_FILE = REPO_ROOT / 'public_html' / 'blog-posts.json'
+BLOG_POSTS_DIR = REPO_ROOT / 'public_html' / 'blog'
 BLOG_POSTS_DIR.mkdir(parents=True, exist_ok=True)
 
 def очистить_текст_от_html(текст):
