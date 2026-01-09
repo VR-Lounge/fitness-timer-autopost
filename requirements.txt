@@ -3,3 +3,8 @@ openai
 python-telegram-bot
 requests
 pillow
+beautifulsoup4
+lxml
+
+# Для автономного тестирования и мониторинга
+ast-comments

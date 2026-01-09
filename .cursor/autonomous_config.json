@@ -1,0 +1,44 @@
+{
+  "autonomous_mode": {
+    "enabled": true,
+    "auto_test": true,
+    "auto_fix": true,
+    "auto_monitor": true,
+    "browser_integration": true,
+    "perplexity_integration": true
+  },
+  "testing": {
+    "run_on_save": true,
+    "check_syntax": true,
+    "check_imports": true,
+    "check_bugs": true,
+    "test_apis": true
+  },
+  "monitoring": {
+    "check_interval_minutes": 30,
+    "auto_fix_common_issues": true,
+    "generate_reports": true,
+    "notify_on_errors": true
+  },
+  "browser": {
+    "test_on_deploy": true,
+    "check_console_errors": true,
+    "check_network_errors": true,
+    "take_screenshots": true,
+    "test_mobile": true
+  },
+  "perplexity": {
+    "enabled": true,
+    "auto_generate_instructions": true,
+    "test_websites": [
+      "https://www.tabatatimer.ru",
+      "https://www.tabatatimer.ru/#timer",
+      "https://www.tabatatimer.ru/nastrojki-tabata-tajmera.html"
+    ]
+  },
+  "workflows": {
+    "test_before_commit": true,
+    "test_after_deploy": true,
+    "monitor_github_actions": true
+  }
+}

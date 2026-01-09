@@ -1,0 +1,82 @@
+{
+  "task_id": "task_1",
+  "task_name": "Проверка сайта tabatatimer.ru",
+  "timestamp": "2026-01-09T12:00:00Z",
+  "performed_by": "Perplexity/Comet Browser",
+  "url": "https://www.tabatatimer.ru",
+  "status": "passed",
+  "console_errors": [
+    {
+      "message": "Пример ошибки",
+      "line": 123,
+      "file": "script.js",
+      "severity": "error"
+    }
+  ],
+  "console_warnings": [
+    {
+      "message": "Пример предупреждения",
+      "line": 456,
+      "file": "script.js",
+      "severity": "warning"
+    }
+  ],
+  "network_errors": [
+    {
+      "url": "https://example.com/resource.js",
+      "status": 404,
+      "type": "failed",
+      "resource_type": "script",
+      "method": "GET",
+      "timestamp": "2026-01-09T12:00:00Z"
+    }
+  ],
+  "network_slow_requests": [
+    {
+      "url": "https://example.com/image.jpg",
+      "duration_ms": 5000,
+      "resource_type": "image",
+      "size_bytes": 1024000
+    }
+  ],
+  "functionality_tests": {
+    "timer_works": true,
+    "settings_work": true,
+    "mobile_responsive": true,
+    "images_load": true,
+    "links_work": true,
+    "forms_work": true,
+    "animations_work": true
+  },
+  "performance_metrics": {
+    "page_load_time_ms": 2500,
+    "dom_content_loaded_ms": 1500,
+    "first_contentful_paint_ms": 1200,
+    "largest_contentful_paint_ms": 2000,
+    "total_page_size_bytes": 2048000,
+    "total_requests": 45
+  },
+  "accessibility_issues": [
+    {
+      "type": "missing_alt",
+      "element": "img",
+      "severity": "warning",
+      "description": "Изображение без alt атрибута"
+    }
+  ],
+  "seo_issues": [
+    {
+      "type": "missing_meta_description",
+      "severity": "warning",
+      "description": "Отсутствует meta description"
+    }
+  ],
+  "screenshot": "screenshot_tabatatimer_ru_20260109.png",
+  "recommendations": [
+    "Исправить ошибку в script.js:123",
+    "Оптимизировать загрузку изображений",
+    "Добавить alt атрибуты к изображениям"
+  ],
+  "next_check": "2026-01-10T12:00:00Z",
+  "notes": "Дополнительные заметки о проверке"
+}

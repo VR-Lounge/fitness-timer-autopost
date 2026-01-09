@@ -1,0 +1,71 @@
+name: 🤖 Автономный мониторинг и тестирование
+
+on:
+  schedule:
+    # Запускаем каждые 6 часов для мониторинга
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  autonomous-testing:
+    name: Автономное тестирование
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+      
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Установка зависимостей
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Автономное тестирование кода
+        run: |
+          cd fitness-timer-autopost
+          python3 autonomous_testing.py
+      
+      - name: Автономный мониторинг
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          cd fitness-timer-autopost
+          python3 autonomous_monitor.py
+      
+      - name: Загрузка отчетов
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            fitness-timer-autopost/test_report.json
+            fitness-timer-autopost/monitoring_report_*.md
+          retention-days: 30
+      
+      - name: Уведомление об ошибках
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ADMIN_TELEGRAM_CHAT_ID: ${{ secrets.ADMIN_TELEGRAM_CHAT_ID }}
+        run: |
+          python3 -c "
+          import requests
+          import os
+          token = os.getenv('TELEGRAM_BOT_TOKEN')
+          chat_id = os.getenv('ADMIN_TELEGRAM_CHAT_ID')
+          if token and chat_id:
+              url = f'https://api.telegram.org/bot{token}/sendMessage'
+              requests.post(url, json={
+                  'chat_id': chat_id,
+                  'text': '⚠️ Обнаружены ошибки в автономном тестировании! Проверьте GitHub Actions.'
+              })
+          "

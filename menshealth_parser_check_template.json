@@ -1,0 +1,63 @@
+{
+  "task_id": "menshealth_parser_check",
+  "task_name": "Проверка работы парсера Men's Health",
+  "timestamp": "2026-01-09T12:00:00Z",
+  "performed_by": "Perplexity/Comet Browser",
+  "workflow_name": "📰 Парсер Men's Health с рерайтингом",
+  "workflow_url": "https://github.com/VR-Lounge/fitness-timer-autopost/actions/workflows/menshealth-parser.yml",
+  "status": "passed",
+  "last_run": {
+    "run_id": 123456,
+    "status": "success",
+    "started_at": "2026-01-09T08:00:00Z",
+    "completed_at": "2026-01-09T08:05:00Z",
+    "duration_seconds": 300
+  },
+  "workflow_logs": {
+    "articles_found": 50,
+    "articles_filtered": 5,
+    "articles_published": 2,
+    "articles_skipped": 3,
+    "errors": []
+  },
+  "schedule_check": {
+    "morning_run": {
+      "scheduled": "08:00 UTC (11:00 МСК)",
+      "last_run": "2026-01-09T08:00:00Z",
+      "status": "success"
+    },
+    "evening_run": {
+      "scheduled": "20:00 UTC (23:00 МСК)",
+      "last_run": "2026-01-08T20:00:00Z",
+      "status": "success"
+    }
+  },
+  "api_checks": {
+    "rss_parsing": {
+      "status": "ok",
+      "feeds_checked": 5,
+      "errors": []
+    },
+    "deepseek_api": {
+      "status": "ok",
+      "calls_made": 2,
+      "errors": []
+    },
+    "telegram_api": {
+      "status": "ok",
+      "posts_sent": 2,
+      "errors": []
+    }
+  },
+  "state_file": {
+    "exists": true,
+    "articles_count": 150,
+    "last_update": "2026-01-09T08:05:00Z"
+  },
+  "found_errors": [],
+  "recommendations": [
+    "Парсер работает корректно",
+    "Все API подключения успешны"
+  ],
+  "next_check": "2026-01-10T12:00:00Z"
+}

@@ -1,0 +1,45 @@
+{
+  "task_id": "telegram_channel_check",
+  "task_name": "Проверка Telegram канала @fitnesstimer",
+  "timestamp": "2026-01-09T12:00:00Z",
+  "performed_by": "Perplexity/Comet Browser",
+  "channel": "@fitnesstimer",
+  "channel_url": "https://t.me/fitnesstimer",
+  "status": "passed",
+  "posts_checked": 10,
+  "last_post_date": "2026-01-09T10:00:00Z",
+  "posts_from_parser": {
+    "total": 5,
+    "with_images": 5,
+    "without_images": 0,
+    "with_errors": 0
+  },
+  "quality_checks": {
+    "formatting_correct": true,
+    "images_load": true,
+    "no_source_traces": true,
+    "relevant_content": true,
+    "links_work": true
+  },
+  "found_issues": [
+    {
+      "type": "missing_image",
+      "post_id": 12345,
+      "description": "Пост без изображения",
+      "severity": "warning"
+    }
+  ],
+  "parser_posts_analysis": {
+    "checked_posts": 5,
+    "posts_with_source_traces": 0,
+    "posts_with_broken_images": 0,
+    "posts_with_formatting_issues": 0,
+    "posts_relevant": 5
+  },
+  "recommendations": [
+    "Все посты от парсера выглядят хорошо",
+    "Рекомендуется проверить качество рерайтинга еженедельно"
+  ],
+  "screenshot": "telegram_channel_screenshot_YYYYMMDD.png",
+  "next_check": "2026-01-10T12:00:00Z"
+}
