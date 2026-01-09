@@ -754,7 +754,7 @@ def сгенерировать_html_страницу(пост):
         </div>
         
         <div class="blog-post-tags">
-            {''.join([f'<span class="blog-post-tag">{тег}</span>' for тег in теги])}
+            {''.join([f'<a href="../blog.html?filter={quote(тег)}" class="blog-post-tag">{тег}</a>' for тег in теги])}
         </div>
     </div>
     
