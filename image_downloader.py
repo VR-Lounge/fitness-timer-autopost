@@ -10,6 +10,7 @@
 """
 
 import os
+import re
 import requests
 import hashlib
 from pathlib import Path
