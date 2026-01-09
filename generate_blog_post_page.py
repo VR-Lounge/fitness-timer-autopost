@@ -11,6 +11,7 @@
 
 import json
 import re
+import html
 from pathlib import Path
 from datetime import datetime
 from urllib.parse import quote
