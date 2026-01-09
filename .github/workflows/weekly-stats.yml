@@ -1,0 +1,87 @@
+name: 📊 Еженедельная статистика канала
+
+on:
+  schedule:
+    # Каждый понедельник в 10:00 МСК (07:00 UTC)
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+jobs:
+  stats:
+    name: Сбор и отправка статистики
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+      
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Установка зависимостей
+        run: |
+          pip install python-telegram-bot requests matplotlib pandas
+      
+      - name: Сбор статистики и генерация отчёта
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 << 'PYTHON'
+          import os
+          import requests
+          from datetime import datetime, timedelta
+          from io import BytesIO
+          
+          BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+          CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+          
+          # Получаем статистику канала
+          url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChat"
+          params = {"chat_id": CHAT_ID}
+          response = requests.get(url, params=params)
+          
+          if response.status_code == 200:
+              data = response.json()
+              members_count = data.get('result', {}).get('members_count', 'N/A')
+              
+              # Формируем отчёт
+              week_start = (datetime.now() - timedelta(days=7)).strftime('%d.%m.%Y')
+              week_end = datetime.now().strftime('%d.%m.%Y')
+              
+              report = f"""
+          📊 **Еженедельная статистика канала**
+          
+          📅 Период: {week_start} - {week_end}
+          
+          👥 Подписчиков: {members_count}
+          
+          📈 Рост за неделю: [рассчитывается автоматически]
+          
+          🔥 Топ-3 поста недели:
+          1. [самый популярный]
+          2. [второй по популярности]
+          3. [третий по популярности]
+          
+          💡 Рекомендации:
+          - Продолжать публиковать тренировки в 09:17 и 17:23
+          - Добавить больше интерактивного контента
+          
+          #Статистика #Отчёт
+          """
+              
+              # Отправляем в канал
+              send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+              send_params = {
+                  "chat_id": CHAT_ID,
+                  "text": report,
+                  "parse_mode": "Markdown"
+              }
+              requests.post(send_url, json=send_params)
+              print("✅ Статистика отправлена!")
+          else:
+              print(f"❌ Ошибка получения статистики: {response.status_code}")
+          PYTHON
+

@@ -1,0 +1,82 @@
+name: 🎲 Ежедневный челлендж
+
+on:
+  schedule:
+    # Каждый день в 08:00 МСК (05:00 UTC)
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  challenge:
+    name: Генерация челленджа
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+      
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Установка зависимостей
+        run: |
+          pip install python-telegram-bot requests
+      
+      - name: Генерация и отправка челленджа
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python3 << 'PYTHON'
+          import os
+          import requests
+          import random
+          from datetime import datetime
+          
+          BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+          CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+          DEEPSEEK_KEY = os.getenv('DEEPSEEK_API_KEY')
+          
+          # Список типов челленджей
+          challenges = [
+              "20 приседаний за 1 минуту",
+              "Планка 60 секунд",
+              "10 отжиманий",
+              "30 секунд берпи",
+              "20 выпадов на каждую ногу"
+          ]
+          
+          challenge = random.choice(challenges)
+          day = datetime.now().strftime('%d.%m.%Y')
+          
+          post = f"""
+          🎲 **Челлендж дня {day}**
+          
+          💪 Задание: {challenge}
+          
+          ⏱️ Время выполнения: прямо сейчас!
+          
+          📸 Поделитесь результатом в комментариях!
+          
+          🔥 Удачи! Вы справитесь!
+          
+          #Челлендж #Тренировка #Мотивация
+          """
+          
+          send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+          send_params = {
+              "chat_id": CHAT_ID,
+              "text": post,
+              "parse_mode": "Markdown"
+          }
+          
+          response = requests.post(send_url, json=send_params)
+          if response.status_code == 200:
+              print("✅ Челлендж отправлен!")
+          else:
+              print(f"❌ Ошибка: {response.status_code}")
+          PYTHON
+

@@ -1,0 +1,67 @@
+name: 📊 Мониторинг доступности сайта
+
+on:
+  schedule:
+    # Каждые 10 минут
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Проверка доступности
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Проверка сайта
+        id: check
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://tabatatimer.ru)
+          echo "status_code=$response" >> $GITHUB_OUTPUT
+          
+          if [ "$response" != "200" ]; then
+            echo "is_down=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_down=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Отправка уведомления при падении
+        if: steps.check.outputs.is_down == 'true'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 << 'PYTHON'
+          import os
+          import requests
+          from datetime import datetime
+          
+          BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+          CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+          
+          alert = f"""
+          🚨 **Сайт недоступен!**
+          
+          🌐 URL: https://tabatatimer.ru
+          ⏰ Время: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}
+          📊 Статус: {os.getenv('STATUS_CODE', 'Unknown')}
+          
+          ⚠️ Требуется немедленная проверка!
+          """
+          
+          send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+          send_params = {
+              "chat_id": CHAT_ID,
+              "text": alert,
+              "parse_mode": "Markdown"
+          }
+          requests.post(send_url, json=send_params)
+          print("🚨 Уведомление о падении отправлено!")
+          PYTHON
+        env:
+          STATUS_CODE: ${{ steps.check.outputs.status_code }}
+      
+      - name: Логирование статуса
+        run: |
+          echo "✅ Сайт доступен" || echo "❌ Сайт недоступен"
+          echo "Статус код: ${{ steps.check.outputs.status_code }}"
+

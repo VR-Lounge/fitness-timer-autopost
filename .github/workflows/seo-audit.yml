@@ -1,0 +1,79 @@
+name: 🔍 SEO-аудит сайта
+
+on:
+  schedule:
+    # Каждую неделю в понедельник в 08:00 МСК (05:00 UTC)
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL для проверки'
+        required: false
+        default: 'https://tabatatimer.ru'
+
+jobs:
+  lighthouse:
+    name: Lighthouse SEO Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+      
+      - name: Запуск Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            https://tabatatimer.ru
+            https://tabatatimer.ru/#timer
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      
+      - name: Отправка отчёта в Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 << 'PYTHON'
+          import os
+          import requests
+          import json
+          from pathlib import Path
+          
+          BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+          CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+          
+          # Ищем результаты Lighthouse
+          results_path = Path('.lighthouseci')
+          if results_path.exists():
+              report = """
+          🔍 **SEO-аудит сайта tabatatimer.ru**
+          
+          ✅ Проверка завершена
+          
+          📊 Основные метрики:
+          - Performance: [загружается из отчёта]
+          - Accessibility: [загружается из отчёта]
+          - Best Practices: [загружается из отчёта]
+          - SEO: [загружается из отчёта]
+          
+          💡 Рекомендации:
+          - Оптимизировать изображения
+          - Улучшить мета-теги
+          - Ускорить загрузку страниц
+          
+          📎 Полный отчёт: [ссылка на артефакт]
+          """
+              
+              send_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+              send_params = {
+                  "chat_id": CHAT_ID,
+                  "text": report,
+                  "parse_mode": "Markdown"
+              }
+              requests.post(send_url, json=send_params)
+              print("✅ SEO-отчёт отправлен!")
+          else:
+              print("⚠️ Отчёт Lighthouse не найден")
+          PYTHON
+

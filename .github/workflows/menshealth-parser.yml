@@ -23,8 +23,8 @@ jobs:
           cache: 'pip'
       
       - name: Установка зависимостей
-        working-directory: fitness-timer-autopost
         run: |
+          cd fitness-timer-autopost
           pip install --upgrade pip
           pip install -r requirements.txt
       
@@ -40,9 +40,9 @@ jobs:
         continue-on-error: true
       
       - name: Копирование состояния
-        working-directory: fitness-timer-autopost
         if: steps.download-state.outcome == 'success'
         run: |
+          cd fitness-timer-autopost
           if [ -f .menshealth_processed.json ]; then
             echo "✅ Состояние загружено"
           else
@@ -50,17 +50,17 @@ jobs:
           fi
       
       - name: Запуск парсера Men's Health
-        working-directory: fitness-timer-autopost
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
+          cd fitness-timer-autopost
           python3 menshealth_parser.py
       
       - name: Генерация HTML страниц для блога
-        working-directory: fitness-timer-autopost
         run: |
+          cd fitness-timer-autopost
           python3 generate_blog_post_page.py
       
       - name: Установка AWS CLI для Яндекс Cloud
@@ -68,11 +68,11 @@ jobs:
           pip install awscli
       
       - name: Загрузка файлов блога на Яндекс Cloud
-        working-directory: fitness-timer-autopost
         env:
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
         run: |
+          cd fitness-timer-autopost
           chmod +x upload_blog_to_yandex.sh
           ./upload_blog_to_yandex.sh || echo "⚠️ Загрузка на Яндекс Cloud пропущена (переменные не настроены)"
       
@@ -90,6 +90,7 @@ jobs:
         if: always()
         run: |
           echo "📊 Результат выполнения парсера:"
+          cd fitness-timer-autopost
           if [ -f .menshealth_processed.json ]; then
             echo "✅ Состояние сохранено"
           else
