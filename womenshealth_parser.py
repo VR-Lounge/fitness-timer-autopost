@@ -22,6 +22,15 @@ from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 import time
 import html
+import sys
+import subprocess
+
+# Добавляем путь к модулю проверки уникальности
+sys.path.insert(0, str(Path(__file__).parent))
+from content_uniqueness import (
+    проверить_полную_уникальность,
+    сохранить_контент_как_использованный
+)
 
 # ============= КОНФИГУРАЦИЯ =============
 
@@ -29,23 +38,89 @@ TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
 
-# RSS фиды Women's Health (топовые источники)
+# RSS фиды Women's Health (70 источников)
 WOMENSHEALTH_RSS_FEEDS = [
+    # 1-10
+    'https://www.healthywomen.org/feeds/feed.rss',
+    'https://www.intimina.com/blog/feed/',
+    'https://www.sheknows.com/health-and-wellness/feed/',
+    'https://adriaticawomenshealth.com/newsblog/feed/',
+    'https://gymbunny.ie/feed/',
+    'https://nourishinglab.com/feed/',
+    'https://www.fempower-health.com/blog-feed.xml',
+    'https://www.fit4females.com/fitblog/feed/',
+    'https://www.womenshealthkc.com/resources-forms/blog?format=feed',
+    'https://sarahfit.com/feed/',
+    # 11-20
+    'http://knocked-upfitness.com/feed/',
+    'https://bwhi.org/feed/',
+    'https://healthworksfitness.com/feed/',
+    'https://blogs.womans.org/feed/',
+    'https://womensmentalhealth.org/feed/',
+    'https://blog.metagenics.com/post/category/womens-health/feed/',
+    'https://womensfitnessclubs.com/feed/',
+    'https://sanitydaily.com/feed/',
+    'https://jessicasepel.com/feed/',
+    'http://www.livingbetter50.com/category/health-fitness/feed/',
+    # 21-30
+    'https://www.healthista.com/feed/',
+    'https://www.womenfitness.net/feed/',
+    'https://flecksoflex.com/feed/',
+    'https://femalefitnesssystems.com/feed/',
+    'https://www.fitnessmag.co.za/feed/',
+    'https://www.femalle.net/feed/',
+    'https://fitnessista.com/feed/',
+    'https://blivewear.com/feed/',
+    'https://www.kimberleypayne.com/feed/',
+    'https://bebodywise.com/blog/rss/',
+    # 31-40
+    'https://whcsmd.com/feed/',
+    'https://lazygirlfitness.com.au/feed/',
+    'https://azgyn.com/feed/',
+    'https://vivamagonline.com/feed/',
+    'https://fitbottomedgirls.com/feed',
+    'https://www.girlsgonesstrong.com/feed/',
+    'https://theflowerempowered.com/feed/',
+    'https://my.toneitup.com/blogs/latest.atom',
+    'https://www.innovativewomen.net//feed/rss2',
+    'https://kathydolanhealthfitness.blogspot.com/feeds/posts/default?alt=rss',
+    # 41-50
+    'https://newriverwomenshealth.com/feed/',
+    'https://femmephysiques.com/feed/',
+    'https://www.stronghealthywoman.com/feed/',
+    'https://noomikajsa.com/feed/',
+    'http://vgcfitlifestyle.blogspot.com/feeds/posts/default',
+    'http://www.heartlandwomenshealth.com/blog?format=RSS',
+    'https://www.jerseygirltalk.com/feed/',
+    'https://fitness4her.com/feed/',
+    'https://thefithabit.com/feed/',
+    'https://thehoneypot.co/blogs/latest.atom',
+    # 51-60
+    'http://fitnessontoast.com/feed/',
+    'https://www.vuvatech.com/blogs/care.atom',
+    'https://takingthemysteryoutof50.com/feed/',
+    'https://www.besthealthmag.ca/wellness/health/feed/',
+    'https://www.kaylainthecity.com/feed/',
+    'https://womenshealthtoday.blog/feed/',
+    'https://niashanks.com/feed/',
+    'https://juliabuckleyfitness.com/feed/',
+    'https://amodrn.com/feed/',
+    'http://www.nwwomensfitness.com/feed/',
+    # 61-70
+    'https://stayhealthyfitness.blogspot.com/feeds/posts/default?alt=rss',
+    'https://www.hormona.io/feed/',
+    'https://www.jillbrownfitness.com/feed/',
+    'https://www.bepreparedperiod.com/blog/feed/',
+    'https://kaldascenter.com/blog?format=rss',
+    'http://whepducom.blogspot.com/feeds/posts/default?alt=rss',
+    'https://www.drdawnswellnesstools.com/blog-feed.xml',
+    # Дополнительные проверенные источники
     'https://www.womenshealthmag.com/rss/all.xml',
     'https://www.shape.com/rss/all.xml',
     'https://www.oxygenmag.com/rss/all.xml',
     'https://www.fitnessmagazine.com/rss/all.xml',
-    'https://www.fitbottomedgirls.com/feed/',
-    'https://www.girlsgonesstrong.com/feed/',
-    'https://www.toneitup.com/blog/feed/',
-    'https://www.thefitnessista.com/feed/',
-    'https://www.healthywomen.org/feeds/feed.rss',
-    'https://www.sheknows.com/health-and-wellness/feed/',
-    'https://www.intimina.com/blog/feed',
     'https://www.floliving.com/blog/feed/',
-    'https://www.kaiafit.com/blog/feed/',
-    'https://www.healthista.com/feed/',
-    'https://www.womenfitness.net/feed/'
+    'https://www.kaiafit.com/blog/feed/'
 ]
 
 # Ключевые слова для фильтрации статей
@@ -69,6 +144,25 @@ RELEVANT_KEYWORDS = [
 
 # Файл для хранения обработанных статей (чтобы не дублировать)
 PROCESSED_ARTICLES_FILE = Path('.womenshealth_processed.json')
+
+# Файл для хранения постов блога (будет синхронизироваться с сайтом)
+# В GitHub Actions репозиторий клонируется в корень, поэтому используем относительный путь
+SCRIPT_DIR = Path(__file__).parent.absolute()
+# Проверяем, где мы находимся
+if (SCRIPT_DIR.parent / 'public_html').exists():
+    # Мы в fitness-timer-autopost, public_html на уровень выше
+    REPO_ROOT = SCRIPT_DIR.parent
+elif (SCRIPT_DIR / 'public_html').exists():
+    # Мы в корне репозитория
+    REPO_ROOT = SCRIPT_DIR
+else:
+    # Пробуем найти public_html относительно текущей директории
+    REPO_ROOT = Path.cwd()
+    if not (REPO_ROOT / 'public_html').exists():
+        # Последняя попытка - ищем в родительской директории
+        REPO_ROOT = REPO_ROOT.parent
+
+BLOG_POSTS_FILE = REPO_ROOT / 'public_html' / 'blog-posts.json'
 
 # ============= ФУНКЦИИ ПАРСИНГА =============
 
@@ -100,7 +194,7 @@ def уже_обработана(article_url):
     return article_url in data['articles']
 
 def парсить_rss_feed(rss_url):
-    """Парсит RSS фид и возвращает список статей"""
+    """Парсит RSS фид и возвращает список статей (поддерживает RSS 2.0, Atom, FeedBurner)"""
     try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
@@ -109,34 +203,59 @@ def парсить_rss_feed(rss_url):
         response.raise_for_status()
         
         # Парсим XML
-        root = ET.fromstring(response.content)
+        try:
+            root = ET.fromstring(response.content)
+        except ET.ParseError:
+            # Пробуем исправить возможные проблемы с кодировкой
+            content = response.content.decode('utf-8', errors='ignore')
+            root = ET.fromstring(content)
+        
         articles = []
         
-        # Поддерживаем разные форматы RSS
+        # Поддерживаем разные форматы RSS (RSS 2.0, Atom, FeedBurner)
         items = root.findall('.//item') or root.findall('.//entry')
         
         for item in items:
             try:
+                # RSS 2.0 формат
                 title_elem = item.find('title') or item.find('.//title')
                 link_elem = item.find('link') or item.find('.//link')
                 pub_date_elem = item.find('pubDate') or item.find('published') or item.find('.//pubDate')
                 
-                if title_elem is not None and link_elem is not None:
+                # Atom формат
+                if not title_elem:
+                    title_elem = item.find('{http://www.w3.org/2005/Atom}title')
+                if not link_elem:
+                    link_elem = item.find('{http://www.w3.org/2005/Atom}link')
+                    if link_elem is not None:
+                        link = link_elem.get('href', '')
+                    else:
+                        link = ''
+                else:
+                    link = link_elem.text or link_elem.get('href', '') if link_elem is not None else ''
+                
+                if title_elem is not None and link:
                     title = title_elem.text or ''
-                    link = link_elem.text or link_elem.get('href', '')
+                    if not link and link_elem is not None:
+                        link = link_elem.text or link_elem.get('href', '')
                     
-                    if link:
+                    if link and title:
                         articles.append({
-                            'title': title,
-                            'link': link,
-                            'pub_date': pub_date_elem.text if pub_date_elem is not None else None
+                            'title': title.strip(),
+                            'link': link.strip(),
+                            'pub_date': pub_date_elem.text if pub_date_elem is not None else None,
+                            'description': (item.find('description') or item.find('{http://www.w3.org/2005/Atom}summary') or item.find('.//description')).text if (item.find('description') or item.find('{http://www.w3.org/2005/Atom}summary') or item.find('.//description')) is not None else ''
                         })
             except Exception as e:
                 continue
         
-        print(f"✅ Получено {len(articles)} статей из {rss_url}")
+        if articles:
+            print(f"✅ Получено {len(articles)} статей из {rss_url}")
         return articles
     
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Ошибка запроса RSS {rss_url}: {e}")
+        return []
     except Exception as e:
         print(f"❌ Ошибка парсинга RSS {rss_url}: {e}")
         return []
@@ -398,6 +517,119 @@ def форматировать_пост(рерайт, оригинальный_�
     
     return пост
 
+def определить_теги(текст, заголовок):
+    """Определяет теги поста на основе контента"""
+    теги = []
+    текст_нижний = (текст + ' ' + заголовок).lower()
+    
+    # Девушкам
+    if any(word in текст_нижний for word in ['девушк', 'женщин', 'для девочек', 'девушкам', 'женский']):
+        теги.append('Девушкам')
+    
+    # Питание
+    if any(word in текст_нижний for word in ['рецепт', 'питани', 'еда', 'блюд', 'продукт', 'ингредиент']):
+        теги.append('Питание')
+    
+    # Диеты
+    if any(word in текст_нижний for word in ['диет', 'похуден', 'калори', 'белк', 'углевод', 'жир']):
+        теги.append('Диеты')
+    
+    # Мотивация
+    if any(word in текст_нижний for word in ['мотивац', 'вдохнов', 'мотивир', 'результат', 'цель', 'успех']):
+        теги.append('Мотивация')
+    
+    # Если тегов нет, добавляем по умолчанию
+    if not теги:
+        теги.append('Мотивация')
+    
+    return теги
+
+def сохранить_пост_в_блог(текст, изображение_url, заголовок, источник='womenshealth'):
+    """Сохраняет пост в JSON файл для блога с проверкой уникальности"""
+    try:
+        # КРИТИЧЕСКАЯ ПРОВЕРКА: Уникальность контента (ФОТО+ТЕКСТ)
+        print("\n🔍 Проверка уникальности контента...")
+        
+        # Загружаем существующие посты для проверки семантической схожести
+        существующие_посты = []
+        if BLOG_POSTS_FILE.exists():
+            with open(BLOG_POSTS_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                существующие_посты = data.get('posts', [])
+        
+        # Проверяем полную уникальность
+        уникален, причина = проверить_полную_уникальность(текст, изображение_url, существующие_посты)
+        
+        if not уникален:
+            print(f"❌ Контент НЕ уникален: {причина}")
+            print("⚠️ Пост НЕ будет сохранён в блог (дубликат контента)")
+            return False
+        
+        print("✅ Контент уникален!")
+        
+        # Загружаем существующие посты для добавления
+        if BLOG_POSTS_FILE.exists():
+            with open(BLOG_POSTS_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        else:
+            data = {'posts': []}
+        
+        # Определяем теги
+        теги = определить_теги(текст, заголовок)
+        
+        # Создаём новый пост
+        новый_пост = {
+            'id': f"{источник}_{int(time.time())}",
+            'title': заголовок,
+            'text': текст,
+            'image': изображение_url,
+            'tags': теги,
+            'source': источник,
+            'date': datetime.now().isoformat(),
+            'timestamp': int(time.time())
+        }
+        
+        # Добавляем в начало списка
+        data['posts'].insert(0, новый_пост)
+        
+        # Ограничиваем количество постов (храним последние 500)
+        if len(data['posts']) > 500:
+            data['posts'] = data['posts'][:500]
+        
+        # Сохраняем
+        BLOG_POSTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        
+        # ВАЖНО: Сохраняем контент как использованный (добавляем хеши)
+        сохранить_контент_как_использованный(текст, изображение_url)
+        
+        print(f"✅ Пост сохранён в блог ({len(теги)} тегов: {', '.join(теги)})")
+        
+        # Генерируем HTML страницу для SEO
+        try:
+            генератор = Path(__file__).parent / 'generate_blog_post_page.py'
+            if генератор.exists():
+                result = subprocess.run(
+                    ['python3', str(генератор)],
+                    cwd=str(Path(__file__).parent),
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                if result.returncode == 0:
+                    print("✅ HTML страница для статьи сгенерирована")
+                else:
+                    print(f"⚠️ Ошибка генерации HTML страницы: {result.stderr}")
+        except Exception as e:
+            print(f"⚠️ Ошибка генерации HTML страницы: {e}")
+        
+        return True
+    
+    except Exception as e:
+        print(f"⚠️ Ошибка сохранения поста в блог: {e}")
+        return False
+
 # ============= ГЛАВНАЯ ФУНКЦИЯ =============
 
 def главная():
@@ -420,11 +652,28 @@ def главная():
     # Парсим RSS фиды
     все_статьи = []
     for rss_url in WOMENSHEALTH_RSS_FEEDS:
-        if rss_url.endswith('.xml') or rss_url.endswith('/feed') or rss_url.endswith('/feed/'):
-            статьи = парсить_rss_feed(rss_url)
-            все_статьи.extend(статьи)
+        # Проверяем различные форматы RSS/Atom фидов
+        if (rss_url.endswith('.xml') or 
+            rss_url.endswith('.atom') or 
+            rss_url.endswith('/feed') or 
+            rss_url.endswith('/feed/') or
+            rss_url.endswith('?format=feed') or
+            rss_url.endswith('?format=rss') or
+            rss_url.endswith('?format=RSS') or
+            '/feed' in rss_url or
+            '/rss' in rss_url or
+            '.xml' in rss_url or
+            '.atom' in rss_url or
+            'feedburner.com' in rss_url or
+            'feeds/posts' in rss_url):
+            try:
+                статьи = парсить_rss_feed(rss_url)
+                все_статьи.extend(статьи)
+            except Exception as e:
+                print(f"⚠️ Ошибка парсинга {rss_url}: {e}")
+                continue
         else:
-            print(f"⏭️ Пропускаем: {rss_url}")
+            print(f"⏭️ Пропускаем (не RSS формат): {rss_url}")
     
     # Удаляем дубликаты по URL
     уникальные_статьи = {}
@@ -448,24 +697,24 @@ def главная():
     
     print(f"✅ Релевантных статей: {len(релевантные)}\n")
     
-    # Обрабатываем релевантные статьи (максимум 2 за запуск)
+    # Обрабатываем релевантные статьи до тех пор, пока не найдём уникальный контент
     обработано = 0
-    for статья in релевантные[:2]:
-        if обработано >= 2:
-            break
-        
-        print(f"📝 Обрабатываем статью: {статья['title']}")
+    максимальное_количество_попыток = min(5, len(релевантные))  # Пробуем максимум 5 статей
+    
+    for i, статья in enumerate(релевантные[:максимальное_количество_попыток]):
+        print(f"\n{'='*60}")
+        print(f"📝 Попытка {i+1}/{максимальное_количество_попыток}: {статья['title']}")
         print(f"🔗 URL: {статья['link']}")
         ключевые_слова = проверить_релевантность(статья)[1]
         print(f"🔑 Ключевые слова: {', '.join(ключевые_слова[:5])}")
-        print()
+        print(f"{'='*60}\n")
         
         # Парсим полный текст
         print("📥 Парсинг статьи...")
         полный_текст = парсить_статью(статья['link'])
         
         if not полный_текст:
-            print("⚠️ Не удалось получить текст статьи, пропускаем\n")
+            print("⚠️ Не удалось получить текст статьи, пробуем следующую...\n")
             continue
         
         print(f"✅ Получен контент ({len(полный_текст)} символов)")
@@ -473,6 +722,11 @@ def главная():
         # Ищем изображения
         изображения = найти_изображения(статья['link'])
         print(f"✅ Найдено изображений: {len(изображения)}")
+        
+        if not изображения:
+            print("⚠️ Нет изображений, пробуем следующую статью...\n")
+            continue
+        
         print()
         
         # Рерайтинг через DeepSeek
@@ -480,7 +734,7 @@ def главная():
         рерайт = рерайтить_через_deepseek(полный_текст, статья['title'])
         
         if not рерайт:
-            print("⚠️ Не удалось сделать рерайтинг, пропускаем\n")
+            print("⚠️ Не удалось сделать рерайтинг, пробуем следующую...\n")
             continue
         
         print()
@@ -488,20 +742,34 @@ def главная():
         # Форматируем пост
         пост = форматировать_пост(рерайт, статья['title'])
         
-        # Отправляем в Telegram
-        print("📤 Отправка в Telegram...")
-        фото_url = изображения[0] if изображения else None
-        успех = отправить_в_telegram(пост, фото_url)
+        # Выбираем лучшее изображение
+        фото_url = изображения[0]
         
-        if успех:
+        # ПРОВЕРКА УНИКАЛЬНОСТИ ПЕРЕД СОХРАНЕНИЕМ
+        print("\n🔍 Проверка уникальности перед сохранением...")
+        успех_сохранения = сохранить_пост_в_блог(пост, фото_url, статья['title'], 'womenshealth')
+        
+        if not успех_сохранения:
+            print("⚠️ Контент не уникален, пробуем следующую статью...\n")
+            # Сохраняем как обработанную, чтобы не пытаться снова
+            сохранить_обработанную_статью(статья['link'])
+            continue
+        
+        # Если контент уникален и сохранён, отправляем в Telegram
+        print("\n📤 Отправка в Telegram...")
+        успех_telegram = отправить_в_telegram(пост, фото_url)
+        
+        if успех_telegram:
             сохранить_обработанную_статью(статья['link'])
             обработано += 1
             print("✅ Статья успешно опубликована!\n")
+            break  # Успешно обработали, выходим
         else:
-            print("❌ Ошибка публикации статьи\n")
+            print("❌ Ошибка отправки в Telegram, пробуем следующую...\n")
+            # Не сохраняем как обработанную, чтобы попробовать снова позже
         
         # Пауза между статьями
-        if обработано < len(релевантные[:2]):
+        if i < максимальное_количество_попыток - 1:
             time.sleep(5)
     
     print("=" * 60)
