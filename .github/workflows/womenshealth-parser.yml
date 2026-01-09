@@ -1,0 +1,76 @@
+name: 💅 Парсер Women's Health с рерайтингом
+
+on:
+  schedule:
+    # Запускаем 2 раза в день (утром и вечером) для поиска новых статей
+    - cron: '0 9 * * *'   # 09:00 UTC (12:00 МСК)
+    - cron: '0 21 * * *'  # 21:00 UTC (00:00 МСК)
+  workflow_dispatch:
+
+jobs:
+  parse-and-publish:
+    name: Парсинг и публикация статей для девушек
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+      
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Установка зависимостей
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Загрузка состояния (обработанные статьи)
+        id: download-state
+        uses: actions/download-artifact@v4
+        with:
+          name: womenshealth-state
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.run_id }}
+          allow-404: true
+        continue-on-error: true
+      
+      - name: Копирование состояния
+        if: steps.download-state.outcome == 'success'
+        run: |
+          if [ -f .womenshealth_processed.json ]; then
+            echo "✅ Состояние загружено"
+          else
+            echo "ℹ️ Состояние не найдено (первый запуск)"
+          fi
+      
+      - name: Запуск парсера Women's Health
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python3 womenshealth_parser.py
+      
+      - name: Сохранение состояния
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: womenshealth-state
+          path: |
+            .womenshealth_processed.json
+          include-hidden-files: true
+          retention-days: 90
+      
+      - name: Логирование результата
+        if: always()
+        run: |
+          echo "📊 Результат выполнения парсера:"
+          if [ -f .womenshealth_processed.json ]; then
+            echo "✅ Состояние сохранено"
+          else
+            echo "⚠️ Состояние не найдено"
+          fi
