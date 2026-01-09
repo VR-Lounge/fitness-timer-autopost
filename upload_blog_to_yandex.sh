@@ -84,4 +84,13 @@ if [ -f "robots.txt" ]; then
     echo "✅ robots.txt загружен"
 fi
 
+# Загружаем изображения блога
+if [ -d "images/blog" ]; then
+    aws s3 sync images/blog/ "s3://$BUCKET_NAME/images/blog/" \
+        --endpoint-url="$ENDPOINT_URL" \
+        --acl public-read \
+        --exclude "*.DS_Store"
+    echo "✅ Изображения блога загружены"
+fi
+
 echo "✅ Все файлы блога загружены на Яндекс Cloud!"
