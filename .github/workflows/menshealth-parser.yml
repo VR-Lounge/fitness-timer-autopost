@@ -24,7 +24,6 @@ jobs:
       
       - name: Установка зависимостей
         run: |
-          cd fitness-timer-autopost
           pip install --upgrade pip
           pip install -r requirements.txt
       
