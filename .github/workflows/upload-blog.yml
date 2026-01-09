@@ -1,0 +1,74 @@
+name: 📤 Загрузка blog.html на Yandex Cloud
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload-blog:
+    name: Загрузка blog.html
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Клонирование репозитория
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Установка AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+          aws --version
+      
+      - name: Настройка AWS CLI для Яндекс Cloud
+        env:
+          YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
+          YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
+        run: |
+          export AWS_ACCESS_KEY_ID="$YANDEX_ACCESS_KEY_ID"
+          export AWS_SECRET_ACCESS_KEY="$YANDEX_SECRET_ACCESS_KEY"
+          export AWS_DEFAULT_REGION="ru-central1"
+          
+          BUCKET_NAME="www.tabatatimer.ru"
+          ENDPOINT_URL="https://storage.yandexcloud.net"
+          
+          echo "📤 Загрузка blog.html на Яндекс Cloud..."
+          
+          # Загружаем blog.html
+          if [ -f "public_html/blog.html" ]; then
+            aws s3 cp public_html/blog.html "s3://$BUCKET_NAME/blog.html" \
+              --endpoint-url="$ENDPOINT_URL" \
+              --acl public-read
+            echo "✅ blog.html загружен"
+          else
+            echo "❌ Файл blog.html не найден"
+            exit 1
+          fi
+          
+          # Загружаем blog-posts.json
+          if [ -f "public_html/blog-posts.json" ]; then
+            aws s3 cp public_html/blog-posts.json "s3://$BUCKET_NAME/blog-posts.json" \
+              --endpoint-url="$ENDPOINT_URL" \
+              --acl public-read
+            echo "✅ blog-posts.json загружен"
+          fi
+          
+          # Загружаем все HTML страницы статей
+          if [ -d "public_html/blog" ]; then
+            aws s3 sync public_html/blog/ "s3://$BUCKET_NAME/blog/" \
+              --endpoint-url="$ENDPOINT_URL" \
+              --acl public-read \
+              --exclude "*.DS_Store"
+            echo "✅ HTML страницы статей загружены"
+          fi
+          
+          # Загружаем sitemap.xml
+          if [ -f "public_html/sitemap.xml" ]; then
+            aws s3 cp public_html/sitemap.xml "s3://$BUCKET_NAME/sitemap.xml" \
+              --endpoint-url="$ENDPOINT_URL" \
+              --acl public-read
+            echo "✅ sitemap.xml загружен"
+          fi
+          
+          echo "✅ Все файлы блога загружены на Яндекс Cloud!"
