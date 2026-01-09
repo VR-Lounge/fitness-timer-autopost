@@ -1,0 +1,195 @@
+{
+  "task_id": "yandex_metrika_blog_setup",
+  "task_name": "Настройка Яндекс.Метрики для блога",
+  "timestamp": "2026-01-09T23:00:00Z",
+  "status": "completed|in_progress|error",
+  "metrika_url": "https://metrika.yandex.ru/",
+  "site": "www.tabatatimer.ru",
+  "counter_id": "COUNTER_ID",
+  "goals_created": [
+    {
+      "name": "Переход на страницу блога",
+      "type": "JavaScript-событие",
+      "condition": "event == 'blog_page_view'",
+      "description": "Отслеживание посещений главной страницы блога",
+      "status": "created|already_exists|error",
+      "goal_id": "GOAL_ID_1"
+    },
+    {
+      "name": "Открытие модального окна статьи",
+      "type": "JavaScript-событие",
+      "condition": "event == 'blog_modal_open'",
+      "description": "Отслеживание открытия модального окна с полным текстом статьи",
+      "status": "created|already_exists|error",
+      "goal_id": "GOAL_ID_2"
+    },
+    {
+      "name": "Переход на страницу статьи",
+      "type": "JavaScript-событие",
+      "condition": "event == 'blog_post_page_view'",
+      "description": "Отслеживание переходов на отдельные страницы статей блога",
+      "status": "created|already_exists|error",
+      "goal_id": "GOAL_ID_3"
+    },
+    {
+      "name": "Клик \"Читать полностью\"",
+      "type": "JavaScript-событие",
+      "condition": "event == 'blog_read_more_click'",
+      "description": "Отслеживание кликов по кнопке \"Читать полностью →\"",
+      "status": "created|already_exists|error",
+      "goal_id": "GOAL_ID_4"
+    },
+    {
+      "name": "Переход на таймер из блога",
+      "type": "JavaScript-событие",
+      "condition": "event == 'blog_timer_link_click'",
+      "description": "Отслеживание кликов по ссылкам на tabatatimer.ru/#timer",
+      "status": "created|already_exists|error",
+      "goal_id": "GOAL_ID_5"
+    },
+    {
+      "name": "Фильтрация по тегам блога",
+      "type": "JavaScript-событие",
+      "condition": "event == 'blog_filter_click'",
+      "description": "Отслеживание использования фильтров по тегам",
+      "status": "created|already_exists|error",
+      "goal_id": "GOAL_ID_6"
+    },
+    {
+      "name": "Клик по тегу в статье",
+      "type": "JavaScript-событие",
+      "condition": "event == 'blog_tag_click'",
+      "description": "Отслеживание кликов по тегам в статьях",
+      "status": "created|already_exists|error",
+      "goal_id": "GOAL_ID_7"
+    }
+  ],
+  "tags_created": [
+    {
+      "name": "blog_source",
+      "value": "blog",
+      "description": "Метка для трафика, пришедшего из блога",
+      "status": "created|already_exists|error"
+    },
+    {
+      "name": "content_type",
+      "values": [
+        "blog_main",
+        "blog_post",
+        "blog_modal"
+      ],
+      "description": "Тип контента (главная страница, статья, модальное окно)",
+      "status": "created|already_exists|error"
+    },
+    {
+      "name": "blog_category",
+      "values": [
+        "men",
+        "women",
+        "nutrition",
+        "diet",
+        "motivation"
+      ],
+      "description": "Категория статьи (Мужчинам, Девушкам, Питание, Диеты, Мотивация)",
+      "status": "created|already_exists|error"
+    },
+    {
+      "name": "user_action",
+      "values": [
+        "filter_click",
+        "modal_open",
+        "read_more",
+        "timer_link",
+        "tag_click"
+      ],
+      "description": "Действие пользователя (клик по фильтру, открытие модального окна и т.д.)",
+      "status": "created|already_exists|error"
+    }
+  ],
+  "triggers_created": [
+    {
+      "name": "blog_modal_open_trigger",
+      "condition": "event == 'blog_modal_open'",
+      "action": "Отправить событие в Яндекс.Метрику",
+      "status": "created|already_exists|error",
+      "trigger_id": "TRIGGER_ID_1"
+    },
+    {
+      "name": "blog_filter_click_trigger",
+      "condition": "event == 'blog_filter_click'",
+      "action": "Отправить событие в Яндекс.Метрику",
+      "status": "created|already_exists|error",
+      "trigger_id": "TRIGGER_ID_2"
+    },
+    {
+      "name": "blog_timer_link_click_trigger",
+      "condition": "event == 'blog_timer_link_click'",
+      "action": "Отправить событие в Яндекс.Метрику",
+      "status": "created|already_exists|error",
+      "trigger_id": "TRIGGER_ID_3"
+    },
+    {
+      "name": "blog_tag_click_trigger",
+      "condition": "event == 'blog_tag_click'",
+      "action": "Отправить событие в Яндекс.Метрику",
+      "status": "created|already_exists|error",
+      "trigger_id": "TRIGGER_ID_4"
+    }
+  ],
+  "summary": {
+    "total_goals": 7,
+    "goals_created": 0,
+    "goals_already_exists": 0,
+    "goals_with_errors": 0,
+    "total_tags": 4,
+    "tags_created": 0,
+    "tags_already_exists": 0,
+    "tags_with_errors": 0,
+    "total_triggers": 4,
+    "triggers_created": 0,
+    "triggers_already_exists": 0,
+    "triggers_with_errors": 0
+  },
+  "test_results": {
+    "blog_page_view": {
+      "status": "passed|failed",
+      "events_received": 0,
+      "test_date": "2026-01-09"
+    },
+    "blog_modal_open": {
+      "status": "passed|failed",
+      "events_received": 0,
+      "test_date": "2026-01-09"
+    },
+    "blog_filter_click": {
+      "status": "passed|failed",
+      "events_received": 0,
+      "test_date": "2026-01-09"
+    },
+    "blog_timer_link_click": {
+      "status": "passed|failed",
+      "events_received": 0,
+      "test_date": "2026-01-09"
+    },
+    "blog_tag_click": {
+      "status": "passed|failed",
+      "events_received": 0,
+      "test_date": "2026-01-09"
+    }
+  },
+  "actions_taken": [
+    "Открыт Яндекс.Метрика",
+    "Созданы цели",
+    "Созданы теги",
+    "Созданы триггеры",
+    "Проведено тестирование"
+  ],
+  "errors": [],
+  "warnings": [],
+  "recommendations": [
+    "Проверить, что JavaScript код для отправки событий добавлен на сайт",
+    "Проверить события в реальном времени через несколько дней",
+    "Настроить отчёты в Яндекс.Метрике для отслеживания целей"
+  ],
+  "next_check": "2026-01-12T12:00:00Z"
+}
