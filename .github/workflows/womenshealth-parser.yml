@@ -11,10 +11,25 @@ jobs:
   parse-and-publish:
     name: Парсинг и публикация статей для девушек
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+      pull-requests: read
     
     steps:
-      - name: Клонирование репозитория
+      - name: Клонирование репозитория fitness-timer-autopost
         uses: actions/checkout@v4
+        with:
+          path: fitness-timer-autopost
+      
+      - name: Клонирование репозитория tabatatimer-ru (public_html)
+        uses: actions/checkout@v4
+        with:
+          repository: VR-Lounge/tabatatimer-ru
+          path: public_html
+          token: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
       
       - name: Установка Python
         uses: actions/setup-python@v5
@@ -23,8 +38,8 @@ jobs:
           cache: 'pip'
       
       - name: Установка зависимостей
+        working-directory: fitness-timer-autopost
         run: |
-          cd fitness-timer-autopost
           pip install --upgrade pip
           pip install -r requirements.txt
       
@@ -33,7 +48,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: womenshealth-state
-          path: .
+          path: fitness-timer-autopost
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.run_id }}
           allow-404: true
@@ -41,6 +56,7 @@ jobs:
       
       - name: Копирование состояния
         if: steps.download-state.outcome == 'success'
+        working-directory: fitness-timer-autopost
         run: |
           if [ -f .womenshealth_processed.json ]; then
             echo "✅ Состояние загружено"
@@ -48,7 +64,13 @@ jobs:
             echo "ℹ️ Состояние не найдено (первый запуск)"
           fi
       
+      - name: Создание структуры директорий
+        run: |
+          mkdir -p public_html/blog
+          echo "✅ Структура директорий создана"
+      
       - name: Запуск парсера Women's Health
+        working-directory: fitness-timer-autopost
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -57,10 +79,12 @@ jobs:
           python3 womenshealth_parser.py
       
       - name: Генерация HTML страниц для блога
+        working-directory: fitness-timer-autopost
         run: |
           python3 generate_blog_post_page.py
       
       - name: Установка AWS CLI для Яндекс Cloud
+        working-directory: fitness-timer-autopost
         run: |
           pip install awscli
       
@@ -69,22 +93,49 @@ jobs:
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
         run: |
+          cd fitness-timer-autopost
           chmod +x upload_blog_to_yandex.sh
           ./upload_blog_to_yandex.sh || echo "⚠️ Загрузка на Яндекс Cloud пропущена (переменные не настроены)"
       
+      - name: Коммит изменений в репозиторий tabatatimer-ru
+        if: always()
+        working-directory: public_html
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Настраиваем remote с токеном для push (используем PAT если доступен, иначе GITHUB_TOKEN)
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VR-Lounge/tabatatimer-ru.git
+          
+          if [ -n "$(git status --porcelain)" ]; then
+            git add blog-posts.json blog/*.html sitemap.xml robots.txt images/blog/ 2>/dev/null || true
+            git commit -m "🤖 Автообновление: новые посты блога $(date +'%Y-%m-%d %H:%M:%S')" || echo "⚠️ Нет изменений для коммита"
+            if git push origin main; then
+              echo "✅ Изменения успешно отправлены в tabatatimer-ru"
+            else
+              echo "⚠️ Не удалось запушить изменения в tabatatimer-ru (используется Яндекс Cloud для загрузки файлов)"
+            fi
+          else
+            echo "ℹ️ Нет изменений для коммита"
+          fi
+      
       - name: Сохранение состояния
+        working-directory: fitness-timer-autopost
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: womenshealth-state
           path: |
-            .womenshealth_processed.json
-            .content_hashes.json
+            fitness-timer-autopost/.womenshealth_processed.json
+            fitness-timer-autopost/.content_hashes.json
           include-hidden-files: true
           retention-days: 90
       
       - name: Логирование результата
         if: always()
+        working-directory: fitness-timer-autopost
         run: |
           echo "📊 Результат выполнения парсера:"
           if [ -f .womenshealth_processed.json ]; then
