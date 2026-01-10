@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+    Модуль для проверки уникальности контента (ФОТО+ТЕКСТ)
+    
+    Использует хеширование и DeepSeek AI для проверки семантической схожести
+    чтобы гарантировать, что контент никогда не повторяется.
+    
+    Автор: VR-Lounge
+"""
+
+import hashlib
+import json
+import os
+import requests
+from pathlib import Path
+from typing import Dict, List, Tuple, Optional
+
+# Файл для хранения хешей использованного контента
+CONTENT_HASHES_FILE = Path('.content_hashes.json')
+DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
+
+def загрузить_хеши_контента() -> Dict:
+    """Загружает хеши уже использованного контента"""
+    if CONTENT_HASHES_FILE.exists():
+        try:
+            with open(CONTENT_HASHES_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return {'text_hashes': [], 'image_hashes': [], 'content_pairs': []}
+    return {'text_hashes': [], 'image_hashes': [], 'content_pairs': []}
+
+def сохранить_хеши_контента(data: Dict):
+    """Сохраняет хеши использованного контента"""
+    # Ограничиваем размер (храним последние 2000 записей)
+    for key in ['text_hashes', 'image_hashes', 'content_pairs']:
+        if len(data.get(key, [])) > 2000:
+            data[key] = data[key][-2000:]
+    
+    with open(CONTENT_HASHES_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def создать_хеш_текста(текст: str) -> str:
+    """Создаёт хеш текста (нормализованный)"""
+    # Нормализуем текст: убираем лишние пробелы, приводим к нижнему регистру
+    нормализованный = ' '.join(текст.lower().split())
+    # Создаём SHA256 хеш
+    return hashlib.sha256(нормализованный.encode('utf-8')).hexdigest()
+
+def создать_хеш_изображения(image_url: str) -> str:
+    """Создаёт хеш URL изображения (нормализованный)"""
+    # Нормализуем URL: убираем параметры запроса для сравнения
+    нормализованный = image_url.split('?')[0].lower().strip()
+    return hashlib.sha256(нормализованный.encode('utf-8')).hexdigest()
+
+def создать_хеш_пары(текст: str, image_url: str) -> str:
+    """Создаёт хеш пары ФОТО+ТЕКСТ"""
+    текст_хеш = создать_хеш_текста(текст)
+    изображение_хеш = создать_хеш_изображения(image_url)
+    пара = f"{текст_хеш}:{изображение_хеш}"
+    return hashlib.sha256(пара.encode('utf-8')).hexdigest()
+
+def проверить_уникальность_текста(текст: str) -> Tuple[bool, Optional[str]]:
+    """
+    Проверяет, использовался ли уже этот текст
+    
+    Returns:
+        (is_unique, existing_hash) - уникален ли текст и хеш существующего (если есть)
+    """
+    хеш_текста = создать_хеш_текста(текст)
+    данные = загрузить_хеши_контента()
+    
+    if хеш_текста in данные['text_hashes']:
+        return False, хеш_текста
+    
+    return True, None
+
+def проверить_уникальность_изображения(image_url: str) -> Tuple[bool, Optional[str]]:
+    """
+    Проверяет, использовалось ли уже это изображение
+    
+    Returns:
+        (is_unique, existing_hash) - уникально ли изображение и хеш существующего (если есть)
+    """
+    хеш_изображения = создать_хеш_изображения(image_url)
+    данные = загрузить_хеши_контента()
+    
+    if хеш_изображения in данные['image_hashes']:
+        return False, хеш_изображения
+    
+    return True, None
+
+def проверить_уникальность_пары(текст: str, image_url: str) -> Tuple[bool, Optional[str]]:
+    """
+    Проверяет, использовалась ли уже эта комбинация ФОТО+ТЕКСТ
+    
+    Returns:
+        (is_unique, existing_hash) - уникальна ли пара и хеш существующей (если есть)
+    """
+    хеш_пары = создать_хеш_пары(текст, image_url)
+    данные = загрузить_хеши_контента()
+    
+    if хеш_пары in данные['content_pairs']:
+        return False, хеш_пары
+    
+    return True, None
+
+def проверить_семантическую_схожесть_через_deepseek(новый_текст: str, существующие_тексты: List[str]) -> Tuple[bool, float]:
+    """
+    Проверяет семантическую схожесть нового текста с существующими через DeepSeek
+    
+    Returns:
+        (is_similar, similarity_score) - похож ли текст (True если схожесть > 80%)
+    """
+    if not DEEPSEEK_API_KEY or not существующие_тексты:
+        return False, 0.0
+    
+    try:
+        url = "https://api.deepseek.com/v1/chat/completions"
+        
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {DEEPSEEK_API_KEY}"
+        }
+        
+        # Создаём промпт для проверки схожести
+        существующие_тексты_кратко = '\n'.join([f"- {t[:200]}..." for t in существующие_тексты[:5]])
+        
+        system_prompt = """Ты эксперт по анализу текстов. Твоя задача - определить, насколько новый текст похож на существующие тексты по смыслу и содержанию.
+
+Верни ТОЛЬКО JSON в формате:
+{
+    "similarity_score": число от 0 до 100 (процент схожести),
+    "is_similar": true/false (true если схожесть > 80%),
+    "reason": краткое объяснение (1 предложение)
+}
+
+Схожесть > 80% означает, что тексты слишком похожи и это может быть дубликат."""
+        
+        user_prompt = f"""Сравни новый текст с существующими текстами:
+
+НОВЫЙ ТЕКСТ:
+{новый_текст[:1000]}
+
+СУЩЕСТВУЮЩИЕ ТЕКСТЫ:
+{существующие_тексты_кратко}
+
+Определи процент схожести (0-100) и верни JSON."""
+        
+        data = {
+            "model": "deepseek-chat",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": 0.3,  # Низкая температура для более точного анализа
+            "max_tokens": 200
+        }
+        
+        response = requests.post(url, headers=headers, json=data, timeout=30)
+        response.raise_for_status()
+        
+        result = response.json()
+        ответ = result['choices'][0]['message']['content']
+        
+        # Парсим JSON из ответа
+        try:
+            # Извлекаем JSON из ответа (может быть обёрнут в markdown)
+            import re
+            json_match = re.search(r'\{[^}]+\}', ответ)
+            if json_match:
+                parsed = json.loads(json_match.group())
+                similarity_score = parsed.get('similarity_score', 0)
+                is_similar = parsed.get('is_similar', False) or similarity_score > 80
+                return is_similar, similarity_score
+        except Exception as e:
+            print(f"⚠️ Ошибка парсинга ответа DeepSeek: {e}")
+            print(f"Ответ: {ответ}")
+        
+        return False, 0.0
+    
+    except Exception as e:
+        print(f"⚠️ Ошибка проверки семантической схожести через DeepSeek: {e}")
+        return False, 0.0
+
+def проверить_полную_уникальность(текст: str, image_url: str, существующие_посты: List[Dict] = None) -> Tuple[bool, str]:
+    """
+    Полная проверка уникальности контента (ФОТО+ТЕКСТ)
+    
+    Args:
+        текст: текст поста
+        image_url: URL изображения
+        существующие_посты: список существующих постов из blog-posts.json (опционально)
+    
+    Returns:
+        (is_unique, reason) - уникален ли контент и причина (если не уникален)
+    """
+    # 1. Проверяем уникальность пары ФОТО+ТЕКСТ
+    уникальна_пара, хеш_пары = проверить_уникальность_пары(текст, image_url)
+    if not уникальна_пара:
+        return False, f"Комбинация ФОТО+ТЕКСТ уже использовалась (хеш: {хеш_пары[:16]}...)"
+    
+    # 2. Проверяем уникальность текста отдельно
+    уникален_текст, хеш_текста = проверить_уникальность_текста(текст)
+    if not уникален_текст:
+        return False, f"Текст уже использовался (хеш: {хеш_текста[:16]}...)"
+    
+    # 3. Проверяем уникальность изображения отдельно
+    уникально_изображение, хеш_изображения = проверить_уникальность_изображения(image_url)
+    if not уникально_изображение:
+        return False, f"Изображение уже использовалось (хеш: {хеш_изображения[:16]}...)"
+    
+    # 4. Если есть существующие посты, проверяем семантическую схожесть через DeepSeek
+    if существующие_посты and DEEPSEEK_API_KEY:
+        существующие_тексты = [post.get('text', '') for post in существующие_посты[:20]]  # Проверяем последние 20
+        существующие_тексты = [t for t in существующие_тексты if t]  # Убираем пустые
+        
+        if существующие_тексты:
+            похож, score = проверить_семантическую_схожесть_через_deepseek(текст, существующие_тексты)
+            if похож:
+                return False, f"Текст семантически похож на существующие (схожесть: {score}%)"
+    
+    return True, "Контент уникален"
+
+def сохранить_контент_как_использованный(текст: str, image_url: str):
+    """Сохраняет контент как использованный (добавляет хеши)"""
+    данные = загрузить_хеши_контента()
+    
+    # Добавляем хеши
+    хеш_текста = создать_хеш_текста(текст)
+    хеш_изображения = создать_хеш_изображения(image_url)
+    хеш_пары = создать_хеш_пары(текст, image_url)
+    
+    if хеш_текста not in данные['text_hashes']:
+        данные['text_hashes'].append(хеш_текста)
+    
+    if хеш_изображения not in данные['image_hashes']:
+        данные['image_hashes'].append(хеш_изображения)
+    
+    if хеш_пары not in данные['content_pairs']:
+        данные['content_pairs'].append(хеш_пары)
+    
+    сохранить_хеши_контента(данные)
+    print(f"✅ Контент сохранён как использованный (хеш пары: {хеш_пары[:16]}...)")
