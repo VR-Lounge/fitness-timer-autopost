@@ -122,7 +122,6 @@ jobs:
           fi
       
       - name: Сохранение состояния
-        working-directory: fitness-timer-autopost
         uses: actions/upload-artifact@v4
         with:
           name: menshealth-state
@@ -134,7 +133,7 @@ jobs:
       
       - name: Логирование результата
         if: always()
-        working-directory: fitness-timer-autopost
+              working-directory: fitness-timer-autopost
         run: |
           echo "📊 Результат выполнения парсера:"
           if [ -f .menshealth_processed.json ]; then
