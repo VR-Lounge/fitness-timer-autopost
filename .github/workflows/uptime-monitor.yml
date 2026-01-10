@@ -29,6 +29,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          STATUS_CODE: ${{ steps.check.outputs.status_code }}
         run: |
           python3 << 'PYTHON'
           import os
@@ -57,8 +58,6 @@ jobs:
           requests.post(send_url, json=send_params)
           print("🚨 Уведомление о падении отправлено!")
           PYTHON
-        env:
-          STATUS_CODE: ${{ steps.check.outputs.status_code }}
       
       - name: Логирование статуса
         run: |

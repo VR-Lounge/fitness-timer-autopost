@@ -122,7 +122,6 @@ jobs:
           fi
       
       - name: Сохранение состояния
-        working-directory: fitness-timer-autopost
         uses: actions/upload-artifact@v4
         if: always()
         with:
