@@ -1215,7 +1215,7 @@ def сгенерировать_html_страницу(пост):
         }}
         
         .blog-subscribe-button-secondary {{
-            padding: 12px 17px 0px 0px;
+            padding: 12px 17px 12px 0px;
             background: transparent;
             color: #7af5ff;
             border-color: #7af5ff;
@@ -1245,12 +1245,13 @@ def сгенерировать_html_страницу(пост):
             }}
             
             .blog-subscribe-buttons {{
-                flex-direction: column;
+                flex-wrap: wrap;
+                gap: 15px;
             }}
             
             .blog-subscribe-button {{
-                width: 100%;
-                text-align: center;
+                min-width: auto;
+                flex: 1 1 auto;
             }}
         }}
     </style>
@@ -1285,14 +1286,14 @@ def сгенерировать_html_страницу(пост):
         <footer class="blog-subscribe-footer">
             <div class="blog-subscribe-container">
                 <div class="blog-subscribe-content">
-                    <h3 class="blog-subscribe-title">💪 Больше тренировок и мотивации</h3>
+                    <h3 class="blog-subscribe-title">Больше тренировок и мотивации</h3>
                     <p class="blog-subscribe-description">Подписывайся на наш Telegram-канал <strong>TABATA TIMER</strong> и получай ежедневные программы тренировок, таймеры и советы по фитнесу</p>
                     <div class="blog-subscribe-buttons">
                         <a href="https://t.me/fitnesstimer" target="_blank" rel="noopener noreferrer" class="blog-subscribe-button blog-subscribe-button-primary" onclick="if(typeof ym !== 'undefined'){{ym(42580049, 'reachGoal', 'blogSubscribeTelegram');}}">
-                            📱 Подписаться на канал
+                            Подписаться на канал
                         </a>
                         <a href="https://tabatatimer.ru/#timer" class="blog-subscribe-button blog-subscribe-button-secondary" onclick="if(typeof ym !== 'undefined'){{ym(42580049, 'reachGoal', 'blogToTimer');}}">
-                            ⏱️ Открыть таймер
+                            Открыть таймер
                         </a>
                     </div>
                 </div>
