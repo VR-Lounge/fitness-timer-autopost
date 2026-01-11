@@ -30,7 +30,6 @@ jobs:
       
       - name: Автономное тестирование кода
         run: |
-          cd fitness-timer-autopost
           python3 autonomous_testing.py
       
       - name: Автономный мониторинг
@@ -39,16 +38,16 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
-          cd fitness-timer-autopost
           python3 autonomous_monitor.py
       
       - name: Загрузка отчетов
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: test-reports
           path: |
-            fitness-timer-autopost/test_report.json
-            fitness-timer-autopost/monitoring_report_*.md
+            test_report.json
+            monitoring_report_*.md
           retention-days: 30
       
       - name: Уведомление об ошибках
