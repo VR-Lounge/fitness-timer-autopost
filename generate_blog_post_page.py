@@ -1260,11 +1260,6 @@ def сгенерировать_html_страницу(пост):
                 font-size: 1.3rem;
             }}
             
-            .blog-subscribe-features {{
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }}
-            
             .blog-subscribe-buttons {{
                 flex-direction: column;
             }}
@@ -1308,11 +1303,6 @@ def сгенерировать_html_страницу(пост):
                 <div class="blog-subscribe-content">
                     <h3 class="blog-subscribe-title">💪 Больше тренировок и мотивации</h3>
                     <p class="blog-subscribe-description">Подписывайся на наш Telegram-канал <strong>TABATA TIMER</strong> и получай ежедневные программы тренировок, таймеры и советы по фитнесу</p>
-                    <div class="blog-subscribe-features">
-                        <div class="blog-subscribe-feature">⚡ Ежедневные табата-программы</div>
-                        <div class="blog-subscribe-feature">⏱️ Таймеры и схемы упражнений</div>
-                        <div class="blog-subscribe-feature">🥗 Советы по питанию и восстановлению</div>
-                    </div>
                     <div class="blog-subscribe-buttons">
                         <a href="https://t.me/fitnesstimer" target="_blank" rel="noopener noreferrer" class="blog-subscribe-button blog-subscribe-button-primary" onclick="if(typeof ym !== 'undefined'){{ym(42580049, 'reachGoal', 'blogSubscribeTelegram');}}">
                             📱 Подписаться на канал
