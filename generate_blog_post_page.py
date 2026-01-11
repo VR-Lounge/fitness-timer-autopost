@@ -1005,6 +1005,7 @@ def сгенерировать_html_страницу(пост):
             font-size: 1.8rem;
             margin: 30px 0 15px 0;
             color: #7af5ff;
+            text-align: center;
         }}
         
         .blog-post-content h3 {{
