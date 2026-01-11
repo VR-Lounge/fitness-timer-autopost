@@ -1183,22 +1183,6 @@ def сгенерировать_html_страницу(пост):
             color: #7af5ff;
         }}
         
-        .blog-subscribe-features {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 25px 0 30px 0;
-        }}
-        
-        .blog-subscribe-feature {{
-            color: rgba(255, 255, 255, 0.75);
-            font-size: 0.9rem;
-            padding: 10px;
-            background: rgba(122, 245, 255, 0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(122, 245, 255, 0.1);
-        }}
-        
         .blog-subscribe-buttons {{
             display: flex;
             gap: 15px;
