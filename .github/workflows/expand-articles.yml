@@ -1,0 +1,64 @@
+name: 📝 Расширение существующих статей
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Запускаем 1 раз в неделю (понедельник) для проверки и расширения статей
+    - cron: '0 12 * * 1'  # Понедельник 12:00 UTC (15:00 МСК)
+
+jobs:
+  expand-articles:
+    name: Расширение контента статей
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    
+    steps:
+      - name: Клонирование репозитория fitness-timer-autopost
+        uses: actions/checkout@v4
+        with:
+          path: fitness-timer-autopost
+      
+      - name: Клонирование репозитория tabatatimer-ru (public_html)
+        uses: actions/checkout@v4
+        with:
+          repository: VR-Lounge/tabatatimer-ru
+          path: public_html
+          token: ${{ secrets.PAT_CROSS_REPO }}
+      
+      - name: Установка Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Установка зависимостей
+        working-directory: fitness-timer-autopost
+        run: |
+          pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml
+      
+      - name: Расширение контента существующих статей
+        working-directory: fitness-timer-autopost
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          python3 expand_existing_articles.py
+      
+      - name: Коммит и пуш изменений в tabatatimer-ru
+        working-directory: public_html
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add blog-posts.json blog/*.html sitemap.xml
+          git diff --staged --quiet || git commit -m "📝 Расширен контент существующих статей до полноценных статей"
+          git push
+      
+      - name: Загрузка обновлённых файлов на Yandex Cloud
+        working-directory: public_html
+        env:
+          YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
+          YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
+        run: |
+          bash ../fitness-timer-autopost/upload_blog_to_yandex.sh
