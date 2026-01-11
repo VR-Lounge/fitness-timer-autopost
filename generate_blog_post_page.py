@@ -1252,6 +1252,8 @@ def сгенерировать_html_страницу(пост):
             .blog-subscribe-button {{
                 min-width: auto;
                 flex: 1 1 auto;
+                text-align: center;
+                padding-left: 17px;
             }}
         }}
     </style>
