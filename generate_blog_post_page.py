@@ -1148,6 +1148,99 @@ def сгенерировать_html_страницу(пост):
             text-decoration: underline;
         }}
         
+        /* Блок подписки на Telegram канал */
+        .blog-subscribe-footer {{
+            margin-top: 60px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(122, 245, 255, 0.08) 0%, rgba(122, 245, 255, 0.03) 100%);
+            border-top: 1px solid rgba(122, 245, 255, 0.15);
+        }}
+        
+        .blog-subscribe-container {{
+            max-width: 800px;
+            margin: 0 auto;
+        }}
+        
+        .blog-subscribe-content {{
+            text-align: center;
+        }}
+        
+        .blog-subscribe-title {{
+            font-size: 1.5rem;
+            color: #7af5ff;
+            margin: 0 0 15px 0;
+            font-weight: 600;
+        }}
+        
+        .blog-subscribe-description {{
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0 0 25px 0;
+        }}
+        
+        .blog-subscribe-description strong {{
+            color: #7af5ff;
+        }}
+        
+        .blog-subscribe-features {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0 30px 0;
+        }}
+        
+        .blog-subscribe-feature {{
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.9rem;
+            padding: 10px;
+            background: rgba(122, 245, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(122, 245, 255, 0.1);
+        }}
+        
+        .blog-subscribe-buttons {{
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }}
+        
+        .blog-subscribe-button {{
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }}
+        
+        .blog-subscribe-button-primary {{
+            background: #7af5ff;
+            color: #1a1a2e;
+            border-color: #7af5ff;
+        }}
+        
+        .blog-subscribe-button-primary:hover {{
+            background: #5dd5e5;
+            border-color: #5dd5e5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(122, 245, 255, 0.3);
+        }}
+        
+        .blog-subscribe-button-secondary {{
+            background: transparent;
+            color: #7af5ff;
+            border-color: #7af5ff;
+        }}
+        
+        .blog-subscribe-button-secondary:hover {{
+            background: rgba(122, 245, 255, 0.1);
+            transform: translateY(-2px);
+        }}
+        
         @media (max-width: 768px) {{
             .blog-post-title {{
                 font-size: 1.8rem;
@@ -1155,6 +1248,29 @@ def сгенерировать_html_страницу(пост):
             
             .blog-post-page {{
                 padding: 20px 15px;
+            }}
+            
+            .blog-subscribe-footer {{
+                padding: 30px 15px;
+                margin-top: 40px;
+            }}
+            
+            .blog-subscribe-title {{
+                font-size: 1.3rem;
+            }}
+            
+            .blog-subscribe-features {{
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }}
+            
+            .blog-subscribe-buttons {{
+                flex-direction: column;
+            }}
+            
+            .blog-subscribe-button {{
+                width: 100%;
+                text-align: center;
             }}
         }}
     </style>
@@ -1184,6 +1300,30 @@ def сгенерировать_html_страницу(пост):
         <div class="blog-post-tags">
             {''.join([f'<a href="../blog.html?filter={quote(тег)}" class="blog-post-tag">{тег}</a>' for тег in теги])}
         </div>
+        
+        <!-- Блок подписки на Telegram канал -->
+        <footer class="blog-subscribe-footer">
+            <div class="blog-subscribe-container">
+                <div class="blog-subscribe-content">
+                    <h3 class="blog-subscribe-title">💪 Больше тренировок и мотивации</h3>
+                    <p class="blog-subscribe-description">Подписывайся на наш Telegram-канал <strong>TABATA TIMER</strong> и получай ежедневные программы тренировок, таймеры и советы по фитнесу</p>
+                    <div class="blog-subscribe-features">
+                        <div class="blog-subscribe-feature">⚡ Ежедневные табата-программы</div>
+                        <div class="blog-subscribe-feature">⏱️ Таймеры и схемы упражнений</div>
+                        <div class="blog-subscribe-feature">🥗 Советы по питанию и восстановлению</div>
+                        <div class="blog-subscribe-feature">🔥 Мотивация и научные факты</div>
+                    </div>
+                    <div class="blog-subscribe-buttons">
+                        <a href="https://t.me/fitnesstimer" target="_blank" rel="noopener noreferrer" class="blog-subscribe-button blog-subscribe-button-primary" onclick="if(typeof ym !== 'undefined'){{ym(42580049, 'reachGoal', 'blogSubscribeTelegram');}}">
+                            📱 Подписаться на канал
+                        </a>
+                        <a href="https://tabatatimer.ru/#timer" class="blog-subscribe-button blog-subscribe-button-secondary" onclick="if(typeof ym !== 'undefined'){{ym(42580049, 'reachGoal', 'blogToTimer');}}">
+                            ⏱️ Открыть таймер
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
     
     <!-- Burger Menu Script -->
