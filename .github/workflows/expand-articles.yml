@@ -51,9 +51,15 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          # Получаем последние изменения из удалённого репозитория
+          git pull --rebase origin main || echo "⚠️ Не удалось сделать pull, продолжаем"
           git add blog-posts.json blog/*.html sitemap.xml
-          git diff --staged --quiet || git commit -m "📝 Расширен контент существующих статей до полноценных статей"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "📝 Расширен контент существующих статей до полноценных статей"
+            git push origin main
+          else
+            echo "ℹ️ Нет изменений для коммита"
+          fi
       
       - name: Загрузка обновлённых файлов на Yandex Cloud
         working-directory: public_html
