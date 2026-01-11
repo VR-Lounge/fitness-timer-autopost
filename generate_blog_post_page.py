@@ -16,6 +16,15 @@ from pathlib import Path
 from datetime import datetime
 from urllib.parse import quote
 
+# Импортируем функцию загрузки изображений
+try:
+    from image_downloader import загрузить_все_изображения_блога
+except ImportError:
+    # Если модуль не найден, создаём заглушку
+    def загрузить_все_изображения_блога():
+        print("⚠️ Модуль image_downloader не найден, пропускаем загрузку изображений")
+        return False
+
 # Путь к файлу с постами
 # В GitHub Actions репозиторий клонируется в fitness-timer-autopost, а public_html - отдельно
 SCRIPT_DIR = Path(__file__).parent.absolute()
