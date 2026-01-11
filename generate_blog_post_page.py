@@ -1198,10 +1198,11 @@ def сгенерировать_html_страницу(пост):
             font-size: 0.95rem;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            text-align: center;
         }}
         
         .blog-subscribe-button-primary {{
-            padding: 12px 17px 12px 0px;
+            padding: 12px 17px;
             background: #7af5ff;
             color: #1a1a2e;
             border-color: #7af5ff;
@@ -1215,7 +1216,7 @@ def сгенерировать_html_страницу(пост):
         }}
         
         .blog-subscribe-button-secondary {{
-            padding: 12px 17px 12px 0px;
+            padding: 12px 17px;
             background: transparent;
             color: #7af5ff;
             border-color: #7af5ff;
