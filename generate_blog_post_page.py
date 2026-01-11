@@ -1009,8 +1009,12 @@ def сгенерировать_html_страницу(пост):
         
         .blog-post-content h3 {{
             font-size: 1.5rem;
-            margin: 25px 0 12px 0;
+            margin: 30px 0 12px 0;
             color: rgba(255, 255, 255, 0.9);
+        }}
+        
+        .blog-post-content h3:first-of-type {{
+            margin-top: 40px;
         }}
         
         .blog-post-content h4 {{
