@@ -61,4 +61,8 @@ jobs:
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
         run: |
-          bash ../fitness-timer-autopost/upload_blog_to_yandex.sh
+          if [ -n "$YANDEX_ACCESS_KEY_ID" ] && [ -n "$YANDEX_SECRET_ACCESS_KEY" ]; then
+            bash ../fitness-timer-autopost/upload_blog_to_yandex.sh
+          else
+            echo "⚠️ Yandex Cloud credentials не настроены, пропускаем загрузку"
+          fi
