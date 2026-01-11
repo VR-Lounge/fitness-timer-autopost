@@ -1208,7 +1208,6 @@ def сгенерировать_html_страницу(пост):
         
         .blog-subscribe-button {{
             display: inline-block;
-            padding: 12px 24px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 500;
@@ -1218,6 +1217,7 @@ def сгенерировать_html_страницу(пост):
         }}
         
         .blog-subscribe-button-primary {{
+            padding: 12px 17px 12px 0px;
             background: #7af5ff;
             color: #1a1a2e;
             border-color: #7af5ff;
@@ -1231,6 +1231,7 @@ def сгенерировать_html_страницу(пост):
         }}
         
         .blog-subscribe-button-secondary {{
+            padding: 12px 17px 0px 0px;
             background: transparent;
             color: #7af5ff;
             border-color: #7af5ff;
@@ -1311,7 +1312,6 @@ def сгенерировать_html_страницу(пост):
                         <div class="blog-subscribe-feature">⚡ Ежедневные табата-программы</div>
                         <div class="blog-subscribe-feature">⏱️ Таймеры и схемы упражнений</div>
                         <div class="blog-subscribe-feature">🥗 Советы по питанию и восстановлению</div>
-                        <div class="blog-subscribe-feature">🔥 Мотивация и научные факты</div>
                     </div>
                     <div class="blog-subscribe-buttons">
                         <a href="https://t.me/fitnesstimer" target="_blank" rel="noopener noreferrer" class="blog-subscribe-button blog-subscribe-button-primary" onclick="if(typeof ym !== 'undefined'){{ym(42580049, 'reachGoal', 'blogSubscribeTelegram');}}">
