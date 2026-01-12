@@ -87,18 +87,6 @@ WOMENSHEALTH_RSS_FEEDS = [
     'https://bwhi.org/feed/',  # Black Women's Health Imperative
     'https://www.intimina.com/blog/feed/',  # Intimina - женское интимное здоровье
     'https://www.hormona.io/feed/',  # Hormona Library - гормональное здоровье
-    'https://www.jillbrownfitness.com/feed/',
-    'https://www.bepreparedperiod.com/blog/feed/',
-    'https://kaldascenter.com/blog?format=rss',
-    'http://whepducom.blogspot.com/feeds/posts/default?alt=rss',
-    'https://www.drdawnswellnesstools.com/blog-feed.xml',
-    # Дополнительные проверенные источники
-    'https://www.womenshealthmag.com/rss/all.xml',
-    'https://www.shape.com/rss/all.xml',
-    'https://www.oxygenmag.com/rss/all.xml',
-    'https://www.fitnessmagazine.com/rss/all.xml',
-    'https://www.floliving.com/blog/feed/',
-    'https://www.kaiafit.com/blog/feed/'
 ]
 
 # Ключевые слова для фильтрации статей
