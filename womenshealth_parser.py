@@ -39,77 +39,54 @@ TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
 
-# RSS фиды Women's Health (70 источников)
+# RSS фиды Women's Health (40 проверенных рабочих источников)
 WOMENSHEALTH_RSS_FEEDS = [
-    # 1-10
-    'https://www.healthywomen.org/feeds/feed.rss',
-    'https://www.intimina.com/blog/feed/',
-    'https://www.sheknows.com/health-and-wellness/feed/',
-    'https://adriaticawomenshealth.com/newsblog/feed/',
-    'https://gymbunny.ie/feed/',
-    'https://nourishinglab.com/feed/',
-    'https://www.fempower-health.com/blog-feed.xml',
-    'https://www.fit4females.com/fitblog/feed/',
-    'https://www.womenshealthkc.com/resources-forms/blog?format=feed',
-    'https://sarahfit.com/feed/',
-    # 11-20
-    'http://knocked-upfitness.com/feed/',
-    'https://bwhi.org/feed/',
-    'https://healthworksfitness.com/feed/',
-    'https://blogs.womans.org/feed/',
-    'https://womensmentalhealth.org/feed/',
-    'https://blog.metagenics.com/post/category/womens-health/feed/',
-    'https://womensfitnessclubs.com/feed/',
-    'https://sanitydaily.com/feed/',
-    'https://jessicasepel.com/feed/',
-    'http://www.livingbetter50.com/category/health-fitness/feed/',
-    # 21-30
-    'https://www.healthista.com/feed/',
-    'https://www.womenfitness.net/feed/',
-    'https://flecksoflex.com/feed/',
-    'https://femalefitnesssystems.com/feed/',
-    'https://www.fitnessmag.co.za/feed/',
-    'https://www.femalle.net/feed/',
-    'https://fitnessista.com/feed/',
-    'https://blivewear.com/feed/',
-    'https://www.kimberleypayne.com/feed/',
-    'https://bebodywise.com/blog/rss/',
-    # 31-40
-    'https://whcsmd.com/feed/',
-    'https://lazygirlfitness.com.au/feed/',
-    'https://azgyn.com/feed/',
-    'https://vivamagonline.com/feed/',
-    'https://fitbottomedgirls.com/feed',
-    'https://www.girlsgonesstrong.com/feed/',
-    'https://theflowerempowered.com/feed/',
-    'https://my.toneitup.com/blogs/latest.atom',
-    'https://www.innovativewomen.net//feed/rss2',
-    'https://kathydolanhealthfitness.blogspot.com/feeds/posts/default?alt=rss',
-    # 41-50
-    'https://newriverwomenshealth.com/feed/',
-    'https://femmephysiques.com/feed/',
-    'https://www.stronghealthywoman.com/feed/',
-    'https://noomikajsa.com/feed/',
-    'http://vgcfitlifestyle.blogspot.com/feeds/posts/default',
-    'http://www.heartlandwomenshealth.com/blog?format=RSS',
-    'https://www.jerseygirltalk.com/feed/',
-    'https://fitness4her.com/feed/',
-    'https://thefithabit.com/feed/',
-    'https://thehoneypot.co/blogs/latest.atom',
-    # 51-60
-    'http://fitnessontoast.com/feed/',
-    'https://www.vuvatech.com/blogs/care.atom',
-    'https://takingthemysteryoutof50.com/feed/',
-    'https://www.besthealthmag.ca/wellness/health/feed/',
-    'https://www.kaylainthecity.com/feed/',
-    'https://womenshealthtoday.blog/feed/',
-    'https://niashanks.com/feed/',
-    'https://juliabuckleyfitness.com/feed/',
-    'https://amodrn.com/feed/',
-    'http://www.nwwomensfitness.com/feed/',
-    # 61-70
-    'https://stayhealthyfitness.blogspot.com/feeds/posts/default?alt=rss',
-    'https://www.hormona.io/feed/',
+    # ПРИОРИТЕТ 1: ФИТНЕС, HIIT, TABATA, ТРЕНИРОВКИ (1-20)
+    'https://hiitscience.com/feed',  # HIIT Science - научный подход к HIIT
+    'https://nourishmovelove.com/feed/',  # Nourish Move Love - HIIT + домашние тренировки
+    'https://www.girlsgonestrong.com/feed/',  # Girls Gone Strong - силовые + HIIT для женщин
+    'https://gymbunny.ie/feed/',  # Gym Bunny - фитнес-коды, HIIT, диеты
+    'https://www.womenfitness.net/feed/',  # Women Fitness - всё для женского фитнеса
+    'https://fitnessista.com/feed/',  # The Fitnessista - домашние тренировки + HIIT
+    'https://femalefitnesssystems.com/feed/',  # Female Fitness Systems - тренировки + питание
+    'https://fitbottomedgirls.com/feed',  # Fit Bottomed Girls - body-positive фитнес
+    'https://my.toneitup.com/blogs/latest.atom',  # Tone It Up - тренировки + мотивация
+    'https://sarahfit.com/feed/',  # Sarah Fit - clean eating + тренировки
+    'https://www.fit4females.com/fitblog/feed/',  # Fit4Females - фитнес для мам
+    'https://healthworksfitness.com/feed/',  # Healthworks Fitness - женское здоровье + фитнес
+    'https://womensfitnessclubs.com/feed/',  # Womens Fitness Club - групповые тренировки
+    'https://www.fitnessmag.co.za/feed/',  # Fitness Magazine (ЮАР) - женский фитнес-лайфстайл
+    'https://www.stronghealthywoman.com/feed/',  # Strong Healthy Woman - похудение, питание, тренировки
+    'https://www.healthista.com/feed/',  # Healthista - здоровье + фитнес UK
+    'https://femmephysiques.com/feed/',  # Femmephysiques - body confidence + тренировки
+    'https://lazygirlfitness.com.au/feed/',  # Lazy Girl Fitness - простые тренировки
+    'http://fitnessontoast.com/feed/',  # Fitness On Toast - тренировки в зале
+    'https://www.kaylainthecity.com/feed/',  # Kayla in the City - NYC фитнес-блогер
+    
+    # ПРИОРИТЕТ 2: ПИТАНИЕ, ДИЕТЫ, НУТРИЦИОЛОГИЯ (21-29)
+    'https://jessicasepel.com/feed',  # JS Health - нутрициолог Jessica Sepel
+    'https://www.sheknows.com/health-and-wellness/feed/',  # SheKnows Health & Wellness
+    'https://www.healthywomen.org/feeds/feed.rss',  # HealthyWomen - женское здоровье
+    'https://nourishinglab.com/feed/',  # Nourishing Lab - IBS, Hashimoto's, питание
+    'https://www.fempower-health.com/blog-feed.xml',  # Fempower Health - PCOS, бесплодие, диеты
+    'https://realmomnutrition.com/feed',  # Real Mom Nutrition - питание для мам
+    'https://abbylangernutrition.com/feed',  # Abby Langer Nutrition - диетология
+    'https://sharonpalmer.com/feed',  # Sharon Palmer - растительное питание
+    'https://bebodywise.com/blog/rss/',  # Bodywise - женское здоровье + питание
+    
+    # ПРИОРИТЕТ 3: МОТИВАЦИЯ + ЛАЙФСТАЙЛ (30-37)
+    'http://knocked-upfitness.com/feed/',  # Knocked-Up Fitness - фитнес для беременных
+    'https://flecksoflex.com/feed/',  # The Sweat Fearlessly Podcast - фитнес, велнес, йога
+    'https://www.jerseygirltalk.com/feed/',  # Jersey Girl Talk - фитнес + бьюти
+    'https://amodrn.com/feed/',  # Amodrn - современный wellness
+    'https://www.besthealthmag.ca/wellness/health/feed/',  # Best Health Magazine (Канада)
+    'http://www.livingbetter50.com/category/health-fitness/feed/',  # LivingBetter50 - для женщин 50+
+    'https://sanitydaily.com/feed/',  # Sanity Daily - ментальное здоровье
+    
+    # ДОПОЛНИТЕЛЬНЫЕ СПЕЦИАЛИЗИРОВАННЫЕ (38-40)
+    'https://bwhi.org/feed/',  # Black Women's Health Imperative
+    'https://www.intimina.com/blog/feed/',  # Intimina - женское интимное здоровье
+    'https://www.hormona.io/feed/',  # Hormona Library - гормональное здоровье
     'https://www.jillbrownfitness.com/feed/',
     'https://www.bepreparedperiod.com/blog/feed/',
     'https://kaldascenter.com/blog?format=rss',
