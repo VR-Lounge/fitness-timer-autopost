@@ -87,6 +87,7 @@ WOMENSHEALTH_RSS_FEEDS = [
     'https://bwhi.org/feed/',  # Black Women's Health Imperative
     'https://www.intimina.com/blog/feed/',  # Intimina - женское интимное здоровье
     'https://www.hormona.io/feed/',  # Hormona Library - гормональное здоровье
+    'https://adriaticawomenshealth.com/newsblog/feed/',  # Adriatica Women's Health - женское здоровье
 ]
 
 # Ключевые слова для фильтрации статей
