@@ -73,6 +73,20 @@ jobs:
           mkdir -p public_html/blog
           echo "✅ Структура директорий создана"
       
+      - name: Определение режима публикации
+        id: publish_mode
+        run: |
+          # Определяем, нужно ли публиковать на сайт
+          # Публикуем на сайт только утром (08:00) и вечером (20:00)
+          CURRENT_HOUR=$(date -u +%H)
+          if [ "$CURRENT_HOUR" = "08" ] || [ "$CURRENT_HOUR" = "20" ]; then
+            echo "publish_to_blog=true" >> $GITHUB_OUTPUT
+            echo "✅ Режим: публикация на сайт (HTML страницы)"
+          else
+            echo "publish_to_blog=false" >> $GITHUB_OUTPUT
+            echo "📱 Режим: только Telegram (без HTML страниц)"
+          fi
+      
       - name: Запуск парсера Women's Health
         working-directory: fitness-timer-autopost
         env:
