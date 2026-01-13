@@ -99,6 +99,33 @@ WOMENSHEALTH_RSS_FEEDS = [
     'https://www.intimina.com/blog/feed/',  # Intimina - женское интимное здоровье
     'https://www.hormona.io/feed/',  # Hormona Library - гормональное здоровье
     'https://adriaticawomenshealth.com/newsblog/feed/',  # Adriatica Women's Health - женское здоровье
+    
+    # НОВЫЕ ПРОВЕРЕННЫЕ ФИДЫ (41-58) - добавлены после тестирования
+    # ТОП-ПРИОРИТЕТ (100% релевантность)
+    'https://skinnyms.com/category/fitness/feed/',  # Skinny Ms - программы тренировок, меню, фитнес-планы, HIIT
+    'https://blog.myfitnesspal.com/feed/',  # MyFitnessPal Blog - похудение, питание, рецепты, фитнес, калории
+    'https://www.nataliejillfitness.com/feed/',  # Natalie Jill Fitness - функциональные тренировки, похудение, безглютеновое питание
+    'https://lauralondonfitness.com/feed/',  # Laura London Fitness - фитнес для мам 40+, трансформация тела, мотивация
+    'https://www.behealthynow.co.uk/feed/',  # Be Healthy Now - здоровое питание, рецепты, питание, фитнес, натуральная красота
+    'https://hipandhealthy.com/category/fitness/feed/',  # Hip & Healthy - фитнес-тренды, советы, технологии
+    'https://artofhealthyliving.com/category/fitness/feed/',  # Art of Healthy Living - диеты, фитнес, велнес, здоровый образ жизни
+    'https://www.bornfitness.com/feed/',  # Born Fitness - научный подход к фитнесу, питание, стратегии
+    
+    # ВЫСОКАЯ РЕЛЕВАНТНОСТЬ (80% релевантность)
+    'https://fit4mom.com/blog?format=rss',  # FIT4MOM - фитнес до/после родов, тренировки для мам, велнес
+    'https://fitgirlsdiary.com/feed/',  # Fit Girl's Diary - похудение, домашние тренировки, планы питания
+    'https://www.healthifyme.com/blog/feed/',  # Healthifyme - похудение, трекинг питания, диеты, фитнес
+    'https://www.muscleandfitness.com/feed/',  # Muscle & Fitness - силовые тренировки, питание, бодибилдинг
+    
+    # СРЕДНЯЯ РЕЛЕВАНТНОСТЬ (60-67% релевантность)
+    'https://ellymcguinness.com/feed/',  # Elly McGuinness - холистик-фитнес, пренатальные тренировки, похудение
+    'https://www.massyarias.com/feed/',  # Massy Arias - лайфстайл-медицина, тренировки, трансформация
+    'https://www.carlyrowena.com/blog?format=rss',  # Carly Rowena - баланс, фитнес без жертв, мотивация
+    'https://barbend.com/feed/',  # BarBend - CrossFit, тяжёлая атлетика, пауэрлифтинг, питание
+    
+    # НИЗКАЯ РЕЛЕВАНТНОСТЬ (40% релевантность, но рабочие)
+    'https://lovesweatfitness.com/blogs/news.atom',  # Love Sweat Fitness - тренировки дома, программы, челленджи, рецепты, мотивация
+    'https://gethealthyu.com/feed/',  # Get Healthy U - фитнес для женщин 40+, тренировки, питание, здоровый образ жизни
 ]
 
 # Ключевые слова для фильтрации статей
