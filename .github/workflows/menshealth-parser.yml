@@ -71,20 +71,33 @@ jobs:
           mkdir -p public_html/blog
           echo "✅ Структура директорий создана"
       
+      - name: Определение режима публикации
+        id: publish_mode
+        run: |
+          # Определяем, нужно ли публиковать на сайт
+          # Публикуем на сайт только в 14:00 UTC (день)
+          CURRENT_HOUR=$(date -u +%H)
+          if [ "$CURRENT_HOUR" = "14" ]; then
+            echo "publish_to_blog=true" >> $GITHUB_OUTPUT
+            echo "✅ Режим: публикация на сайт (HTML страницы)"
+          else
+            echo "publish_to_blog=false" >> $GITHUB_OUTPUT
+            echo "📱 Режим: только Telegram (без HTML страниц)"
+          fi
+      
       - name: Запуск парсера Men's Health
         working-directory: fitness-timer-autopost
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          # Мужской контент публикуется только в Telegram (без HTML страниц на сайте)
-          # Соотношение: 60% девушки, 40% мужчины
-          PUBLISH_TO_BLOG: 'false'
+          # Мужчины: 1 на сайт (14:00 UTC), 1 только Telegram (10:00 UTC)
+          PUBLISH_TO_BLOG: ${{ steps.publish_mode.outputs.publish_to_blog || github.event_name == 'workflow_dispatch' }}
         run: |
           python3 menshealth_parser.py
       
       - name: Генерация HTML страниц для блога
-        if: env.PUBLISH_TO_BLOG == 'true'
+        if: steps.publish_mode.outputs.publish_to_blog == 'true' || github.event_name == 'workflow_dispatch'
         working-directory: fitness-timer-autopost
         run: |
           python3 generate_blog_post_page.py
@@ -95,7 +108,7 @@ jobs:
           pip install awscli
       
       - name: Загрузка файлов блога на Яндекс Cloud
-        if: env.PUBLISH_TO_BLOG == 'true'
+        if: steps.publish_mode.outputs.publish_to_blog == 'true' || github.event_name == 'workflow_dispatch'
         working-directory: fitness-timer-autopost
         env:
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
@@ -105,7 +118,7 @@ jobs:
           ./upload_blog_to_yandex.sh || echo "⚠️ Загрузка на Яндекс Cloud пропущена (переменные не настроены)"
       
       - name: Коммит изменений в репозиторий tabatatimer-ru
-        if: env.PUBLISH_TO_BLOG == 'true'
+        if: steps.publish_mode.outputs.publish_to_blog == 'true' || github.event_name == 'workflow_dispatch'
         working-directory: public_html
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
