@@ -85,7 +85,7 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           # Публикуем на сайт только утром (08:00) и вечером (20:00), преимущественно для девушек
           # Для остальных запусков - только Telegram
-          PUBLISH_TO_BLOG: ${{ github.event.schedule == '0 8 * * *' || github.event.schedule == '0 20 * * *' || github.event_name == 'workflow_dispatch' }}
+          PUBLISH_TO_BLOG: ${{ steps.publish_mode.outputs.publish_to_blog || github.event_name == 'workflow_dispatch' }}
         run: |
           python3 womenshealth_parser.py
       
