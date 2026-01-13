@@ -100,7 +100,24 @@ MENSHEALTH_RSS_FEEDS = [
     'https://www.menshealth.com/uk/workouts/',
     'https://www.menshealth.com/uk/nutrition/',
     'https://www.menshealth.com/uk/fitness/',
-    'https://www.menshealth.com/uk/fitness/cardio-exercise/'
+    'https://www.menshealth.com/uk/fitness/cardio-exercise/',
+    
+    # НОВЫЕ ВЫСОКОРЕЛЕВАНТНЫЕ ФИДЫ (добавлены после тестирования, 80%+ релевантность)
+    # ТОП-ПРИОРИТЕТ (100% релевантность)
+    'https://www.muscleandfitness.com/feed/',  # Muscle & Fitness - бодибилдинг, силовые тренировки, питание, добавки, HIIT
+    'https://www.nerdfitness.com/feed/',  # Nerd Fitness - фитнес для "ботаников", похудение, набор мышц, мотивация
+    'https://barbend.com/feed/',  # BarBend - силовые виды спорта, CrossFit, тяжелая атлетика, пауэрлифтинг
+    'https://hiitscience.com/feed',  # HIIT Science - научный подход к HIIT, интервальные тренировки
+    'https://drjohnrusin.com/feed/',  # Dr. John Rusin - спортивная медицина, силовые, профилактика травм
+    'https://fitdadchris.com/feed/',  # Fit Dad Chris - фитнес для пап, мотивация, тренировки
+    'https://bengreenfieldlife.com/article/feed/',  # Ben Greenfield Life - биохакинг, спортивное питание, триатлон, оптимизация
+    'https://www.bornfitness.com/feed/',  # Born Fitness - научный подход, питание, тренировки без BS
+    'https://www.mensfitclub.com/mens-fitness/feed/',  # MensFitClub.com - комьюнити для мужчин, фитнес-новости, опыт
+    'https://www.focusfitness.in/feed/',  # Focus Fitness - оборудование, советы, индийский рынок
+    
+    # ВЫСОКАЯ РЕЛЕВАНТНОСТЬ (80% релевантность)
+    'https://www.mensfitness.com/.rss/feed/5a4c1162-86c8-4b99-8611-d683873db65d.xml',  # Men's Fitness - тренировки, планы для мужчин, советы, питание, стратегии
+    'https://feeds.feedburner.com/volt-blog',  # Volt Athletics Blog - S&C для спорта, силовая подготовка, питание
 ]
 
 # Ключевые слова для фильтрации статей
