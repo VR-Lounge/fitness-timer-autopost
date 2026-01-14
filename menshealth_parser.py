@@ -70,17 +70,17 @@ MENSHEALTH_RSS_FEEDS = [
     'https://www.menshealth.com/rss/all.xml/',
     'https://thehealthcast.com/category/mens-health/feed/',
     'https://vitaljake.com/feed/',
-    'https://www.healthpartners.com/blog/topic/mens-health/feed/',
+    # 'https://www.healthpartners.com/blog/topic/mens-health/feed/',  # Ошибка парсинга XML (удалено)
     'https://danielawilson80.wordpress.com/feed/',
     'https://drtanmenshealthblog.com/feed/',
     'https://edsafecure.com/feed/',
     # 21-30
     'https://www.coachweb.com/feeds.xml',
     'https://drtracygapin.com/feed/',
-    'https://www.belmarrahealth.com/mens-health/feed/',
+    # 'https://www.belmarrahealth.com/mens-health/feed/',  # Ошибка парсинга XML (удалено)
     'https://ghc.health/blogs/all-about-men.atom',
     'https://youngmenshealthsite.org/feed/',
-    'https://www.yourhealth.net.au/articles/category/family-health/mens-health/feed/',
+    # 'https://www.yourhealth.net.au/articles/category/family-health/mens-health/feed/',  # Ошибка парсинга XML (удалено)
     'https://www.mazemenshealth.com/blog/feed/',
     'https://www.charlottemenshealth.com/feed/',
     'https://feeds.feedburner.com/Insureblog',

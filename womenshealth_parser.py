@@ -55,23 +55,23 @@ WOMENSHEALTH_RSS_FEEDS = [
     # ПРИОРИТЕТ 1: ФИТНЕС, HIIT, TABATA, ТРЕНИРОВКИ (1-20)
     'https://hiitscience.com/feed',  # HIIT Science - научный подход к HIIT
     'https://nourishmovelove.com/feed/',  # Nourish Move Love - HIIT + домашние тренировки
-    'https://www.girlsgonestrong.com/feed/',  # Girls Gone Strong - силовые + HIIT для женщин
+    # 'https://www.girlsgonestrong.com/feed/',  # Girls Gone Strong - HTTP 403 (удалено)
     'https://gymbunny.ie/feed/',  # Gym Bunny - фитнес-коды, HIIT, диеты
     'https://www.womenfitness.net/feed/',  # Women Fitness - всё для женского фитнеса
     'https://fitnessista.com/feed/',  # The Fitnessista - домашние тренировки + HIIT
     'https://femalefitnesssystems.com/feed/',  # Female Fitness Systems - тренировки + питание
-    'https://fitbottomedgirls.com/feed',  # Fit Bottomed Girls - body-positive фитнес
+    # 'https://fitbottomedgirls.com/feed',  # Fit Bottomed Girls - HTTP 403 (удалено)
     'https://my.toneitup.com/blogs/latest.atom',  # Tone It Up - тренировки + мотивация
     'https://sarahfit.com/feed/',  # Sarah Fit - clean eating + тренировки
-    'https://www.fit4females.com/fitblog/feed/',  # Fit4Females - фитнес для мам
+    # 'https://www.fit4females.com/fitblog/feed/',  # Fit4Females - HTTP 403 (удалено)
     'https://healthworksfitness.com/feed/',  # Healthworks Fitness - женское здоровье + фитнес
     'https://womensfitnessclubs.com/feed/',  # Womens Fitness Club - групповые тренировки
     'https://www.fitnessmag.co.za/feed/',  # Fitness Magazine (ЮАР) - женский фитнес-лайфстайл
-    'https://www.stronghealthywoman.com/feed/',  # Strong Healthy Woman - похудение, питание, тренировки
+    # 'https://www.stronghealthywoman.com/feed/',  # Strong Healthy Woman - Таймаут (удалено)
     'https://www.healthista.com/feed/',  # Healthista - здоровье + фитнес UK
     'https://femmephysiques.com/feed/',  # Femmephysiques - body confidence + тренировки
     'https://lazygirlfitness.com.au/feed/',  # Lazy Girl Fitness - простые тренировки
-    'http://fitnessontoast.com/feed/',  # Fitness On Toast - тренировки в зале
+    # 'http://fitnessontoast.com/feed/',  # Fitness On Toast - HTTP 503 (удалено)
     'https://www.kaylainthecity.com/feed/',  # Kayla in the City - NYC фитнес-блогер
     
     # ПРИОРИТЕТ 2: ПИТАНИЕ, ДИЕТЫ, НУТРИЦИОЛОГИЯ (21-29)
@@ -89,15 +89,15 @@ WOMENSHEALTH_RSS_FEEDS = [
     'http://knocked-upfitness.com/feed/',  # Knocked-Up Fitness - фитнес для беременных
     'https://flecksoflex.com/feed/',  # The Sweat Fearlessly Podcast - фитнес, велнес, йога
     'https://www.jerseygirltalk.com/feed/',  # Jersey Girl Talk - фитнес + бьюти
-    'https://amodrn.com/feed/',  # Amodrn - современный wellness
-    'https://www.besthealthmag.ca/wellness/health/feed/',  # Best Health Magazine (Канада)
+    # 'https://amodrn.com/feed/',  # Amodrn - HTTP 403 (удалено)
+    # 'https://www.besthealthmag.ca/wellness/health/feed/',  # Best Health Magazine - HTTP 403 (удалено)
     'http://www.livingbetter50.com/category/health-fitness/feed/',  # LivingBetter50 - для женщин 50+
     'https://sanitydaily.com/feed/',  # Sanity Daily - ментальное здоровье
     
     # ДОПОЛНИТЕЛЬНЫЕ СПЕЦИАЛИЗИРОВАННЫЕ (38-40)
     'https://bwhi.org/feed/',  # Black Women's Health Imperative
     'https://www.intimina.com/blog/feed/',  # Intimina - женское интимное здоровье
-    'https://www.hormona.io/feed/',  # Hormona Library - гормональное здоровье
+    # 'https://www.hormona.io/feed/',  # Hormona Library - HTTP 404 (удалено)
     'https://adriaticawomenshealth.com/newsblog/feed/',  # Adriatica Women's Health - женское здоровье
     
     # НОВЫЕ ПРОВЕРЕННЫЕ ФИДЫ (41-58) - добавлены после тестирования
@@ -108,12 +108,12 @@ WOMENSHEALTH_RSS_FEEDS = [
     'https://lauralondonfitness.com/feed/',  # Laura London Fitness - фитнес для мам 40+, трансформация тела, мотивация
     'https://www.behealthynow.co.uk/feed/',  # Be Healthy Now - здоровое питание, рецепты, питание, фитнес, натуральная красота
     'https://hipandhealthy.com/category/fitness/feed/',  # Hip & Healthy - фитнес-тренды, советы, технологии
-    'https://artofhealthyliving.com/category/fitness/feed/',  # Art of Healthy Living - диеты, фитнес, велнес, здоровый образ жизни
+    # 'https://artofhealthyliving.com/category/fitness/feed/',  # Art of Healthy Living - HTTP 403 (удалено)
     'https://www.bornfitness.com/feed/',  # Born Fitness - научный подход к фитнесу, питание, стратегии
     
     # ВЫСОКАЯ РЕЛЕВАНТНОСТЬ (80% релевантность)
     'https://fit4mom.com/blog?format=rss',  # FIT4MOM - фитнес до/после родов, тренировки для мам, велнес
-    'https://fitgirlsdiary.com/feed/',  # Fit Girl's Diary - похудение, домашние тренировки, планы питания
+    # 'https://fitgirlsdiary.com/feed/',  # Fit Girl's Diary - HTTP 403 (удалено)
     'https://www.healthifyme.com/blog/feed/',  # Healthifyme - похудение, трекинг питания, диеты, фитнес
     'https://www.muscleandfitness.com/feed/',  # Muscle & Fitness - силовые тренировки, питание, бодибилдинг
     
