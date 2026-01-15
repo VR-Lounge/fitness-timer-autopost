@@ -321,44 +321,82 @@ def парсить_rss_feed(rss_url):
         articles = []
         
         # Поддерживаем разные форматы RSS (RSS 2.0, Atom, FeedBurner)
-        items = root.findall('.//item') or root.findall('.//entry')
+        # Пробуем разные селекторы для поиска элементов
+        items = []
+        if root.tag == 'rss' or root.tag.endswith('rss'):
+            # RSS 2.0
+            channel = root.find('channel')
+            if channel is not None:
+                items = channel.findall('item')
+        elif root.tag.endswith('feed') or '{http://www.w3.org/2005/Atom}feed' in root.tag:
+            # Atom
+            items = root.findall('{http://www.w3.org/2005/Atom}entry')
+        
+        # Если не нашли, пробуем универсальный поиск
+        if not items:
+            items = root.findall('.//item') or root.findall('.//entry') or root.findall('.//{http://www.w3.org/2005/Atom}entry')
         
         for item in items:
             try:
+                title = ''
+                link = ''
+                
                 # RSS 2.0 формат
-                title_elem = item.find('title') or item.find('.//title')
-                link_elem = item.find('link') or item.find('.//link')
-                pub_date_elem = item.find('pubDate') or item.find('published') or item.find('.//pubDate')
+                title_elem = item.find('title')
+                link_elem = item.find('link')
                 
                 # Atom формат
                 if not title_elem:
                     title_elem = item.find('{http://www.w3.org/2005/Atom}title')
                 if not link_elem:
                     link_elem = item.find('{http://www.w3.org/2005/Atom}link')
-                    if link_elem is not None:
-                        link = link_elem.get('href', '')
-                    else:
-                        link = ''
-                else:
-                    link = link_elem.text or link_elem.get('href', '') if link_elem is not None else ''
                 
-                if title_elem is not None and link:
-                    title = title_elem.text or ''
-                    if not link and link_elem is not None:
-                        link = link_elem.text or link_elem.get('href', '')
-                    
-                    if link and title:
-                        articles.append({
-                            'title': title.strip(),
-                            'link': link.strip(),
-                            'pub_date': pub_date_elem.text if pub_date_elem is not None else None,
-                            'description': (item.find('description') or item.find('{http://www.w3.org/2005/Atom}summary') or item.find('.//description')).text if (item.find('description') or item.find('{http://www.w3.org/2005/Atom}summary') or item.find('.//description')) is not None else ''
-                        })
+                # Извлекаем title
+                if title_elem is not None:
+                    title = (title_elem.text or '').strip()
+                
+                # Извлекаем link (для Atom может быть в атрибуте href)
+                if link_elem is not None:
+                    if link_elem.get('href'):
+                        link = link_elem.get('href').strip()
+                    elif link_elem.text:
+                        link = link_elem.text.strip()
+                
+                # Если все еще нет link, пробуем другие варианты
+                if not link:
+                    # Пробуем найти link в других местах
+                    for link_candidate in item.findall('.//link'):
+                        if link_candidate.get('href'):
+                            link = link_candidate.get('href').strip()
+                            break
+                        elif link_candidate.text:
+                            link = link_candidate.text.strip()
+                            break
+                
+                # Публикация дата
+                pub_date_elem = item.find('pubDate') or item.find('published') or item.find('{http://www.w3.org/2005/Atom}published')
+                pub_date = pub_date_elem.text if pub_date_elem is not None else None
+                
+                # Описание
+                desc_elem = item.find('description') or item.find('{http://www.w3.org/2005/Atom}summary') or item.find('content')
+                description = desc_elem.text if desc_elem is not None else ''
+                
+                # Добавляем статью только если есть и title и link
+                if link and title:
+                    articles.append({
+                        'title': title,
+                        'link': link,
+                        'pub_date': pub_date,
+                        'description': description
+                    })
             except Exception as e:
+                # Тихо пропускаем ошибки парсинга отдельных элементов
                 continue
         
         if articles:
-            print(f"✅ Получено {len(articles)} статей из {rss_url}")
+            print(f"✅ Получено {len(articles)} статей из {rss_url[:60]}...")
+        elif len(items) > 0:
+            print(f"⚠️ Найдено {len(items)} элементов, но не удалось извлечь статьи из {rss_url[:60]}...")
         return articles
     
     except requests.exceptions.RequestException as e:
