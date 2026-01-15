@@ -341,45 +341,70 @@ def парсить_rss_feed(rss_url):
                 title = ''
                 link = ''
                 
-                # RSS 2.0 формат
-                title_elem = item.find('title')
-                link_elem = item.find('link')
+                # RSS 2.0 формат - ищем прямые дочерние элементы
+                title_elem = None
+                link_elem = None
                 
-                # Atom формат
-                if not title_elem:
-                    title_elem = item.find('{http://www.w3.org/2005/Atom}title')
-                if not link_elem:
-                    link_elem = item.find('{http://www.w3.org/2005/Atom}link')
+                # Пробуем разные варианты поиска title
+                for child in item:
+                    if child.tag == 'title' or child.tag.endswith('}title'):
+                        title_elem = child
+                        break
+                
+                # Если не нашли, пробуем через find
+                if title_elem is None:
+                    title_elem = item.find('title') or item.find('.//title') or item.find('{http://www.w3.org/2005/Atom}title')
+                
+                # Пробуем разные варианты поиска link
+                for child in item:
+                    if child.tag == 'link' or child.tag.endswith('}link'):
+                        link_elem = child
+                        break
+                
+                # Если не нашли, пробуем через find
+                if link_elem is None:
+                    link_elem = item.find('link') or item.find('.//link') or item.find('{http://www.w3.org/2005/Atom}link')
                 
                 # Извлекаем title
                 if title_elem is not None:
-                    title = (title_elem.text or '').strip()
+                    if hasattr(title_elem, 'text') and title_elem.text:
+                        title = title_elem.text.strip()
+                    elif hasattr(title_elem, 'tail') and title_elem.tail:
+                        title = title_elem.tail.strip()
                 
-                # Извлекаем link (для Atom может быть в атрибуте href)
+                # Извлекаем link (для Atom может быть в атрибуте href, для RSS в text)
                 if link_elem is not None:
-                    if link_elem.get('href'):
+                    # Сначала пробуем атрибут href (Atom формат)
+                    if hasattr(link_elem, 'get') and link_elem.get('href'):
                         link = link_elem.get('href').strip()
-                    elif link_elem.text:
+                    # Затем пробуем text (RSS 2.0 формат)
+                    elif hasattr(link_elem, 'text') and link_elem.text:
                         link = link_elem.text.strip()
-                
-                # Если все еще нет link, пробуем другие варианты
-                if not link:
-                    # Пробуем найти link в других местах
-                    for link_candidate in item.findall('.//link'):
-                        if link_candidate.get('href'):
-                            link = link_candidate.get('href').strip()
-                            break
-                        elif link_candidate.text:
-                            link = link_candidate.text.strip()
-                            break
+                    # Если все еще нет, пробуем найти через guid (RSS 2.0)
+                    if not link:
+                        guid_elem = item.find('guid')
+                        if guid_elem is not None:
+                            if hasattr(guid_elem, 'text') and guid_elem.text:
+                                link = guid_elem.text.strip()
+                            elif hasattr(guid_elem, 'get') and guid_elem.get('isPermaLink') == 'true':
+                                link = guid_elem.text.strip() if guid_elem.text else ''
                 
                 # Публикация дата
-                pub_date_elem = item.find('pubDate') or item.find('published') or item.find('{http://www.w3.org/2005/Atom}published')
-                pub_date = pub_date_elem.text if pub_date_elem is not None else None
+                pub_date = None
+                for pub_tag in ['pubDate', 'published', '{http://www.w3.org/2005/Atom}published']:
+                    pub_elem = item.find(pub_tag)
+                    if pub_elem is not None and hasattr(pub_elem, 'text') and pub_elem.text:
+                        pub_date = pub_elem.text
+                        break
                 
                 # Описание
-                desc_elem = item.find('description') or item.find('{http://www.w3.org/2005/Atom}summary') or item.find('content')
-                description = desc_elem.text if desc_elem is not None else ''
+                description = ''
+                for desc_tag in ['description', '{http://www.w3.org/2005/Atom}summary', 'content', '{http://www.w3.org/2005/Atom}content']:
+                    desc_elem = item.find(desc_tag)
+                    if desc_elem is not None:
+                        if hasattr(desc_elem, 'text') and desc_elem.text:
+                            description = desc_elem.text.strip()
+                            break
                 
                 # Добавляем статью только если есть и title и link
                 if link and title:
