@@ -43,14 +43,14 @@
 **Что остаётся в канале (для подписчиков):**
 - ✅ Посты парсеров (womenshealth-parser, menshealth-parser)
 - ✅ Ежедневные челленджи (daily-challenge.yml)
-- ✅ Еженедельная статистика (weekly-stats.yml)
 - ✅ Автоответы на комментарии (auto-reply.yml)
 
-**Что идёт только админу:**
+**Что идёт только админу (ID: 422372115):**
 - ✅ Отчёты мониторинга (autonomous_monitor.py)
 - ✅ SEO-аудиты (seo-audit.yml)
 - ✅ Уведомления о падении сайта (uptime-monitor.yml)
 - ✅ Ошибки в автономном тестировании (autonomous-monitoring.yml)
+- ✅ Еженедельная статистика (weekly-stats.yml) - **исправлено**
 
 ---
 
