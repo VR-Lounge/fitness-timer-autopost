@@ -8,6 +8,7 @@ feedback_timer.md
 .answered_messages.json
 .menshealth_processed.json
 .womenshealth_processed.json
+.content_hashes.json
 
 # Python
 __pycache__/

@@ -1,0 +1,239 @@
+{
+  "timestamp": "2026-01-09T13:10:25.479621",
+  "errors": [
+    {
+      "message": "Синтаксическая ошибка: expected an indented block (строка 2190)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/автопостинг.py"
+    },
+    {
+      "message": "Ошибка при проверке импортов: expected an indented block (<unknown>, line 2190)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/автопостинг.py"
+    }
+  ],
+  "warnings": [
+    {
+      "message": "Возможный хардкод секрета (строка 567)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 590)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 596)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 638)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 655)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 909)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 974)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1180)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1274)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1448)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1517)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1604)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1606)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1612)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 1613)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/auto_reply.py"
+    },
+    {
+      "message": "Использование bare except может скрыть ошибки (строка 68)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Использование bare except может скрыть ошибки (строка 220)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 258)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 259)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 267)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 303)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 326)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 327)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 333)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 342)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 390)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 392)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 394)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/menshealth_parser.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 127)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 129)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 173)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 175)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 187)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 190)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 221)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 226)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Потенциальная уязвимость SQL injection (строка 231)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_testing.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 43)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/autonomous_monitor.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 13)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/test_config.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 15)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/test_config.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 20)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/test_config.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 244)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/statistics.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 245)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/statistics.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 257)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/statistics.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 276)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/statistics.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 277)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/statistics.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 289)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/statistics.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 2236)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/автопостинг.py"
+    },
+    {
+      "message": "Возможный хардкод секрета (строка 2314)",
+      "file": "/Users/LOBANOFF-PRO/Documents/TABATATIMER.RU/С MediaPipe/fitness-timer-autopost/автопостинг.py"
+    },
+    {
+      "message": "Отсутствуют переменные окружения: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, DEEPSEEK_API_KEY",
+      "file": null
+    }
+  ],
+  "success": [
+    {
+      "message": "Все необходимые файлы присутствуют",
+      "file": null
+    },
+    {
+      "message": "Модуль menshealth_parser успешно импортирован",
+      "file": null
+    },
+    {
+      "message": "Модуль auto_reply успешно импортирован",
+      "file": null
+    },
+    {
+      "message": "Модуль statistics успешно импортирован",
+      "file": null
+    }
+  ],
+  "summary": {
+    "total_errors": 2,
+    "total_warnings": 50,
+    "total_success": 4,
+    "status": "FAIL"
+  }
+}

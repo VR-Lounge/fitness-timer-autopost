@@ -9,14 +9,26 @@ BUCKET_NAME="www.tabatatimer.ru"
 ENDPOINT_URL="https://storage.yandexcloud.net"
 
 # Определяем путь к public_html
-# В GitHub Actions репозиторий клонируется в корень, поэтому используем относительный путь
+# В GitHub Actions репозиторий клонируется в fitness-timer-autopost, а public_html - отдельно
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [ -d "$SCRIPT_DIR/../public_html" ]; then
+# В GitHub Actions структура: fitness-timer-autopost/ и public_html/ на одном уровне
+if [ -d "$(dirname "$SCRIPT_DIR")/../public_html" ]; then
+    # Мы в fitness-timer-autopost, public_html на уровень выше (в родительской директории)
+    SOURCE_DIR="$(dirname "$SCRIPT_DIR")/../public_html"
+elif [ -d "$SCRIPT_DIR/../public_html" ]; then
+    # Мы в fitness-timer-autopost, public_html на уровень выше
     SOURCE_DIR="$SCRIPT_DIR/../public_html"
+elif [ -d "../public_html" ]; then
+    # public_html на уровень выше от текущей директории
+    SOURCE_DIR="../public_html"
 elif [ -d "public_html" ]; then
+    # public_html в текущей директории
     SOURCE_DIR="public_html"
 else
     echo "❌ Папка public_html не найдена"
+    echo "Проверяю текущую директорию: $(pwd)"
+    echo "Проверяю структуру:"
+    ls -la .. | head -10
     exit 1
 fi
 
