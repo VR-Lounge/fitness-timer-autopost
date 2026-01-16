@@ -1,0 +1,295 @@
+{
+  "womens": [
+    {
+      "url": "https://strongfirst.com/blog/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 23,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://nourishmovelove.com/category/hiit/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 10,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://7-min.com/category/hiit/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 10,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://simpleendurancecoaching.com/category/hiit/feed",
+      "status": "parse_error",
+      "http_status": 200,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "XML Parse Error: syntax error: line 1, column 0"
+    },
+    {
+      "url": "https://polar.com/blog/tag/hiit-training/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 10,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://tone-and-tighten.com/category/strength-training/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 8,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://potentialpersonaltraining.co.uk/category/weight-training/feed",
+      "status": "error",
+      "http_status": null,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "Request Error: HTTPSConnectionPool(host='potentialpersonaltraining.co.uk', port=443): Max retries exceeded with url: /category/weight-training/feed (Caused by NameResolutionError(\"<urllib3.connection.HTTPSConnection object at 0x107643e80>: Failed to resolve 'potentialpersonaltraining.co.uk' ([Errno 8] nodename nor servname provided, or not known)\"))"
+    },
+    {
+      "url": "https://strengthforendurance.com/strength-training/feed",
+      "status": "error",
+      "http_status": 404,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "HTTP 404"
+    },
+    {
+      "url": "https://fasterfitness.com/category/training/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 10,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://juliabuckleyfitness.com/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 10,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://fitbottomedgirls.com/category/workouts/feed",
+      "status": "error",
+      "http_status": 403,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://hungry-runner.com/category/fitness/strength-training/feed",
+      "status": "error",
+      "http_status": 403,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "HTTP 403"
+    },
+    {
+      "url": "https://kingofthegym.com/training/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 10,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://wellnessmama.com/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 20,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://feeds.buzzsprout.com/2269359.rss",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 76,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://feeds.buzzsprout.com/1776731.rss",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 73,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://media.rss.com/thiccfit-fitness/feed.xml",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 84,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://www.vickihill.co.uk/blog/feed",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 20,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://rss.com/podcasts/muscle-strength-and-menopause/feed",
+      "status": "error",
+      "http_status": 404,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "HTTP 404"
+    },
+    {
+      "url": "https://blog.feed.fm/feed",
+      "status": "error",
+      "http_status": 404,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "HTTP 404"
+    }
+  ],
+  "mens": [
+    {
+      "url": "https://startingstrength.com/rss.rss",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 100,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://3dmusclejourney.com/blog.rss",
+      "status": "not_relevant",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 10,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": null
+    },
+    {
+      "url": "https://www.jimwendler.com/blogs/jimwendler-com.atom",
+      "status": "high_relevance",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 30,
+      "relevance_score": 0.9,
+      "relevance_percentage": 90,
+      "sample_titles": [
+        "Winter Treadmill Conditioning Challenges",
+        "Building Strength and the Training Max",
+        "5 Tips If You're Struggling with Your Training"
+      ],
+      "error": null
+    },
+    {
+      "url": "https://www.westside-barbell.com/blogs/the-blog.atom",
+      "status": "high_relevance",
+      "http_status": 200,
+      "parse_success": true,
+      "articles_count": 30,
+      "relevance_score": 1.0,
+      "relevance_percentage": 100,
+      "sample_titles": [
+        "Conjugate for Athletes: How to Achieve Productive Training",
+        "Starting Conjugate: Three Keys to Successful Dynamic Effort Training",
+        "Basic Conjugate Training Advice XVII"
+      ],
+      "error": null
+    },
+    {
+      "url": "https://breakingmuscle.com/feed",
+      "status": "error",
+      "http_status": 500,
+      "parse_success": false,
+      "articles_count": 0,
+      "relevance_score": 0.0,
+      "relevance_percentage": 0,
+      "sample_titles": [],
+      "error": "HTTP 500"
+    }
+  ],
+  "high_relevance_womens": [],
+  "high_relevance_mens": [
+    "https://www.jimwendler.com/blogs/jimwendler-com.atom",
+    "https://www.westside-barbell.com/blogs/the-blog.atom"
+  ],
+  "timestamp": "2026-01-16T11:16:07.707813"
+}
