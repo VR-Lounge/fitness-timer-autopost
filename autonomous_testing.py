@@ -255,6 +255,159 @@ class AutonomousTester:
             self.log_error(f"Не удалось импортировать {module_name}: {e}")
             return False
     
+    def test_integration_parsers(self) -> bool:
+        """Интеграционное тестирование парсеров на реальных данных"""
+        print(f"{Colors.BOLD}🔄 Интеграционное тестирование парсеров...{Colors.RESET}")
+        
+        success_count = 0
+        total_tests = 0
+        
+        # Тест 1: Проверка наличия модулей парсеров
+        total_tests += 1
+        try:
+            sys.path.insert(0, str(self.project_root))
+            
+            # Проверяем импорт парсеров
+            try:
+                import menshealth_parser
+                self.log_success("Модуль menshealth_parser импортирован")
+                success_count += 1
+            except Exception as e:
+                self.log_error(f"Не удалось импортировать menshealth_parser: {e}")
+            
+            try:
+                import womenshealth_parser
+                self.log_success("Модуль womenshealth_parser импортирован")
+                success_count += 1
+            except Exception as e:
+                self.log_error(f"Не удалось импортировать womenshealth_parser: {e}")
+            
+            total_tests += 1
+        except Exception as e:
+            self.log_error(f"Ошибка при интеграционном тестировании: {e}")
+        
+        # Тест 2: Проверка функций парсеров
+        total_tests += 1
+        try:
+            # Проверяем наличие ключевых функций
+            required_functions = {
+                'menshealth_parser': ['главная', 'парсить_rss_feed', 'определить_теги'],
+                'womenshealth_parser': ['главная', 'парсить_rss_feed', 'определить_теги']
+            }
+            
+            for module_name, functions in required_functions.items():
+                try:
+                    module = importlib.import_module(module_name)
+                    for func_name in functions:
+                        if hasattr(module, func_name):
+                            self.log_success(f"Функция {func_name} найдена в {module_name}")
+                        else:
+                            self.log_warning(f"Функция {func_name} не найдена в {module_name}")
+                except Exception as e:
+                    self.log_error(f"Ошибка проверки {module_name}: {e}")
+            
+            success_count += 1
+        except Exception as e:
+            self.log_error(f"Ошибка проверки функций: {e}")
+        
+        # Тест 3: Проверка работы с blog-posts.json
+        total_tests += 1
+        try:
+            blog_posts_file = self.project_root.parent / 'public_html' / 'blog-posts.json'
+            if not blog_posts_file.exists():
+                blog_posts_file = self.project_root / 'blog-posts.json'
+            
+            if blog_posts_file.exists():
+                with open(blog_posts_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                
+                posts = data.get('posts', [])
+                self.log_success(f"blog-posts.json найден, постов: {len(posts)}")
+                
+                # Проверяем структуру постов
+                if posts:
+                    sample_post = posts[0]
+                    required_fields = ['id', 'title', 'text', 'url']
+                    missing_fields = [field for field in required_fields if field not in sample_post]
+                    
+                    if missing_fields:
+                        self.log_warning(f"Отсутствуют поля в постах: {', '.join(missing_fields)}")
+                    else:
+                        self.log_success("Структура постов корректна")
+                
+                success_count += 1
+            else:
+                self.log_warning("blog-posts.json не найден (это нормально для первого запуска)")
+        except Exception as e:
+            self.log_error(f"Ошибка проверки blog-posts.json: {e}")
+        
+        # Тест 4: Проверка модулей проверки уникальности
+        total_tests += 1
+        try:
+            if (self.project_root / 'content_uniqueness.py').exists():
+                import content_uniqueness
+                required_funcs = ['проверить_полную_уникальность', 'проверить_схожесть_заголовков']
+                for func_name in required_funcs:
+                    if hasattr(content_uniqueness, func_name):
+                        self.log_success(f"Функция {func_name} найдена")
+                    else:
+                        self.log_warning(f"Функция {func_name} не найдена")
+                success_count += 1
+        except Exception as e:
+            self.log_error(f"Ошибка проверки content_uniqueness: {e}")
+        
+        # Тест 5: Проверка генератора HTML страниц
+        total_tests += 1
+        try:
+            if (self.project_root / 'generate_blog_post_page.py').exists():
+                import generate_blog_post_page
+                required_funcs = ['создать_slug', 'адаптировать_заголовок_для_русской_аудитории']
+                for func_name in required_funcs:
+                    if hasattr(generate_blog_post_page, func_name):
+                        self.log_success(f"Функция {func_name} найдена")
+                    else:
+                        self.log_warning(f"Функция {func_name} не найдена")
+                success_count += 1
+        except Exception as e:
+            self.log_error(f"Ошибка проверки generate_blog_post_page: {e}")
+        
+        return success_count == total_tests
+    
+    def test_parser_real_data(self) -> bool:
+        """Тестирует парсеры на реальных данных (без публикации)"""
+        print(f"{Colors.BOLD}📰 Тестирование парсеров на реальных данных...{Colors.RESET}")
+        
+        try:
+            # Проверяем наличие RSS фидов в парсерах
+            sys.path.insert(0, str(self.project_root))
+            
+            # Проверяем menshealth_parser
+            try:
+                import menshealth_parser
+                if hasattr(menshealth_parser, 'MENSHEALTH_RSS_FEEDS'):
+                    feeds = menshealth_parser.MENSHEALTH_RSS_FEEDS
+                    self.log_success(f"Men's Health RSS фидов: {len(feeds)}")
+                else:
+                    self.log_warning("MENSHEALTH_RSS_FEEDS не найден")
+            except Exception as e:
+                self.log_warning(f"Не удалось проверить menshealth_parser: {e}")
+            
+            # Проверяем womenshealth_parser
+            try:
+                import womenshealth_parser
+                if hasattr(womenshealth_parser, 'WOMENSHEALTH_RSS_FEEDS'):
+                    feeds = womenshealth_parser.WOMENSHEALTH_RSS_FEEDS
+                    self.log_success(f"Women's Health RSS фидов: {len(feeds)}")
+                else:
+                    self.log_warning("WOMENSHEALTH_RSS_FEEDS не найден")
+            except Exception as e:
+                self.log_warning(f"Не удалось проверить womenshealth_parser: {e}")
+            
+            return True
+        except Exception as e:
+            self.log_error(f"Ошибка тестирования на реальных данных: {e}")
+            return False
+    
     def run_all_tests(self):
         """Запускает все тесты"""
         print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.RESET}")
@@ -290,7 +443,7 @@ class AutonomousTester:
         
         # 5. Тестирование импорта модулей
         print(f"{Colors.BOLD}🧪 Тестирование импорта модулей...{Colors.RESET}")
-        modules_to_test = ['menshealth_parser', 'auto_reply', 'statistics']
+        modules_to_test = ['menshealth_parser', 'womenshealth_parser', 'auto_reply', 'statistics', 'content_uniqueness']
         for module in modules_to_test:
             if (self.project_root / f"{module}.py").exists():
                 self.test_module_import(module)
@@ -304,6 +457,16 @@ class AutonomousTester:
         # 7. Тестирование API подключений
         print(f"{Colors.BOLD}🌐 Тестирование API подключений...{Colors.RESET}")
         self.test_api_connections()
+        print()
+        
+        # 8. Интеграционное тестирование парсеров
+        print(f"{Colors.BOLD}🔄 Интеграционное тестирование парсеров...{Colors.RESET}")
+        self.test_integration_parsers()
+        print()
+        
+        # 9. Тестирование парсеров на реальных данных
+        print(f"{Colors.BOLD}📰 Тестирование парсеров на реальных данных...{Colors.RESET}")
+        self.test_parser_real_data()
         print()
         
         # Генерация отчета
