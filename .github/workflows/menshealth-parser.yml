@@ -45,26 +45,17 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Загрузка состояния (обработанные статьи)
-        id: download-state
-        uses: actions/download-artifact@v4
+      - name: Восстановление состояния (cache)
+        uses: actions/cache/restore@v4
         with:
-          name: menshealth-state
-          path: fitness-timer-autopost
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.run_id }}
-          allow-404: true
-        continue-on-error: true
-      
-      - name: Копирование состояния
-        if: steps.download-state.outcome == 'success'
-        working-directory: fitness-timer-autopost
-        run: |
-          if [ -f .menshealth_processed.json ]; then
-            echo "✅ Состояние загружено"
-          else
-            echo "ℹ️ Состояние не найдено (первый запуск)"
-          fi
+          path: |
+            fitness-timer-autopost/.menshealth_processed.json
+            fitness-timer-autopost/.content_hashes.json
+            fitness-timer-autopost/.telegram_recent.json
+            fitness-timer-autopost/.publication_logs.json
+          key: menshealth-state-${{ github.run_id }}
+          restore-keys: |
+            menshealth-state-
       
       - name: Создание структуры директорий
         run: |
@@ -141,15 +132,16 @@ jobs:
             echo "ℹ️ Нет изменений для коммита"
           fi
       
-      - name: Сохранение состояния
-        uses: actions/upload-artifact@v4
+      - name: Сохранение состояния (cache)
+        uses: actions/cache/save@v4
+        if: always()
         with:
-          name: menshealth-state
           path: |
             fitness-timer-autopost/.menshealth_processed.json
             fitness-timer-autopost/.content_hashes.json
-          include-hidden-files: true
-          retention-days: 90
+            fitness-timer-autopost/.telegram_recent.json
+            fitness-timer-autopost/.publication_logs.json
+          key: menshealth-state-${{ github.run_id }}
       
       - name: Логирование результата
         if: always()

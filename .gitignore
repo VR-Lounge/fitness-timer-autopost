@@ -9,8 +9,6 @@ feedback_timer.md
 .menshealth_processed.json
 .womenshealth_processed.json
 .content_hashes.json
-.telegram_recent.json
-.publication_logs.json
 
 # Python
 __pycache__/
@@ -38,3 +36,4 @@ logs/
 *.tmp
 *.bak
 *.swp
+.DS_Store
