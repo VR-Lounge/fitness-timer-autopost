@@ -18,7 +18,7 @@ from urllib.parse import urlparse, urljoin
 import subprocess
 import time
 
-from image_content_matcher import проверить_соответствие_изображения_контенту_через_deepseek
+from image_content_matcher import проверить_изображение_в_два_этапа
 
 # Определяем пути
 SCRIPT_DIR = Path(__file__).parent.absolute()
@@ -212,11 +212,11 @@ def скачать_и_загрузить_изображение(
     
     # Предварительная проверка по DeepSeek (логотипы/текст/релевантность)
     alt_текст = " ".join(теги) if теги else ""
-    соответствует, оценка, объяснение = проверить_соответствие_изображения_контенту_через_deepseek(
+    соответствует, оценка, объяснение = проверить_изображение_в_два_этапа(
         url, alt_текст, заголовок or "", текст or ""
     )
     if строгий_фильтр and not соответствует:
-        print(f"❌ DeepSeek отклонил изображение: {объяснение}")
+        print(f"❌ DeepSeek (2 этапа) отклонил изображение: {объяснение}")
         return None
     
     # Скачиваем изображение
