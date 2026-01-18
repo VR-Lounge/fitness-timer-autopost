@@ -38,6 +38,7 @@ from image_content_matcher import (
 )
 from text_cleaner import очистить_текст_для_telegram, очистить_текст_для_статьи
 from topic_balance import выбрать_статью_для_баланса
+from content_library import load_library, save_library, upsert_item, build_library_item
 from publication_logger import логировать_публикацию
 
 # Импортируем функцию адаптации заголовка
@@ -56,6 +57,11 @@ except ImportError:
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
+
+# Настройки библиотеки релевантного контента
+LIBRARY_MAX_ARTICLES = int(os.getenv('LIBRARY_MAX_ARTICLES', '80'))
+LIBRARY_MIN_KEYWORDS = int(os.getenv('LIBRARY_MIN_KEYWORDS', '1'))
+LIBRARY_USE_DEEPSEEK = os.getenv('LIBRARY_USE_DEEPSEEK', 'true').lower() == 'true'
 
 # RSS фиды Women's Health (40 проверенных рабочих источников)
 WOMENSHEALTH_RSS_FEEDS = [
@@ -610,6 +616,120 @@ def проверить_ограничение_частоты_публикаци�
         print(f"⚠️ Ошибка проверки ограничения частоты публикации: {e}")
         return True, None  # В случае ошибки разрешаем публикацию
 
+def оценить_релевантность_для_библиотеки(заголовок, текст, ключевые_слова, изображения):
+    """Оценивает релевантность статьи для библиотеки через DeepSeek (если доступно)."""
+    if not DEEPSEEK_API_KEY or not LIBRARY_USE_DEEPSEEK:
+        return None
+    
+    try:
+        url = "https://api.deepseek.com/v1/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {DEEPSEEK_API_KEY}"
+        }
+        
+        system_prompt = (
+            "Ты эксперт по фитнес-контенту. Оцени релевантность статьи для сайта о "
+            "HIIT/TABATA/EMOM/AMRAP тренировках и мотивации. "
+            "Верни ответ строго в JSON."
+        )
+        
+        изображения_текст = "\n".join(изображения[:5]) if изображения else "нет"
+        user_prompt = (
+            "Оцени статью:\n"
+            f"Заголовок: {заголовок}\n"
+            f"Ключевые слова: {', '.join(ключевые_слова)}\n"
+            f"Текст (фрагмент): {текст[:1200]}\n"
+            f"Изображения (URL): {изображения_текст}\n\n"
+            "Ответ строго JSON со структурой:\n"
+            "{"
+            "\"score\": 0-100, "
+            "\"summary_ru\": \"краткое описание на русском (1-2 предложения)\", "
+            "\"fitness_match\": \"high|medium|low\", "
+            "\"image_match\": \"high|medium|low\", "
+            "\"topics_ru\": [\"...\"]"
+            "}"
+        )
+        
+        data = {
+            "model": "deepseek-chat",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": 0.2,
+            "max_tokens": 300,
+            "top_p": 0.9
+        }
+        
+        response = requests.post(url, headers=headers, json=data, timeout=45)
+        response.raise_for_status()
+        result = response.json()
+        content = result['choices'][0]['message']['content']
+        
+        # Пытаемся распарсить JSON
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError:
+            match = re.search(r'\{.*\}', content, re.DOTALL)
+            if match:
+                return json.loads(match.group(0))
+        return None
+    except Exception as e:
+        print(f"⚠️ Ошибка оценки релевантности через DeepSeek: {e}")
+        return None
+
+def пополнить_библиотеку_релевантными(релевантные, источник='womenshealth'):
+    """Сохраняет релевантные статьи в библиотеку контента."""
+    if not релевантные:
+        return
+    
+    лимит = min(LIBRARY_MAX_ARTICLES, len(релевантные))
+    if лимит <= 0:
+        return
+    
+    print(f"\n📚 Пополняю библиотеку релевантным контентом (до {лимит} статей)...")
+    library = load_library()
+    добавлено = 0
+    
+    for статья in релевантные[:лимит]:
+        ключевые_слова = статья.get('keywords', [])
+        if len(ключевые_слова) < LIBRARY_MIN_KEYWORDS:
+            continue
+        
+        parsed = парсить_статью(статья.get('link', ''))
+        if not parsed or not parsed.get('content'):
+            continue
+        
+        изображения = [img.get('url', '') for img in parsed.get('images', []) if isinstance(img, dict)]
+        оценка = оценить_релевантность_для_библиотеки(
+            статья.get('title', ''),
+            parsed.get('content', ''),
+            ключевые_слова,
+            изображения
+        )
+        
+        summary_ru = оценка.get('summary_ru') if оценка else ''
+        relevance_score = оценка.get('score') if оценка else None
+        
+        item = build_library_item(
+            title=статья.get('title', ''),
+            url=статья.get('link', ''),
+            rss_feed_url=статья.get('rss_feed_url', ''),
+            source=источник,
+            keywords=ключевые_слова,
+            summary_ru=summary_ru,
+            relevance_score=relevance_score,
+            content_excerpt=parsed.get('content', '')[:500],
+            images=parsed.get('images', [])
+        )
+        
+        if upsert_item(library, item):
+            добавлено += 1
+    
+    save_library(library)
+    print(f"✅ Библиотека обновлена: добавлено/обновлено {добавлено} записей\n")
+
 def парсить_статью(url):
     """Парсит полный текст статьи и изображения с сайта"""
     try:
@@ -713,10 +833,25 @@ def парсить_статью(url):
                 'is_main': True
             })
         
+        def извлечь_src_изображения(img_tag):
+            """Извлекает URL изображения, включая srcset/data-srcset"""
+            src = img_tag.get('src') or img_tag.get('data-src') or img_tag.get('data-lazy-src') or img_tag.get('data-original')
+            if not src:
+                srcset = img_tag.get('srcset') or img_tag.get('data-srcset')
+                if srcset:
+                    # Берем первый URL из srcset
+                    src = srcset.split(',')[0].strip().split(' ')[0]
+            return src
+        
+        def разрешенное_расширение(img_url):
+            """Проверяет расширение файла по пути (без query)"""
+            path = urlparse(img_url).path.lower()
+            return any(path.endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp', '.gif'])
+        
         # Ищем изображения в статье
         article_images = soup.select('article img, .article-content img, .article-body img, main img, [class*="image"] img, [class*="photo"] img')
         for img in article_images[:20]:  # Увеличиваем до 20 изображений
-            src = img.get('src') or img.get('data-src') or img.get('data-lazy-src') or img.get('data-original')
+            src = извлечь_src_изображения(img)
             if not src:
                 continue
             
@@ -739,8 +874,8 @@ def парсить_статью(url):
                 except (ValueError, TypeError):
                     pass
             
-            # Фильтруем по расширению
-            if not any(src.lower().endswith(ext) for ext in ['.jpg', '.jpeg', '.png', '.webp', '.gif']):
+            # Фильтруем по расширению (учитываем query-параметры)
+            if not разрешенное_расширение(src):
                 continue
             
             # Проверяем релевантность
@@ -1614,6 +1749,7 @@ def главная():
         
         релевантна, ключевые_слова = проверить_релевантность(статья)
         if релевантна:
+            статья['keywords'] = ключевые_слова
             релевантные.append(статья)
         else:
             не_релевантных += 1
@@ -1640,6 +1776,9 @@ def главная():
                 print(f"     🖼️  Изображение: {изображение}")
     
     print()
+    
+    # Пополняем библиотеку релевантным контентом
+    пополнить_библиотеку_релевантными(релевантные, источник='womenshealth')
     
     # УЛУЧШЕНИЕ: Выбираем статью с лучшим балансом тематик
     текущий_час_utc = datetime.utcnow().strftime('%H')
