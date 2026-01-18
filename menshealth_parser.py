@@ -38,6 +38,7 @@ from image_content_matcher import (
 )
 from text_cleaner import очистить_текст_для_telegram, очистить_текст_для_статьи
 from topic_balance import выбрать_статью_для_баланса
+from telegram_dedup import is_duplicate as telegram_is_duplicate, record_post as telegram_record_post
 from publication_logger import логировать_публикацию
 
 # Импортируем функцию адаптации заголовка
@@ -56,6 +57,9 @@ except ImportError:
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
+
+# Жёсткий анти-повтор для Telegram
+TELEGRAM_ANTI_REPEAT_COUNT = int(os.getenv('TELEGRAM_ANTI_REPEAT_COUNT', '30'))
 
 # RSS фиды Men's Health (40+ источников)
 MENSHEALTH_RSS_FEEDS = [
@@ -607,7 +611,7 @@ def парсить_статью(url):
         
         # Ищем изображения в статье
         article_images = soup.select('article img, .article-content img, .article-body img, main img, [class*="image"] img, [class*="photo"] img')
-        for img in article_images[:20]:  # Увеличиваем до 20 изображений
+        for img in article_images[:40]:  # Увеличиваем до 40 изображений
             src = извлечь_src_изображения(img)
             if not src:
                 continue
@@ -653,6 +657,58 @@ def парсить_статью(url):
                 'title': title_attr,
                 'is_main': False
             })
+
+        # Ищем изображения в <source> (picture/video)
+        source_tags = soup.select('article source, .article-content source, .article-body source, main source')
+        for source in source_tags[:40]:
+            src = source.get('src') or None
+            if not src:
+                srcset = source.get('srcset') or source.get('data-srcset')
+                if srcset:
+                    src = srcset.split(',')[0].strip().split(' ')[0]
+            if not src:
+                continue
+            if src.startswith('//'):
+                src = 'https:' + src
+            elif src.startswith('/'):
+                parsed = urlparse(url)
+                src = f"{parsed.scheme}://{parsed.netloc}{src}"
+            elif not src.startswith('http'):
+                src = urljoin(url, src)
+            if not разрешенное_расширение(src):
+                continue
+            images.append({
+                'url': src,
+                'alt': '',
+                'title': '',
+                'is_main': False
+            })
+
+        # Ищем background-image в style атрибутах в пределах статьи
+        for elem in soup.select('article [style], .article-content [style], .article-body [style], main [style]'):
+            style = elem.get('style', '')
+            if 'background-image' not in style:
+                continue
+            match = re.findall(r'url\\(([^)]+)\\)', style)
+            for raw in match:
+                bg = raw.strip(' "\'')
+                if not bg:
+                    continue
+                if bg.startswith('//'):
+                    bg = 'https:' + bg
+                elif bg.startswith('/'):
+                    parsed = urlparse(url)
+                    bg = f"{parsed.scheme}://{parsed.netloc}{bg}"
+                elif not bg.startswith('http'):
+                    bg = urljoin(url, bg)
+                if not разрешенное_расширение(bg):
+                    continue
+                images.append({
+                    'url': bg,
+                    'alt': '',
+                    'title': '',
+                    'is_main': False
+                })
         
         # Удаляем дубликаты по URL
         unique_images = []
@@ -663,7 +719,7 @@ def парсить_статью(url):
                 seen_urls.add(normalized)
                 unique_images.append(img_dict)
         
-        images = unique_images[:10]  # Оставляем до 10 релевантных изображений
+        images = unique_images[:20]  # Оставляем до 20 релевантных изображений
         
         # Очищаем текст от лишних пробелов и переносов
         article_content = re.sub(r'\n{3,}', '\n\n', article_content)
@@ -1639,9 +1695,16 @@ def главная():
         # Форматируем пост с ссылкой (если есть) и отправляем в Telegram
         print("\n📤 Отправка в Telegram...")
         пост = форматировать_пост(рерайт_telegram, заголовок_русский, post_id=post_id, url=url_статьи if публиковать_на_сайт else None)
+        
+        # ЖЁСТКИЙ АНТИ-ПОВТОР: проверяем текст и изображение перед отправкой
+        if TELEGRAM_ANTI_REPEAT_COUNT > 0 and telegram_is_duplicate(пост, фото_url, TELEGRAM_ANTI_REPEAT_COUNT):
+            print("❌ Анти‑повтор: текст/картинка уже публиковались в Telegram, пробуем следующую статью...\n")
+            continue
+        
         успех_telegram = отправить_в_telegram(пост, фото_url)
         
         if успех_telegram:
+            telegram_record_post(пост, фото_url, TELEGRAM_ANTI_REPEAT_COUNT)
             # Сохраняем как обработанную
             сохранить_обработанную_статью(статья['link'])
             обработано += 1

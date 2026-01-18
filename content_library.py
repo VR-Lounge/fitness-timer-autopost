@@ -8,7 +8,7 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from urllib.parse import urlparse
 
 
@@ -60,6 +60,73 @@ def upsert_item(library: Dict, item: Dict) -> bool:
             return True
     library.setdefault("items", []).append(item)
     return True
+
+
+def _normalize_image_url(url: str) -> str:
+    if not url:
+        return ""
+    parsed = urlparse(url)
+    return f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+
+
+def normalize_images(images: List[Dict]) -> List[Dict]:
+    """Удаляет дубликаты изображений по URL."""
+    if not images:
+        return []
+    seen = set()
+    normalized = []
+    for img in images:
+        if not isinstance(img, dict):
+            continue
+        url = img.get("url", "")
+        key = _normalize_image_url(url)
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        normalized.append(img)
+    return normalized
+
+
+def prune_library(
+    library: Dict,
+    *,
+    min_score: int = 70,
+    min_images: int = 1,
+    blocked_phrases: Optional[List[str]] = None
+) -> Tuple[Dict, int]:
+    """Удаляет нерелевантные записи из библиотеки."""
+    removed = 0
+    if blocked_phrases is None:
+        blocked_phrases = [
+            "розыгрыш", "giveaway", "абонемент", "membership",
+            "анонс", "расписание", "призыв к регистрации", "register",
+            "скидк", "sale", "promo"
+        ]
+    
+    cleaned = []
+    for item in library.get("items", []):
+        score = item.get("relevance_score")
+        summary = (item.get("summary_ru", "") or "").lower()
+        content_excerpt = (item.get("content_excerpt", "") or "").lower()
+        images = normalize_images(item.get("images", []))
+        
+        if score is not None and score < min_score:
+            removed += 1
+            continue
+        
+        if any(p in summary or p in content_excerpt for p in blocked_phrases):
+            removed += 1
+            continue
+        
+        if len(images) < min_images:
+            removed += 1
+            continue
+        
+        item["images"] = images
+        cleaned.append(item)
+    
+    library["items"] = cleaned
+    return library, removed
 
 
 def build_library_item(

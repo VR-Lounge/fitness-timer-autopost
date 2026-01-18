@@ -38,7 +38,8 @@ from image_content_matcher import (
 )
 from text_cleaner import очистить_текст_для_telegram, очистить_текст_для_статьи
 from topic_balance import выбрать_статью_для_баланса
-from content_library import load_library, save_library, upsert_item, build_library_item
+from content_library import load_library, save_library, upsert_item, build_library_item, prune_library, normalize_images
+from telegram_dedup import is_duplicate as telegram_is_duplicate, record_post as telegram_record_post
 from publication_logger import логировать_публикацию
 
 # Импортируем функцию адаптации заголовка
@@ -59,9 +60,14 @@ TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
 
 # Настройки библиотеки релевантного контента
-LIBRARY_MAX_ARTICLES = int(os.getenv('LIBRARY_MAX_ARTICLES', '80'))
+LIBRARY_MAX_ARTICLES = int(os.getenv('LIBRARY_MAX_ARTICLES', '120'))
 LIBRARY_MIN_KEYWORDS = int(os.getenv('LIBRARY_MIN_KEYWORDS', '1'))
+LIBRARY_MIN_SCORE = int(os.getenv('LIBRARY_MIN_SCORE', '70'))
+LIBRARY_MIN_IMAGES = int(os.getenv('LIBRARY_MIN_IMAGES', '1'))
 LIBRARY_USE_DEEPSEEK = os.getenv('LIBRARY_USE_DEEPSEEK', 'true').lower() == 'true'
+
+# Жёсткий анти-повтор для Telegram
+TELEGRAM_ANTI_REPEAT_COUNT = int(os.getenv('TELEGRAM_ANTI_REPEAT_COUNT', '30'))
 
 # RSS фиды Women's Health (40 проверенных рабочих источников)
 WOMENSHEALTH_RSS_FEEDS = [
@@ -679,6 +685,16 @@ def оценить_релевантность_для_библиотеки(заг
         print(f"⚠️ Ошибка оценки релевантности через DeepSeek: {e}")
         return None
 
+def сформировать_alt_title_ru(заголовок_русский: str, keywords: list, idx: int) -> Dict[str, str]:
+    """Формирует уникальные alt/title для изображения на русском."""
+    базовый = заголовок_русский or "Тренировка и фитнес"
+    хвост = ""
+    if keywords:
+        хвост = f" — {keywords[0]}"
+    alt = f"{базовый}{хвост} — фото {idx}"
+    title = f"{базовый}{хвост} — изображение {idx}"
+    return {"alt": alt, "title": title}
+
 def пополнить_библиотеку_релевантными(релевантные, источник='womenshealth'):
     """Сохраняет релевантные статьи в библиотеку контента."""
     if not релевантные:
@@ -690,6 +706,13 @@ def пополнить_библиотеку_релевантными(релев�
     
     print(f"\n📚 Пополняю библиотеку релевантным контентом (до {лимит} статей)...")
     library = load_library()
+    library, удалено = prune_library(
+        library,
+        min_score=LIBRARY_MIN_SCORE,
+        min_images=LIBRARY_MIN_IMAGES
+    )
+    if удалено > 0:
+        print(f"🧹 Библиотека очищена: удалено {удалено} нерелевантных записей")
     добавлено = 0
     
     for статья in релевантные[:лимит]:
@@ -711,6 +734,28 @@ def пополнить_библиотеку_релевантными(релев�
         
         summary_ru = оценка.get('summary_ru') if оценка else ''
         relevance_score = оценка.get('score') if оценка else None
+        if relevance_score is not None and relevance_score < LIBRARY_MIN_SCORE:
+            continue
+        
+        # Формируем русские alt/title для изображений
+        заголовок_русский = адаптировать_заголовок_для_русской_аудитории(
+            статья.get('title', ''),
+            parsed.get('content', '')
+        )
+        images = []
+        for i, img in enumerate(parsed.get('images', [])[:20], 1):
+            if not isinstance(img, dict) or not img.get('url'):
+                continue
+            alt_title = сформировать_alt_title_ru(заголовок_русский, ключевые_слова, i)
+            images.append({
+                "url": img.get("url", ""),
+                "alt": alt_title["alt"],
+                "title": alt_title["title"],
+                "is_main": img.get("is_main", False)
+            })
+        images = normalize_images(images)
+        if len(images) < LIBRARY_MIN_IMAGES:
+            continue
         
         item = build_library_item(
             title=статья.get('title', ''),
@@ -721,7 +766,7 @@ def пополнить_библиотеку_релевантными(релев�
             summary_ru=summary_ru,
             relevance_score=relevance_score,
             content_excerpt=parsed.get('content', '')[:500],
-            images=parsed.get('images', [])
+            images=images
         )
         
         if upsert_item(library, item):
@@ -850,7 +895,7 @@ def парсить_статью(url):
         
         # Ищем изображения в статье
         article_images = soup.select('article img, .article-content img, .article-body img, main img, [class*="image"] img, [class*="photo"] img')
-        for img in article_images[:20]:  # Увеличиваем до 20 изображений
+        for img in article_images[:40]:  # Увеличиваем до 40 изображений
             src = извлечь_src_изображения(img)
             if not src:
                 continue
@@ -897,6 +942,58 @@ def парсить_статью(url):
                 'title': title_attr,
                 'is_main': False
             })
+
+        # Ищем изображения в <source> (picture/video)
+        source_tags = soup.select('article source, .article-content source, .article-body source, main source')
+        for source in source_tags[:40]:
+            src = source.get('src') or None
+            if not src:
+                srcset = source.get('srcset') or source.get('data-srcset')
+                if srcset:
+                    src = srcset.split(',')[0].strip().split(' ')[0]
+            if not src:
+                continue
+            if src.startswith('//'):
+                src = 'https:' + src
+            elif src.startswith('/'):
+                parsed = urlparse(url)
+                src = f"{parsed.scheme}://{parsed.netloc}{src}"
+            elif not src.startswith('http'):
+                src = urljoin(url, src)
+            if not разрешенное_расширение(src):
+                continue
+            images.append({
+                'url': src,
+                'alt': '',
+                'title': '',
+                'is_main': False
+            })
+
+        # Ищем background-image в style атрибутах в пределах статьи
+        for elem in soup.select('article [style], .article-content [style], .article-body [style], main [style]'):
+            style = elem.get('style', '')
+            if 'background-image' not in style:
+                continue
+            match = re.findall(r'url\\(([^)]+)\\)', style)
+            for raw in match:
+                bg = raw.strip(' "\'')
+                if not bg:
+                    continue
+                if bg.startswith('//'):
+                    bg = 'https:' + bg
+                elif bg.startswith('/'):
+                    parsed = urlparse(url)
+                    bg = f"{parsed.scheme}://{parsed.netloc}{bg}"
+                elif not bg.startswith('http'):
+                    bg = urljoin(url, bg)
+                if not разрешенное_расширение(bg):
+                    continue
+                images.append({
+                    'url': bg,
+                    'alt': '',
+                    'title': '',
+                    'is_main': False
+                })
         
         # Удаляем дубликаты по URL
         unique_images = []
@@ -907,7 +1004,7 @@ def парсить_статью(url):
                 seen_urls.add(normalized)
                 unique_images.append(img_dict)
         
-        images = unique_images[:10]  # Оставляем до 10 релевантных изображений
+        images = unique_images[:20]  # Оставляем до 20 релевантных изображений
         
         # Очищаем текст от лишних пробелов и переносов
         article_content = re.sub(r'\n{3,}', '\n\n', article_content)
@@ -1906,9 +2003,16 @@ def главная():
         # Форматируем пост с ссылкой (если есть) и отправляем в Telegram
         print("\n📤 Отправка в Telegram...")
         пост = форматировать_пост(рерайт_telegram, заголовок_русский, post_id=post_id, url=url_статьи if публиковать_на_сайт else None)
+        
+        # ЖЁСТКИЙ АНТИ-ПОВТОР: проверяем текст и изображение перед отправкой
+        if TELEGRAM_ANTI_REPEAT_COUNT > 0 and telegram_is_duplicate(пост, фото_url, TELEGRAM_ANTI_REPEAT_COUNT):
+            print("❌ Анти‑повтор: текст/картинка уже публиковались в Telegram, пробуем следующую статью...\n")
+            continue
+        
         успех_telegram = отправить_в_telegram(пост, фото_url)
         
         if успех_telegram:
+            telegram_record_post(пост, фото_url, TELEGRAM_ANTI_REPEAT_COUNT)
             сохранить_обработанную_статью(статья['link'])
             обработано += 1
             
