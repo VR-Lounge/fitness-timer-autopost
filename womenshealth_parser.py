@@ -24,6 +24,7 @@ import time
 import html
 import sys
 import subprocess
+from typing import Dict
 
 # Добавляем путь к модулю проверки уникальности
 sys.path.insert(0, str(Path(__file__).parent))
