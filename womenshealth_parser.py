@@ -696,6 +696,23 @@ def сформировать_alt_title_ru(заголовок_русский: str
     title = f"{базовый}{хвост} — изображение {idx}"
     return {"alt": alt, "title": title}
 
+def заполнить_alt_title_в_библиотеке(library: Dict) -> Dict:
+    """Заполняет пустые alt/title в библиотеке на русском языке."""
+    for item in library.get("items", []):
+        title = item.get("title", "")
+        excerpt = item.get("content_excerpt", "")
+        keywords = item.get("keywords", [])
+        заголовок_русский = адаптировать_заголовок_для_русской_аудитории(title, excerpt)
+        images = item.get("images", [])
+        for idx, img in enumerate(images, 1):
+            if not isinstance(img, dict):
+                continue
+            if not img.get("alt") or not img.get("title"):
+                alt_title = сформировать_alt_title_ru(заголовок_русский, keywords, idx)
+                img["alt"] = img.get("alt") or alt_title["alt"]
+                img["title"] = img.get("title") or alt_title["title"]
+    return library
+
 def пополнить_библиотеку_релевантными(релевантные, источник='womenshealth'):
     """Сохраняет релевантные статьи в библиотеку контента."""
     if not релевантные:
@@ -712,6 +729,7 @@ def пополнить_библиотеку_релевантными(релев�
         min_score=LIBRARY_MIN_SCORE,
         min_images=LIBRARY_MIN_IMAGES
     )
+    library = заполнить_alt_title_в_библиотеке(library)
     if удалено > 0:
         print(f"🧹 Библиотека очищена: удалено {удалено} нерелевантных записей")
     добавлено = 0
