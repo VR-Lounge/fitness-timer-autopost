@@ -8,11 +8,12 @@ import json
 import hashlib
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Set
 from urllib.parse import urlparse
 
 
 STATE_FILE = Path(".telegram_recent.json")
+PUBLICATION_LOG_FILE = Path(".publication_logs.json")
 
 
 def _normalize_text(text: str) -> str:
@@ -47,15 +48,34 @@ def save_recent(data: Dict) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def _load_recent_images_from_logs(max_items: int) -> Set[str]:
+    if not PUBLICATION_LOG_FILE.exists():
+        return set()
+    try:
+        with open(PUBLICATION_LOG_FILE, "r", encoding="utf-8") as f:
+            logs = json.load(f)
+        images = []
+        for item in logs[-max_items:]:
+            url = _normalize_url(item.get("image_url", ""))
+            if url:
+                images.append(url)
+        return set(images)
+    except Exception:
+        return set()
+
+
 def is_duplicate(text: str, image_url: str, max_items: int = 30) -> bool:
     recent = load_recent()
     text_hash = _hash_text(text)
     image_norm = _normalize_url(image_url)
+    log_images = _load_recent_images_from_logs(max_items)
     for item in recent.get("items", [])[-max_items:]:
         if item.get("text_hash") == text_hash:
             return True
         if image_norm and item.get("image_url") == image_norm:
             return True
+    if image_norm and image_norm in log_images:
+        return True
     return False
 
 

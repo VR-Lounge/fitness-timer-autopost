@@ -1723,7 +1723,8 @@ def главная():
                 'publish_to_telegram': True,
                 'title': заголовок_русский,
                 'post_id': post_id,
-                'url': url_статьи if публиковать_на_сайт else None
+                'url': url_статьи if публиковать_на_сайт else None,
+                'image_url': фото_url
             })
             
             print(f"\n✅ Статья успешно обработана и опубликована!")
