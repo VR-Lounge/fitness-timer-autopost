@@ -98,6 +98,31 @@ jobs:
           PUBLISH_TO_BLOG: ${{ steps.publish_mode.outputs.publish_to_blog || github.event_name == 'workflow_dispatch' }}
         run: |
           python3 womenshealth_parser.py
+
+      - name: Коммит библиотеки релевантного контента
+        if: always()
+        working-directory: fitness-timer-autopost
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f content_library.json ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VR-Lounge/fitness-timer-autopost.git
+            git add content_library.json
+            if git diff --cached --quiet; then
+              echo "ℹ️ Библиотека не изменилась"
+            else
+              git commit -m "📚 Обновление библиотеки контента $(date +'%Y-%m-%d %H:%M:%S')" || echo "⚠️ Нет изменений для коммита"
+              if git push origin main; then
+                echo "✅ Библиотека контента отправлена в fitness-timer-autopost"
+              else
+                echo "⚠️ Не удалось отправить библиотеку контента"
+              fi
+            fi
+          else
+            echo "ℹ️ content_library.json не найден, пропускаю коммит"
+          fi
       
       - name: Генерация HTML страниц для блога
         if: steps.publish_mode.outputs.publish_to_blog == 'true' || github.event_name == 'workflow_dispatch'
@@ -152,6 +177,7 @@ jobs:
           path: |
             fitness-timer-autopost/.womenshealth_processed.json
             fitness-timer-autopost/.content_hashes.json
+            fitness-timer-autopost/content_library.json
           include-hidden-files: true
           retention-days: 90
       
