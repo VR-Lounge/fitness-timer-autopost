@@ -20,7 +20,6 @@ from bs4 import BeautifulSoup
 from content_library import load_library, save_library, upsert_item, build_library_item, normalize_images
 
 
-BASE_CATEGORY_URL = "https://skinnyms.com/category/fitness/"
 STATE_FILE = Path(".skinnyms_queue.json")
 
 HEADERS = {
@@ -42,11 +41,11 @@ BLOCKED_IMAGE_KEYWORDS = [
 
 def load_state() -> Dict:
     if not STATE_FILE.exists():
-        return {"pending_urls": [], "seen_urls": [], "last_page_scanned": 0}
+        return {"pending": [], "seen_urls": [], "last_page_scanned": {}}
     try:
         return json.loads(STATE_FILE.read_text(encoding="utf-8"))
     except Exception:
-        return {"pending_urls": [], "seen_urls": [], "last_page_scanned": 0}
+        return {"pending": [], "seen_urls": [], "last_page_scanned": {}}
 
 
 def save_state(state: Dict) -> None:
@@ -143,10 +142,14 @@ def parse_article(url: str) -> Optional[Dict]:
         img_url = extract_img_url(img)
         if not img_url:
             continue
+        if "gravatar.com" in img_url:
+            continue
         if img_url.startswith("//"):
             img_url = "https:" + img_url
         elif img_url.startswith("/"):
             img_url = urljoin(url, img_url)
+        if "skinnyms.com/wp-content/uploads" not in img_url:
+            continue
         alt = img.get("alt", "")
         width = img.get("width", "")
         height = img.get("height", "")
@@ -179,33 +182,63 @@ def main() -> None:
     max_pages = int(os.getenv("SKINNYMS_MAX_PAGES", "79"))
     pages_per_run = int(os.getenv("SKINNYMS_PAGES_PER_RUN", "79"))
     max_articles = int(os.getenv("SKINNYMS_MAX_ARTICLES_PER_RUN", "20"))
+    categories_env = os.getenv("SKINNYMS_CATEGORIES", "fitness,recipes")
+    categories = [c.strip() for c in categories_env.split(",") if c.strip()]
+    category_map = {
+        "fitness": {
+            "base_url": "https://skinnyms.com/category/fitness/",
+            "source": "skinnyms_fitness",
+            "keywords": ["fitness", "workout", "hiit", "tabata", "emom", "amrap"]
+        },
+        "recipes": {
+            "base_url": "https://skinnyms.com/category/recipes/",
+            "source": "skinnyms_recipes",
+            "keywords": ["recipes", "healthy", "meal", "nutrition"]
+        }
+    }
 
     state = load_state()
     library = load_library()
 
-    start_page = max(1, int(state.get("last_page_scanned", 0)) + 1)
-    end_page = min(max_pages, start_page + pages_per_run - 1)
-
-    print(f"🔎 Сканирую страницы {start_page}-{end_page} из {max_pages}")
-    for page in range(start_page, end_page + 1):
-        page_url = BASE_CATEGORY_URL if page == 1 else f"{BASE_CATEGORY_URL}page/{page}/"
-        soup = fetch_page(page_url)
-        if not soup:
+    for category in categories:
+        cfg = category_map.get(category)
+        if not cfg:
+            print(f"⚠️ Неизвестная категория: {category}")
             continue
-        links = collect_article_links(soup)
-        for link in links:
-            if link not in state["seen_urls"] and link not in state["pending_urls"]:
-                state["pending_urls"].append(link)
-        state["last_page_scanned"] = page
-        time.sleep(1)
+        base_url = cfg["base_url"]
+        last_page = int(state.get("last_page_scanned", {}).get(category, 0))
+        start_page = max(1, last_page + 1)
+        end_page = min(max_pages, start_page + pages_per_run - 1)
+
+        print(f"🔎 {category}: страницы {start_page}-{end_page} из {max_pages}")
+        for page in range(start_page, end_page + 1):
+            page_url = base_url if page == 1 else f"{base_url}page/{page}/"
+            soup = fetch_page(page_url)
+            if not soup:
+                continue
+            links = collect_article_links(soup)
+            for link in links:
+                if link not in state["seen_urls"]:
+                    state["pending"].append({
+                        "url": link,
+                        "source": cfg["source"],
+                        "rss_feed_url": base_url,
+                        "keywords": cfg["keywords"]
+                    })
+            state.setdefault("last_page_scanned", {})[category] = page
+            time.sleep(1)
 
     save_state(state)
-    print(f"📌 В очереди статей: {len(state['pending_urls'])}")
+    print(f"📌 В очереди статей: {len(state['pending'])}")
 
     processed = 0
-    while state["pending_urls"] and processed < max_articles:
-        url = state["pending_urls"].pop(0)
-        if url in state["seen_urls"]:
+    while state["pending"] and processed < max_articles:
+        item = state["pending"].pop(0)
+        url = item.get("url")
+        source = item.get("source", "skinnyms_fitness")
+        rss_feed_url = item.get("rss_feed_url", "")
+        keywords = item.get("keywords", [])
+        if not url or url in state["seen_urls"]:
             continue
         print(f"\n📝 Парсинг: {url}")
         parsed = parse_article(url)
@@ -220,9 +253,9 @@ def main() -> None:
         item = build_library_item(
             title=parsed["title"],
             url=parsed["url"],
-            rss_feed_url=BASE_CATEGORY_URL,
-            source="skinnyms",
-            keywords=["fitness", "workout", "hiit"],
+            rss_feed_url=rss_feed_url,
+            source=source,
+            keywords=keywords,
             summary_ru="",
             relevance_score=85,
             content_excerpt=parsed["content_excerpt"],
