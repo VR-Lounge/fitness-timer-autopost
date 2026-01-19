@@ -68,12 +68,17 @@ def очистить_текст_от_html(текст):
     текст = ' '.join(текст.split())
     return текст
 
-def создать_slug(текст, post_id):
-    """Создаёт URL-friendly slug из текста или использует ID"""
-    if not текст:
-        return post_id
-    
-    # Транслитерация и очистка
+SLUG_CACHE = {}
+USED_SLUGS = set()
+KNOWN_SLUGS = {
+    'nutrition_1': 'pravilnoe-pitanie-dlya-trenirovok-chto-est-do-i-po',
+    'mens_workout_1': 'silovaya-trenirovka-dlya-muzhchin-nabiraem-massu-z',
+    'womens_workout_1': 'trenirovka-dlya-devushek-stroynoe-telo-za-30-dney',
+    'diet_1': 'sredizemnomorskaya-dieta-nauchno-dokazannyy-put-k-',
+    'motivation_1': 'nachni-segodnya-pochemu-ne-stoit-otkladyvat-trenir'
+}
+
+def _transliterate_slug(текст: str) -> str:
     транслит = {
         'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
         'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
@@ -81,24 +86,37 @@ def создать_slug(текст, post_id):
         'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
         'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
     }
-    
-    текст = текст.lower()
+    text = (текст or '').lower()
     slug = ''
-    for char in текст:
+    for char in text:
         if char in транслит:
             slug += транслит[char]
         elif char.isalnum() or char in '- ':
             slug += char
         else:
             slug += '-'
-    
-    # Очищаем и ограничиваем длину
     slug = re.sub(r'[-\s]+', '-', slug)
     slug = slug.strip('-')[:50]
-    
-    if not slug:
-        slug = post_id
-    
+    return slug
+
+def создать_slug(текст, post_id):
+    """Создаёт URL-friendly slug с гарантией уникальности."""
+    if post_id in SLUG_CACHE:
+        return SLUG_CACHE[post_id]
+    if post_id in KNOWN_SLUGS:
+        slug = KNOWN_SLUGS[post_id]
+    else:
+        slug = _transliterate_slug(текст)
+        if not slug:
+            slug = post_id
+    if slug in USED_SLUGS:
+        suffix = re.sub(r'[^a-z0-9]', '', (post_id or '')[-8:].lower())
+        if suffix:
+            slug = f"{slug[:42]}-{suffix}"
+        else:
+            slug = f"{slug[:42]}-{abs(hash(post_id)) % 10000}"
+    USED_SLUGS.add(slug)
+    SLUG_CACHE[post_id] = slug
     return slug
 
 def извлечь_заголовки_из_текста(текст):
@@ -1448,6 +1466,10 @@ def сгенерировать_страницы_для_всех_постов():
     
     посты = data.get('posts', [])
     print(f"📝 Найдено постов: {len(посты)}")
+
+    # Сбрасываем кеши slug для корректной уникальности
+    SLUG_CACHE.clear()
+    USED_SLUGS.clear()
     
     сгенерировано = 0
     for пост in посты:
