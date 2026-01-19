@@ -72,6 +72,7 @@ LIBRARY_MIN_KEYWORDS = int(os.getenv('LIBRARY_MIN_KEYWORDS', '1'))
 LIBRARY_MIN_SCORE = int(os.getenv('LIBRARY_MIN_SCORE', '70'))
 LIBRARY_MIN_IMAGES = int(os.getenv('LIBRARY_MIN_IMAGES', '1'))
 LIBRARY_USE_DEEPSEEK = os.getenv('LIBRARY_USE_DEEPSEEK', 'true').lower() == 'true'
+INLINE_HTML_GENERATION = os.getenv('INLINE_HTML_GENERATION', 'false').lower() == 'true'
 SKINNYMS_ONLY = os.getenv('SKINNYMS_ONLY', 'false').lower() == 'true'
 
 # Жёсткий анти-повтор для Telegram
@@ -1773,62 +1774,62 @@ def сохранить_пост_в_блог(текст, изображение_u
         
         print(f"✅ Пост сохранён в блог ({len(теги)} тегов: {', '.join(теги)})")
         
-        # КРИТИЧЕСКИ ВАЖНО: Генерируем HTML страницу СРАЗУ после сохранения в JSON
-        # Это гарантирует, что страница будет создана ДО отправки в Telegram
-        print(f"\n📄 Генерирую HTML страницу для статьи...")
-        try:
-            генератор = Path(__file__).parent / 'generate_blog_post_page.py'
-            if генератор.exists():
-                # Увеличиваем timeout до 60 секунд для больших статей
-                result = subprocess.run(
-                    ['python3', str(генератор)],
-                    cwd=str(Path(__file__).parent),
-                    capture_output=True,
-                    text=True,
-                    timeout=60
-                )
-                if result.returncode == 0:
-                    print("✅ HTML страница для статьи сгенерирована")
-                    # Проверяем, что файл действительно создан
-                    html_file = REPO_ROOT / 'public_html' / 'blog' / f"{slug}.html"
-                    if html_file.exists():
-                        print(f"✅ HTML файл подтверждён: {html_file.name}")
+        # ВАЖНО: HTML страницы генерируются отдельным шагом workflow.
+        if INLINE_HTML_GENERATION:
+            print(f"\n📄 Генерирую HTML страницу для статьи...")
+            try:
+                генератор = Path(__file__).parent / 'generate_blog_post_page.py'
+                if генератор.exists():
+                    # Увеличиваем timeout до 60 секунд для больших статей
+                    result = subprocess.run(
+                        ['python3', str(генератор)],
+                        cwd=str(Path(__file__).parent),
+                        capture_output=True,
+                        text=True,
+                        timeout=60
+                    )
+                    if result.returncode == 0:
+                        print("✅ HTML страница для статьи сгенерирована")
+                        # Проверяем, что файл действительно создан
+                        html_file = REPO_ROOT / 'public_html' / 'blog' / f"{slug}.html"
+                        if html_file.exists():
+                            print(f"✅ HTML файл подтверждён: {html_file.name}")
+                        else:
+                            print(f"⚠️ HTML файл не найден: {html_file.name}")
+                            # Удаляем пост из blog-posts.json, чтобы не было битой ссылки
+                            data['posts'] = [p for p in data['posts'] if p.get('id') != post_id]
+                            with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
+                                json.dump(data, f, ensure_ascii=False, indent=2)
+                            return False
                     else:
-                        print(f"⚠️ HTML файл не найден: {html_file.name}")
-                        # Удаляем пост из blog-posts.json, чтобы не было битой ссылки
+                        print(f"❌ Ошибка генерации HTML страницы: {result.stderr}")
+                        print(f"   stdout: {result.stdout}")
+                        # Удаляем пост, чтобы не было битой ссылки
                         data['posts'] = [p for p in data['posts'] if p.get('id') != post_id]
                         with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
                             json.dump(data, f, ensure_ascii=False, indent=2)
                         return False
                 else:
-                    print(f"❌ Ошибка генерации HTML страницы: {result.stderr}")
-                    print(f"   stdout: {result.stdout}")
+                    print(f"⚠️ Файл generate_blog_post_page.py не найден: {генератор}")
                     # Удаляем пост, чтобы не было битой ссылки
                     data['posts'] = [p for p in data['posts'] if p.get('id') != post_id]
                     with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
                         json.dump(data, f, ensure_ascii=False, indent=2)
                     return False
-            else:
-                print(f"⚠️ Файл generate_blog_post_page.py не найден: {генератор}")
-                # Удаляем пост, чтобы не было битой ссылки
+            except subprocess.TimeoutExpired:
+                print(f"⚠️ Таймаут генерации HTML страницы (превышено 60 секунд)")
                 data['posts'] = [p for p in data['posts'] if p.get('id') != post_id]
                 with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
                     json.dump(data, f, ensure_ascii=False, indent=2)
                 return False
-        except subprocess.TimeoutExpired:
-            print(f"⚠️ Таймаут генерации HTML страницы (превышено 60 секунд)")
-            data['posts'] = [p for p in data['posts'] if p.get('id') != post_id]
-            with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            return False
-        except Exception as e:
-            print(f"⚠️ Ошибка генерации HTML страницы: {e}")
-            import traceback
-            traceback.print_exc()
-            data['posts'] = [p for p in data['posts'] if p.get('id') != post_id]
-            with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            return False
+            except Exception as e:
+                print(f"⚠️ Ошибка генерации HTML страницы: {e}")
+                import traceback
+                traceback.print_exc()
+                data['posts'] = [p for p in data['posts'] if p.get('id') != post_id]
+                with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, ensure_ascii=False, indent=2)
+                return False
         
         # Возвращаем URL для использования в Telegram
         return {'success': True, 'url': url, 'title': заголовок_русский}
