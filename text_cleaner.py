@@ -20,6 +20,12 @@ import re
     r'официальн', r'ссылка', r'подписк', r'реклама'
 ]
 
+ИСТОЧНИК_МАРКЕРЫ = [
+    r'\bskinny\s*ms\b',
+    r'\bskinnyms\b',
+    r'skinnyms\.com'
+]
+
 def очистить_текст_от_ai_маркеров(текст: str) -> str:
     """
     Очищает текст от AI-маркеров, делая его более естественным
@@ -116,3 +122,14 @@ def содержит_рекламные_маркеры(текст: str) -> bool:
         if re.search(pattern, lower_text):
             return True
     return False
+
+def удалить_упоминания_источника(текст: str) -> str:
+    """Удаляет нейтральные упоминания источников (например SkinnyMs) перед фильтром."""
+    if not текст:
+        return текст
+    cleaned = текст
+    for pattern in ИСТОЧНИК_МАРКЕРЫ:
+        cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
+    # Чистим лишние пробелы
+    cleaned = re.sub(r'\s{2,}', ' ', cleaned).strip()
+    return cleaned

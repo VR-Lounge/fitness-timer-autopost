@@ -46,6 +46,11 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Установка AWS CLI для Яндекс Cloud
+        working-directory: fitness-timer-autopost
+        run: |
+          pip install awscli
       
       - name: Восстановление состояния (cache)
         uses: actions/cache/restore@v4
@@ -71,9 +76,13 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
+          YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
           # Всегда публикуем на сайт вместе с постом
           PUBLISH_TO_BLOG: "true"
           SKINNYMS_ONLY: "true"
+          SKINNYMS_CATEGORIES: "fitness,recipes"
+          SKINNYMS_MAX_ARTICLES_PER_RUN: "40"
         run: |
           python3 skinnyms_parser.py
           python3 womenshealth_parser.py
@@ -107,11 +116,6 @@ jobs:
         working-directory: fitness-timer-autopost
         run: |
           python3 generate_blog_post_page.py
-      
-      - name: Установка AWS CLI для Яндекс Cloud
-        working-directory: fitness-timer-autopost
-        run: |
-          pip install awscli
       
       - name: Загрузка файлов блога на Яндекс Cloud
         working-directory: fitness-timer-autopost

@@ -38,7 +38,12 @@ from image_content_matcher import (
     получить_использованные_изображения_из_постов
 )
 from fitness_image_collections import получить_релевантное_изображение_для_статьи
-from text_cleaner import очистить_текст_для_telegram, очистить_текст_для_статьи, содержит_рекламные_маркеры
+from text_cleaner import (
+    очистить_текст_для_telegram,
+    очистить_текст_для_статьи,
+    содержит_рекламные_маркеры,
+    удалить_упоминания_источника
+)
 from topic_balance import выбрать_статью_для_баланса
 from content_library import load_library, save_library, upsert_item, build_library_item, prune_library, normalize_images
 from telegram_dedup import is_duplicate as telegram_is_duplicate, record_post as telegram_record_post
@@ -2068,7 +2073,8 @@ def главная():
             continue
         
         # ЖЁСТКИЙ фильтр рекламных/брендовых текстов
-        if содержит_рекламные_маркеры(рерайт_telegram):
+        текст_для_фильтра = удалить_упоминания_источника(рерайт_telegram) if SKINNYMS_ONLY else рерайт_telegram
+        if содержит_рекламные_маркеры(текст_для_фильтра):
             print("❌ Рекламные маркеры в тексте Telegram, пробуем следующую...\n")
             сохранить_обработанную_статью(статья['link'])
             continue
@@ -2082,7 +2088,8 @@ def главная():
             print("⚠️ Не удалось расширить контент, используем короткий текст")
             расширенный_текст = None
         else:
-            if содержит_рекламные_маркеры(расширенный_текст):
+            текст_для_фильтра = удалить_упоминания_источника(расширенный_текст) if SKINNYMS_ONLY else расширенный_текст
+            if содержит_рекламные_маркеры(текст_для_фильтра):
                 print("❌ Рекламные маркеры в расширенной статье, пробуем следующую...\n")
                 сохранить_обработанную_статью(статья['link'])
                 continue
