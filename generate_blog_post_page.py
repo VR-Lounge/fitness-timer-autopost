@@ -764,7 +764,15 @@ def сгенерировать_html_страницу(пост):
     изображение = главное_изображение['url'] if главное_изображение else изображение_url
     
     # Создаём slug для URL
-    slug = создать_slug(заголовок, post_id)
+    # Если в посте уже есть URL, извлекаем slug из него
+    существующий_url = пост.get('url', '')
+    if существующий_url and '/blog/' in существующий_url:
+        # Извлекаем slug из URL (например: /blog/trenirovka-tabata-sekretnyy-klyuch-k-rezultatu.html)
+        slug = существующий_url.split('/blog/')[-1].replace('.html', '')
+    else:
+        # Генерируем slug из заголовка
+        slug = создать_slug(заголовок, post_id)
+    
     url = f"https://www.tabatatimer.ru/blog/{slug}.html"
     
     # Создаём чистое описание для meta description (без Markdown, без ID, без мусора)
