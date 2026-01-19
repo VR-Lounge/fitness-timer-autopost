@@ -74,6 +74,7 @@ jobs:
           # Всегда публикуем на сайт вместе с постом
           PUBLISH_TO_BLOG: "true"
         run: |
+          python3 skinnyms_parser.py
           python3 womenshealth_parser.py
 
       - name: Коммит библиотеки релевантного контента

@@ -71,6 +71,7 @@ jobs:
           # Всегда публикуем на сайт вместе с постом
           PUBLISH_TO_BLOG: "true"
         run: |
+          python3 skinnyms_parser.py
           python3 menshealth_parser.py
       
       - name: Генерация HTML страниц для блога

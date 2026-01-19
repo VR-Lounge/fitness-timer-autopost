@@ -37,3 +37,6 @@ logs/
 *.bak
 *.swp
 .DS_Store
+.telegram_recent.json
+.publication_logs.json
+.skinnyms_queue.json
