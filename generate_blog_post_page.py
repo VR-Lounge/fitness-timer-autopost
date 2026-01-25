@@ -1254,11 +1254,29 @@ def сгенерировать_html_страницу(пост):
             font-size: 1.1rem;
         }}
         
+        .blog-post-content section {{
+            margin: 40px 0;
+            padding: 0;
+        }}
+        
+        .blog-post-content section:first-of-type {{
+            margin-top: 0;
+        }}
+        
+        .blog-post-content section:last-of-type {{
+            margin-bottom: 0;
+        }}
+        
         .blog-post-content h2 {{
             font-size: 1.8rem;
-            margin: 30px 0 15px 0;
+            margin: 30px 0 20px 0;
             color: #7af5ff;
-            text-align: center;
+            font-weight: 600;
+            line-height: 1.3;
+        }}
+        
+        .blog-post-content section > h2:first-child {{
+            margin-top: 0;
         }}
         
         .blog-post-content h3 {{
@@ -1297,23 +1315,23 @@ def сгенерировать_html_страницу(пост):
         
         .blog-post-content ul,
         .blog-post-content ol {{
-            margin: 15px 0 15px 25px;
-            padding-left: 20px;
-        }}
-        
-        .blog-post-content li {{
-            margin: 8px 0;
-            line-height: 1.6;
-        }}
-        
-        .blog-post-content ul,
-        .blog-post-content ol {{
-            margin: 15px 0;
+            margin: 20px 0 25px 0;
             padding-left: 30px;
+            line-height: 1.7;
         }}
         
         .blog-post-content li {{
-            margin: 8px 0;
+            margin: 10px 0;
+            line-height: 1.7;
+            padding-left: 5px;
+        }}
+        
+        .blog-post-content ul li {{
+            list-style-type: disc;
+        }}
+        
+        .blog-post-content ol li {{
+            list-style-type: decimal;
         }}
         
         .blog-post-content a {{
