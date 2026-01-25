@@ -78,6 +78,15 @@ if [ -d "blog" ]; then
         --acl public-read \
         --exclude "*.DS_Store"
     echo "✅ HTML страницы статей загружены"
+    
+    # Создаем файл с дефисами для редиректа (если существует основной файл)
+    if [ -f "blog/poleznaya-statya-o-fitnese-i-zdorove.html" ] && [ ! -f "blog/poleznaya-stat-ya-o-fitnese-i-zdorov-e.html" ]; then
+        cp "blog/poleznaya-statya-o-fitnese-i-zdorove.html" "blog/poleznaya-stat-ya-o-fitnese-i-zdorov-e.html"
+        aws s3 cp "blog/poleznaya-stat-ya-o-fitnese-i-zdorov-e.html" "s3://$BUCKET_NAME/blog/poleznaya-stat-ya-o-fitnese-i-zdorov-e.html" \
+            --endpoint-url="$ENDPOINT_URL" \
+            --acl public-read
+        echo "✅ Файл poleznaya-stat-ya-o-fitnese-i-zdorov-e.html создан и загружен"
+    fi
 fi
 
 # Загружаем обновлённый sitemap.xml
