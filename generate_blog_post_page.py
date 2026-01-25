@@ -206,28 +206,37 @@ def создать_уникальную_ссылку_на_таймер(текс�
 
 def создать_галерею_изображений(изображения, заголовок, теги):
     """
-    Создаёт галерею всех релевантных изображений из статьи
+    Создаёт галерею-слайдер со ВСЕМИ изображениями из статьи
     
     ✅ ВСЕ изображения попадают в галерею:
     - Первое изображение показывается как главное (выше в статье)
-    - Остальные изображения показываются в галерее
+    - ВСЕ остальные изображения показываются в слайдере с превьюшками
     - Если есть только одно изображение, галерея не создаётся (оно уже показано)
     """
     if not изображения:
         return ''  # Если нет изображений, галерея не нужна
     
     # ✅ Пропускаем первое изображение (главное), оно уже показано выше в статье
-    # Остальные ВСЕ изображения попадают в галерею
+    # Остальные ВСЕ изображения попадают в слайдер
     дополнительные_изображения = изображения[1:] if len(изображения) > 1 else []
     
     # Если только одно изображение, не создаём галерею (оно уже показано выше)
     if not дополнительные_изображения:
         return ''
     
-    галерея_html = '''
+    # Создаём уникальный ID для галереи
+    gallery_id = f"gallery-{abs(hash(заголовок)) % 10000}"
+    
+    галерея_html = f'''
     <div class="blog-post-gallery">
-        <h3>Иллюстрации из статьи</h3>
-        <div class="blog-gallery-grid">
+        <h3>Иллюстрации из статьи ({len(дополнительные_изображения)})</h3>
+        <div class="blog-gallery-slider" id="{gallery_id}">
+            <div class="blog-gallery-main">
+                <img id="{gallery_id}-main" src="" alt="" class="blog-gallery-main-image">
+                <button class="blog-gallery-prev" onclick="galleryPrev('{gallery_id}')">‹</button>
+                <button class="blog-gallery-next" onclick="galleryNext('{gallery_id}')">›</button>
+            </div>
+            <div class="blog-gallery-thumbnails">
 '''
     
     for idx, img_dict in enumerate(дополнительные_изображения):
@@ -249,15 +258,112 @@ def создать_галерею_изображений(изображения,
         alt = alt.replace('"', '&quot;')
         title = title.replace('"', '&quot;')
         
+        # Первое изображение в слайдере показываем сразу
+        active_class = 'active' if idx == 0 else ''
+        
         галерея_html += f'''
-            <div class="blog-gallery-item">
-                <img src="{img_url}" alt="{alt}" title="{title}" loading="lazy" class="blog-gallery-image">
-            </div>
+                <div class="blog-gallery-thumb {active_class}" onclick="galleryShow('{gallery_id}', {idx})">
+                    <img src="{img_url}" alt="{alt}" title="{title}" loading="lazy" class="blog-gallery-thumb-image">
+                </div>
 '''
     
-    галерея_html += '''
+    # Подготавливаем данные для JavaScript
+    images_data = []
+    for img_dict in дополнительные_изображения:
+        img_url = img_dict.get('url', '')
+        if img_url:
+            img_alt = img_dict.get('alt', '') or f"{заголовок} - фото"
+            img_title = img_dict.get('title', '') or f"{заголовок} - изображение"
+            # Экранируем для JavaScript
+            img_alt = img_alt.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
+            img_title = img_title.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
+            images_data.append({
+                'url': img_url,
+                'alt': img_alt,
+                'title': img_title
+            })
+    
+    images_json = json.dumps(images_data, ensure_ascii=False)
+    
+    галерея_html += f'''
+            </div>
         </div>
     </div>
+    
+    <script>
+        // Инициализация галереи
+        (function() {{
+            const galleryId = '{gallery_id}';
+            const images = {images_json};
+            
+            // Сохраняем данные галереи в глобальный объект
+            if (!window.blogGalleries) {{
+                window.blogGalleries = {{}};
+            }}
+            window.blogGalleries[galleryId] = images;
+            
+            if (images.length > 0) {{
+                // Показываем первое изображение
+                galleryShow(galleryId, 0);
+            }}
+        }})();
+        
+        function galleryShow(galleryId, index) {{
+            const gallery = document.getElementById(galleryId);
+            if (!gallery || !window.blogGalleries || !window.blogGalleries[galleryId]) return;
+            
+            const images = window.blogGalleries[galleryId];
+            
+            if (index < 0 || index >= images.length) return;
+            
+            const mainImg = document.getElementById(galleryId + '-main');
+            const thumbs = gallery.querySelectorAll('.blog-gallery-thumb');
+            
+            if (mainImg && images[index]) {{
+                mainImg.src = images[index].url;
+                mainImg.alt = images[index].alt || '';
+                mainImg.title = images[index].title || '';
+            }}
+            
+            // Обновляем активный класс
+            thumbs.forEach((thumb, i) => {{
+                if (i === index) {{
+                    thumb.classList.add('active');
+                }} else {{
+                    thumb.classList.remove('active');
+                }}
+            }});
+        }}
+        
+        function galleryNext(galleryId) {{
+            const gallery = document.getElementById(galleryId);
+            if (!gallery || !window.blogGalleries || !window.blogGalleries[galleryId]) return;
+            const active = gallery.querySelector('.blog-gallery-thumb.active');
+            if (!active) {{
+                galleryShow(galleryId, 0);
+                return;
+            }}
+            const thumbs = Array.from(gallery.querySelectorAll('.blog-gallery-thumb'));
+            const currentIndex = thumbs.indexOf(active);
+            const nextIndex = (currentIndex + 1) % thumbs.length;
+            galleryShow(galleryId, nextIndex);
+        }}
+        
+        function galleryPrev(galleryId) {{
+            const gallery = document.getElementById(galleryId);
+            if (!gallery || !window.blogGalleries || !window.blogGalleries[galleryId]) return;
+            const active = gallery.querySelector('.blog-gallery-thumb.active');
+            if (!active) {{
+                const thumbs = gallery.querySelectorAll('.blog-gallery-thumb');
+                galleryShow(galleryId, thumbs.length - 1);
+                return;
+            }}
+            const thumbs = Array.from(gallery.querySelectorAll('.blog-gallery-thumb'));
+            const currentIndex = thumbs.indexOf(active);
+            const prevIndex = (currentIndex - 1 + thumbs.length) % thumbs.length;
+            galleryShow(galleryId, prevIndex);
+        }}
+    </script>
 '''
     return галерея_html
 
@@ -968,36 +1074,140 @@ def сгенерировать_html_страницу(пост):
             color: #7af5ff;
         }}
         
-        .blog-gallery-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+        .blog-gallery-slider {{
+            position: relative;
         }}
         
-        .blog-gallery-item {{
+        .blog-gallery-main {{
+            position: relative;
+            margin-bottom: 20px;
             border-radius: 12px;
             overflow: hidden;
             background: rgba(255, 255, 255, 0.05);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
         
-        .blog-gallery-image {{
+        .blog-gallery-main-image {{
             width: 100%;
             height: auto;
-            max-height: 400px;
-            object-fit: cover;
+            max-height: 600px;
+            object-fit: contain;
             display: block;
-            transition: transform 0.3s ease;
         }}
         
-        .blog-gallery-image:hover {{
-            transform: scale(1.02);
+        .blog-gallery-prev,
+        .blog-gallery-next {{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(122, 245, 255, 0.8);
+            border: none;
+            color: #1a1a1a;
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }}
+        
+        .blog-gallery-prev {{
+            left: 15px;
+        }}
+        
+        .blog-gallery-next {{
+            right: 15px;
+        }}
+        
+        .blog-gallery-prev:hover,
+        .blog-gallery-next:hover {{
+            background: #7af5ff;
+            transform: translateY(-50%) scale(1.1);
+        }}
+        
+        .blog-gallery-thumbnails {{
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(122, 245, 255, 0.3) transparent;
+        }}
+        
+        .blog-gallery-thumbnails::-webkit-scrollbar {{
+            height: 8px;
+        }}
+        
+        .blog-gallery-thumbnails::-webkit-scrollbar-track {{
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }}
+        
+        .blog-gallery-thumbnails::-webkit-scrollbar-thumb {{
+            background: rgba(122, 245, 255, 0.3);
+            border-radius: 4px;
+        }}
+        
+        .blog-gallery-thumbnails::-webkit-scrollbar-thumb:hover {{
+            background: rgba(122, 245, 255, 0.5);
+        }}
+        
+        .blog-gallery-thumb {{
+            flex-shrink: 0;
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }}
+        
+        .blog-gallery-thumb:hover {{
+            border-color: rgba(122, 245, 255, 0.5);
+            transform: scale(1.05);
+        }}
+        
+        .blog-gallery-thumb.active {{
+            border-color: #7af5ff;
+            box-shadow: 0 0 15px rgba(122, 245, 255, 0.5);
+        }}
+        
+        .blog-gallery-thumb-image {{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }}
         
         @media (max-width: 768px) {{
-            .blog-gallery-grid {{
-                grid-template-columns: 1fr;
-                gap: 15px;
+            .blog-gallery-main {{
+                min-height: 300px;
+            }}
+            
+            .blog-gallery-main-image {{
+                max-height: 400px;
+            }}
+            
+            .blog-gallery-thumb {{
+                width: 80px;
+                height: 80px;
+            }}
+            
+            .blog-gallery-prev,
+            .blog-gallery-next {{
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
             }}
         }}
         
