@@ -203,12 +203,17 @@ def скачать_и_загрузить_изображение(
     if использованные_urls is None:
         использованные_urls = []
     
-    # Жёсткий фильтр: отбрасываем уже использованные URL
-    normalized_url = url.split('?')[0].lower()
-    for existing_url in использованные_urls:
-        if normalized_url == existing_url.split('?')[0].lower():
-            print("❌ Анти‑повтор: изображение уже использовалось")
-            return None
+    # ✅ УПРОЩЕНИЕ: Для skinnyms.com пропускаем проверку использованных URL
+    # (изображения могут использоваться повторно в разных статьях)
+    is_skinnyms = 'skinnyms.com' in url.lower()
+    
+    if not is_skinnyms:
+        # Жёсткий фильтр: отбрасываем уже использованные URL (только для других источников)
+        normalized_url = url.split('?')[0].lower()
+        for existing_url in использованные_urls:
+            if normalized_url == existing_url.split('?')[0].lower():
+                print("❌ Анти‑повтор: изображение уже использовалось")
+                return None
     
     # Предварительная проверка по DeepSeek (логотипы/текст/релевантность)
     if строгий_фильтр:
