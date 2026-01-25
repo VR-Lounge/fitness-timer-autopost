@@ -99,7 +99,8 @@ def обновить_заголовки_статей():
     problem_slugs = [
         'muzhskoy-zhkt-chto-nuzhno-znat-i-kak-zaschitit-kis',
         'gotov-k-lyubomu-vyzovu-programma-trenirovok',
-        'poleznaya-statya-o-fitnese-i-zdorove'
+        'poleznaya-statya-o-fitnese-i-zdorove',
+        '9-ways-to-get-a-free-butt-lift'
     ]
     
     исправлено = 0
@@ -110,11 +111,17 @@ def обновить_заголовки_статей():
         
         # Проверяем, является ли это проблемной статьёй
         current_title = post.get('title', '').lower()
+        # Проверяем на английские заголовки (если заголовок полностью на английском)
+        is_english = bool(re.search(r'^[a-z\s\d\-\'\.]+$', current_title, re.IGNORECASE))
+        
         is_problem = (
             any(slug in url for slug in problem_slugs) or
             'мужской жкт' in current_title or
             'готов к любому вызову' in current_title or
-            'полезная статья о фитнесе' in current_title
+            'полезная статья о фитнесе' in current_title or
+            'тонус за месяц' in current_title or
+            'энергия в еде' in current_title or
+            (is_english and len(current_title) > 10)  # Английские заголовки длиннее 10 символов
         )
         if not is_problem:
             continue
@@ -167,10 +174,15 @@ def обновить_заголовки_статей():
         # Перегенерируем HTML страницы
         print(f"\n📄 Перегенерирую HTML страницы...")
         try:
+            # Устанавливаем переменную окружения для правильного пути к blog-posts.json
+            os.environ['BLOG_POSTS_FILE'] = str(BLOG_POSTS_FILE)
             from generate_blog_post_page import сгенерировать_страницы_для_всех_постов
             сгенерировать_страницы_для_всех_постов()
+            print(f"✅ HTML страницы перегенерированы")
         except Exception as e:
             print(f"⚠️ Ошибка генерации HTML: {e}")
+            import traceback
+            traceback.print_exc()
     else:
         print("\n⚠️ Не найдено статей для исправления")
 
