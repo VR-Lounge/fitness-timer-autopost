@@ -25,7 +25,6 @@ jobs:
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
         run: |
-          cd fitness-timer-autopost
           python3 update_existing_titles.py
       
       - name: Загрузка на Yandex Cloud
@@ -33,5 +32,4 @@ jobs:
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
         run: |
-          cd fitness-timer-autopost
           bash upload_blog_to_yandex.sh
