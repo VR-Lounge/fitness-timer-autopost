@@ -70,6 +70,25 @@ jobs:
           mkdir -p public_html/blog
           echo "✅ Структура директорий создана"
       
+      - name: Определение режима публикации
+        id: set_publish_flag
+        run: |
+          # Для workflow_dispatch всегда публикуем на сайт
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "PUBLISH_TO_BLOG=true" >> $GITHUB_OUTPUT
+            echo "📝 Режим: опубликовать на сайт + Telegram (workflow_dispatch)"
+          else
+            # Для schedule: публикуем на сайт только при запусках 08:00 и 20:00 UTC
+            HOUR_UTC=$(date -u +%H)
+            if [ "$HOUR_UTC" = "08" ] || [ "$HOUR_UTC" = "20" ]; then
+              echo "PUBLISH_TO_BLOG=true" >> $GITHUB_OUTPUT
+              echo "📝 Режим: опубликовать на сайт + Telegram (schedule)"
+            else
+              echo "PUBLISH_TO_BLOG=false" >> $GITHUB_OUTPUT
+              echo "📱 Режим: только Telegram (без публикации на сайт)"
+            fi
+          fi
+      
       - name: Запуск парсера Women's Health
         working-directory: fitness-timer-autopost
         env:
@@ -78,8 +97,8 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
-          # Всегда публикуем на сайт вместе с постом
-          PUBLISH_TO_BLOG: "true"
+          # Используем значение из шага выше (для workflow_dispatch всегда true)
+          PUBLISH_TO_BLOG: ${{ steps.set_publish_flag.outputs.PUBLISH_TO_BLOG || 'true' }}
           SKINNYMS_ONLY: "true"
           SKINNYMS_CATEGORIES: "fitness,recipes"
           SKINNYMS_MAX_ARTICLES_PER_RUN: "40"
