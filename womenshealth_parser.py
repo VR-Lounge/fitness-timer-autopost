@@ -2165,18 +2165,25 @@ def главная():
             print("❌ Не удалось получить контент статьи, пробуем следующую...\n")
             continue
         
-        # ✅ ИСПРАВЛЕНИЕ: Получаем оригинальный заголовок из спарсенной статьи
-        # Для skinnyms.com используем skinnyms_parser для получения заголовка
+        # ✅ КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Для skinnyms.com используем skinnyms_parser для получения ВСЕХ изображений
+        # skinnyms_parser находит больше изображений, чем общий парсер
         оригинальный_заголовок_статьи = статья.get('title', '')
         if 'skinnyms.com' in статья['link'].lower():
             try:
                 from skinnyms_parser import parse_article as skinnyms_parse_article
                 skinnyms_parsed = skinnyms_parse_article(статья['link'])
-                if skinnyms_parsed and skinnyms_parsed.get('title'):
-                    оригинальный_заголовок_статьи = skinnyms_parsed['title']
-                    print(f"✅ Оригинальный заголовок из skinnyms.com: {оригинальный_заголовок_статьи}")
+                if skinnyms_parsed:
+                    if skinnyms_parsed.get('title'):
+                        оригинальный_заголовок_статьи = skinnyms_parsed['title']
+                        print(f"✅ Оригинальный заголовок из skinnyms.com: {оригинальный_заголовок_статьи}")
+                    
+                    # ✅ КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Используем изображения из skinnyms_parser
+                    # skinnyms_parser находит ВСЕ изображения из статьи
+                    if skinnyms_parsed.get('images'):
+                        parsed['images'] = skinnyms_parsed['images']
+                        print(f"✅ Использованы изображения из skinnyms_parser: {len(parsed['images'])} изображений")
             except Exception as e:
-                print(f"⚠️ Не удалось получить заголовок из skinnyms.com: {e}")
+                print(f"⚠️ Не удалось получить данные из skinnyms.com: {e}")
         
         print(f"✅ Получен контент ({len(parsed['content'])} символов)")
         print(f"✅ Найдено изображений: {len(parsed['images'])}")
