@@ -63,27 +63,62 @@ def upsert_item(library: Dict, item: Dict) -> bool:
 
 
 def _normalize_image_url(url: str) -> str:
+    """Нормализует URL изображения, удаляя query параметры и размеры из имени файла."""
     if not url:
         return ""
     parsed = urlparse(url)
-    return f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+    path = parsed.path
+    
+    # ✅ КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Удаляем размеры из имени файла
+    # Например: "image-600x400.jpg" -> "image.jpg"
+    # Паттерны: -600x400, -750x500, -1200x800, -1200x1802 и т.д.
+    import re
+    # Удаляем паттерны типа -600x400, -750x500 перед расширением
+    path = re.sub(r'-\d+x\d+(?=\.[a-zA-Z]+$)', '', path)
+    # Также удаляем варианты типа -e1234567890 (timestamp в имени)
+    path = re.sub(r'-e\d+(?=\.[a-zA-Z]+$)', '', path)
+    
+    return f"{parsed.scheme}://{parsed.netloc}{path}"
 
 
 def normalize_images(images: List[Dict]) -> List[Dict]:
-    """Удаляет дубликаты изображений по URL."""
+    """Удаляет дубликаты изображений по нормализованному URL (без размеров в имени файла).
+    Если есть несколько вариантов одного изображения (с размерами и без), предпочитает вариант без размера."""
     if not images:
         return []
-    seen = set()
-    normalized = []
+    # Группируем изображения по нормализованному URL
+    groups = {}
     for img in images:
         if not isinstance(img, dict):
             continue
         url = img.get("url", "")
         key = _normalize_image_url(url)
-        if not key or key in seen:
+        if not key:
             continue
-        seen.add(key)
-        normalized.append(img)
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(img)
+    
+    # Для каждой группы выбираем лучшее изображение (предпочитаем без размеров в имени)
+    normalized = []
+    for key, group in groups.items():
+        if len(group) == 1:
+            normalized.append(group[0])
+        else:
+            # Если есть несколько вариантов, выбираем тот, у которого в URL нет размеров (например, -600x400)
+            import re
+            best = None
+            for img in group:
+                url = img.get("url", "")
+                # Проверяем, есть ли размеры в имени файла
+                if not re.search(r'-\d+x\d+(?=\.[a-zA-Z]+$)', url):
+                    best = img
+                    break
+            # Если не нашли без размеров, берем первое
+            if not best:
+                best = group[0]
+            normalized.append(best)
+    
     return normalized
 
 
