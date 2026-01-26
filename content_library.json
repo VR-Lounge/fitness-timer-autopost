@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-01-26T10:38:44.098206",
+  "updated_at": "2026-01-26T12:58:08.639020",
   "items": [
     {
       "id": "womenshealth_2727682866459906446",
@@ -253,7 +253,7 @@
       "fetched_at": "2026-01-19T08:37:23.538633"
     },
     {
-      "id": "skinnyms_fitness_-7135136760104849313",
+      "id": "skinnyms_fitness_-3874021407993479376",
       "title": "5-Minute Lower Body Workouts to Tone Legs and Glutes",
       "url": "https://skinnyms.com/5-minute-lower-body-workouts-to-tone-legs-and-glutes/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -278,12 +278,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/09/Bridges-750x500.jpg",
-          "alt": "woman performing hip bridges",
-          "title": "woman performing hip bridges",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/09/Bridges.jpg",
           "alt": "woman performing hip bridges",
           "title": "woman performing hip bridges",
@@ -296,21 +290,9 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/06/3-Move-Shoulder-Workout-to-get-Strong-Defined-Shoulders-750x500.jpg",
-          "alt": "woman holding dumbbells and flexing back and arms",
-          "title": "woman holding dumbbells and flexing back and arms",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/06/3-Move-Shoulder-Workout-to-get-Strong-Defined-Shoulders.jpg",
           "alt": "woman holding dumbbells and flexing back and arms",
           "title": "woman holding dumbbells and flexing back and arms",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2020/08/Forward-lunges-to-target-your-lower-body-in-this-Simple-Morning-Workout-for-Faster-Weight-Loss-750x500.jpg",
-          "alt": "Woman doing lunges in red pants",
-          "title": "Woman doing lunges in red pants",
           "is_main": false
         },
         {
@@ -320,10 +302,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:37:59.761565"
+      "fetched_at": "2026-01-26T12:57:23.733437"
     },
     {
-      "id": "skinnyms_fitness_8339081167264092096",
+      "id": "skinnyms_fitness_5201828085943539389",
       "title": "3 Best Exercises to Get a Firm, Round, Lifted Butt",
       "url": "https://skinnyms.com/3-best-exercises-get-firm-round-lifted-butt/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -348,22 +330,16 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/08/7-Day-Total-Body-Workout-Challenge-Featured-Glute-Kickbacks-1200x800.jpg",
-          "alt": "woman in pink workout clothes doing donkey kicks",
-          "title": "woman in pink workout clothes doing donkey kicks",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2021/08/The-Best-Thigh-Workout-for-Lean-Legs-Split-Squat-1200x800.jpg",
           "alt": "split squats",
           "title": "split squats",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:02.026704"
+      "fetched_at": "2026-01-26T12:57:25.963256"
     },
     {
-      "id": "skinnyms_fitness_8693274887930094434",
+      "id": "skinnyms_fitness_11609810182790416",
       "title": "10 Low-Impact High-Intensity Interval Training Exercises",
       "url": "https://skinnyms.com/10-low-impact-high-intensity-interval-training-exercises/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -394,12 +370,6 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2017/03/Music-of-2017-to-Get-You-Motivated-for-Your-Next-Workout-750x500.jpg",
-          "alt": "woman listening to music on stationary bike",
-          "title": "woman listening to music on stationary bike",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2017/03/Music-of-2017-to-Get-You-Motivated-for-Your-Next-Workout.jpg",
           "alt": "woman listening to music on stationary bike",
           "title": "woman listening to music on stationary bike",
@@ -409,12 +379,6 @@
           "url": "https://skinnyms.com/wp-content/uploads/2021/08/The-Best-Workout-for-a-Smaller-Waist-High-Knees-1200x857.jpg",
           "alt": "woman performing high knee exercise",
           "title": "woman performing high knee exercise",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/09/Bridges-750x500.jpg",
-          "alt": "low-impact high-intensity interval training exercises: woman performing hip bridges",
-          "title": "low-impact high-intensity interval training exercises: woman performing hip bridges",
           "is_main": false
         },
         {
@@ -442,10 +406,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:04.288622"
+      "fetched_at": "2026-01-26T12:57:28.362028"
     },
     {
-      "id": "skinnyms_fitness_5509766827834283960",
+      "id": "skinnyms_fitness_-969580295107790103",
       "title": "7 Mini Workouts for Total Body Toning",
       "url": "https://skinnyms.com/7-mini-workouts-for-total-body-toning/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -470,27 +434,9 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/08/The-Best-Leg-Workout-for-Absolute-Beginners-2-1200x800.jpg",
-          "alt": "Woman performing body squats in her home",
-          "title": "Woman performing body squats in her home",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/01/14-Day-Toned-Legs-Thighs-Workout-Challenge1-750x500.jpg",
-          "alt": "Woman performing squats in black yoga pants while participating in mini workouts for total body toning.",
-          "title": "Woman performing squats in black yoga pants while participating in mini workouts for total body toning.",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/01/14-Day-Toned-Legs-Thighs-Workout-Challenge1.jpg",
           "alt": "Woman performing squats in black yoga pants while participating in mini workouts for total body toning.",
           "title": "Woman performing squats in black yoga pants while participating in mini workouts for total body toning.",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2014/10/Killer-Kettlebell-Workout-Challenge-750x500.jpg",
-          "alt": "woman exercising with kettlebell",
-          "title": "woman exercising with kettlebell",
           "is_main": false
         },
         {
@@ -500,22 +446,16 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/11/Easy-Meal-Prep-Ideas-Shrimp-Taco-Bowls-750x500.jpg",
-          "alt": "meal prep shrimp taco bowls",
-          "title": "meal prep shrimp taco bowls",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/11/Easy-Meal-Prep-Ideas-Shrimp-Taco-Bowls.jpg",
           "alt": "meal prep shrimp taco bowls",
           "title": "meal prep shrimp taco bowls",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:00.892513"
+      "fetched_at": "2026-01-26T12:57:24.837669"
     },
     {
-      "id": "skinnyms_fitness_-7174842365370143245",
+      "id": "skinnyms_fitness_-6451566360788494339",
       "title": "7-Day Summer Legs Challenge",
       "url": "https://skinnyms.com/summer-legs-challenge-7/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -558,12 +498,6 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/09/Bridges-750x500.jpg",
-          "alt": "woman performing hip bridges",
-          "title": "woman performing hip bridges",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/09/Bridges.jpg",
           "alt": "woman performing hip bridges",
           "title": "woman performing hip bridges",
@@ -588,10 +522,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:03.173459"
+      "fetched_at": "2026-01-26T12:57:27.260270"
     },
     {
-      "id": "skinnyms_fitness_-5056284471973158087",
+      "id": "skinnyms_fitness_3643448072535874863",
       "title": "6 Proven Exercises to Tone Your Triceps for Stronger Arms",
       "url": "https://skinnyms.com/6-proven-exercises-to-tone-your-triceps-for-stronger-arms/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -616,21 +550,9 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/05/shutterstock_1038983215-1200x800.jpg",
-          "alt": "woman flexing tricep",
-          "title": "woman flexing tricep",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2022/03/7-Day-Flabby-Arms-Challenge-Tone-Up-Workout-2.jpg",
           "alt": "woman performing dumbbell triceps kickback exercise",
           "title": "woman performing dumbbell triceps kickback exercise",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/02/5-moves-to-slim-and-toned-arms-1-750x500.jpg",
-          "alt": "woman performing triceps dips on a bench",
-          "title": "woman performing triceps dips on a bench",
           "is_main": false
         },
         {
@@ -640,10 +562,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:05.395739"
+      "fetched_at": "2026-01-26T12:57:29.471041"
     },
     {
-      "id": "skinnyms_fitness_-8157203190907454434",
+      "id": "skinnyms_fitness_-4942572086805964896",
       "title": "10 Effective Butt Exercises for a Tight and Firm Booty",
       "url": "https://skinnyms.com/10-effective-butt-exercises-for-a-tight-and-firm-booty/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -668,21 +590,9 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/02/7-Day-Slim-Legs-Challenge-Walking-Lunge-1200x800.jpg",
-          "alt": "Effective Butt Exercises: Woman Doing Lunges",
-          "title": "Effective Butt Exercises: Woman Doing Lunges",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2014/11/7-Types-of-Squats-for-a-Better-Butt-2-1200x800.jpg",
           "alt": "woman doing squats",
           "title": "woman doing squats",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2020/08/7-Compound-Exercises-For-A-Total-Body-Transformation-dumbbell-deadlifts-750x500.jpg",
-          "alt": "woman performing dumbbell deadlifts",
-          "title": "woman performing dumbbell deadlifts",
           "is_main": false
         },
         {
@@ -698,22 +608,16 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2016/02/30-Day-Booty-Building-Trainer2-750x500.jpg",
-          "alt": "butt workout: woman squatting",
-          "title": "butt workout: woman squatting",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2016/02/30-Day-Booty-Building-Trainer2.jpg",
           "alt": "butt workout: woman squatting",
           "title": "butt workout: woman squatting",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:06.499798"
+      "fetched_at": "2026-01-26T12:57:30.575546"
     },
     {
-      "id": "skinnyms_fitness_-1410276221132890717",
+      "id": "skinnyms_fitness_-8583926261358701919",
       "title": "8 Beginner Fitness Challenges to Build an Exercise Habit",
       "url": "https://skinnyms.com/8-beginner-fitness-challenges-to-build-an-exercise-habit/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -736,18 +640,6 @@
           "alt": "8 Beginner Fitness Challenges to Build an Exercise Habit",
           "title": "8 Beginner Fitness Challenges to Build an Exercise Habit",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/09/4-Week-Fit-and-Healthy-Summer-Workout-Plan-Featured-1200x800.jpg",
-          "alt": "Girl flexing on beach while doing Beginner Fitness Challenges",
-          "title": "Girl flexing on beach while doing Beginner Fitness Challenges",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2012/01/Making-Time-To-Work-Out-750x500.jpg",
-          "alt": "Woman sitting on the gym floor with dumbbell and water bottle.",
-          "title": "Woman sitting on the gym floor with dumbbell and water bottle.",
-          "is_main": false
         },
         {
           "url": "https://skinnyms.com/wp-content/uploads/2012/01/Making-Time-To-Work-Out.jpg",
@@ -774,21 +666,9 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/07/10k-Training-Plan-for-Beginners-750x500.jpg",
-          "alt": "10k training plan, one of the best beginner fitness challenges for cardiovascular health.",
-          "title": "10k training plan, one of the best beginner fitness challenges for cardiovascular health.",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/07/10k-Training-Plan-for-Beginners.jpg",
           "alt": "10k training plan, one of the best beginner fitness challenges for cardiovascular health.",
           "title": "10k training plan, one of the best beginner fitness challenges for cardiovascular health.",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2016/01/HIIT-Kettlebell-Fat-Blaster-Workout-2-750x500.jpg",
-          "alt": "30-day HIIT, one of the best beginner fitness challenges for burning fat.",
-          "title": "30-day HIIT, one of the best beginner fitness challenges for burning fat.",
           "is_main": false
         },
         {
@@ -798,21 +678,9 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/06/14-Day-Beginners-Core-Building-Workout-Challenge-Photo-1-750x500.jpg",
-          "alt": "14-day beginner's core-building workout, one of the best beginner fitness challenges.",
-          "title": "14-day beginner's core-building workout, one of the best beginner fitness challenges.",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/06/14-Day-Beginners-Core-Building-Workout-Challenge-Photo-1.jpg",
           "alt": "14-day beginner's core-building workout, one of the best beginner fitness challenges.",
           "title": "14-day beginner's core-building workout, one of the best beginner fitness challenges.",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/08/Beginners-Leg-Butt-30-Day-Squat-Challenge-Photo-1-750x500.jpg",
-          "alt": "30-day squat challenge, one of the best beginner fitness challenges.",
-          "title": "30-day squat challenge, one of the best beginner fitness challenges.",
           "is_main": false
         },
         {
@@ -822,21 +690,9 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/10/How-To-Do-A-Push-Up-The-Right-Way-750x500.jpg",
-          "alt": "7 day push-up challenge for beginners, one of the best beginner fitness challenges.",
-          "title": "7 day push-up challenge for beginners, one of the best beginner fitness challenges.",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/10/How-To-Do-A-Push-Up-The-Right-Way.jpg",
           "alt": "7 day push-up challenge for beginners, one of the best beginner fitness challenges.",
           "title": "7 day push-up challenge for beginners, one of the best beginner fitness challenges.",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/10/Beginners-Total-Body-Fat-Blasting-Routine-Photo-1-750x500.jpg",
-          "alt": "Total body 30-day challenge, one of the best beginner fitness challenges.",
-          "title": "Total body 30-day challenge, one of the best beginner fitness challenges.",
           "is_main": false
         },
         {
@@ -852,10 +708,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:09.830312"
+      "fetched_at": "2026-01-26T12:57:33.916443"
     },
     {
-      "id": "skinnyms_fitness_3807145094095442100",
+      "id": "skinnyms_fitness_-233348810791251767",
       "title": "5 Workouts To Reshape Your Butt",
       "url": "https://skinnyms.com/5-workouts-to-reshape-your-butt-2/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -878,12 +734,6 @@
           "alt": "5 Workouts To Reshape Your Butt",
           "title": "5 Workouts To Reshape Your Butt",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/02/21-Day-Body-Toning-Workout-Plan-for-Beginners1-750x500.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
         },
         {
           "url": "https://skinnyms.com/wp-content/uploads/2019/12/Beginners-Butt-Blasting-Workout-Photo-2.jpg",
@@ -916,10 +766,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:10.925848"
+      "fetched_at": "2026-01-26T12:57:35.118402"
     },
     {
-      "id": "skinnyms_fitness_-898831110740436080",
+      "id": "skinnyms_fitness_-2767362336801081107",
       "title": "How to Get Rid of Muffin Top in 30 Days",
       "url": "https://skinnyms.com/30-day-muffin-top-challenge-3/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -944,22 +794,16 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2015/04/30-Day-Muffin-Top-Challenge-600x400.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2016/02/Best-3-Workouts-to-Melt-Your-Muffin-Top-1200x800.jpg",
           "alt": "muffin top",
           "title": "muffin top",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:12.042456"
+      "fetched_at": "2026-01-26T12:57:36.231700"
     },
     {
-      "id": "skinnyms_fitness_4134937295142802409",
+      "id": "skinnyms_fitness_7884127617230725231",
       "title": "12 Days of Fitness Challenge: A Total Body Workout",
       "url": "https://skinnyms.com/12-days-of-fitness-the-total-body-workout-challenge/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -984,12 +828,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2020/06/12-Days-of-Fitness-The-Total-Body-Workout-Challenge-Photo-1-750x500.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2020/06/12-Days-of-Fitness-The-Total-Body-Workout-Challenge-Photo-2.jpg",
           "alt": "Get your pre-holiday body back with this challenge!",
           "title": "Get your pre-holiday body back with this challenge!",
@@ -1008,10 +846,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:13.143067"
+      "fetched_at": "2026-01-26T12:57:37.324664"
     },
     {
-      "id": "skinnyms_fitness_-6353655174705704593",
+      "id": "skinnyms_fitness_6774977510581522376",
       "title": "Total Body Crazy 8 Workout Challenge",
       "url": "https://skinnyms.com/the-crazy-8s-total-body-workout-challenge/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1042,10 +880,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:14.246686"
+      "fetched_at": "2026-01-26T12:57:38.421458"
     },
     {
-      "id": "skinnyms_fitness_-2464328431214239679",
+      "id": "skinnyms_fitness_88037814231599216",
       "title": "The Best Pilates Exercises for a Flat Stomach",
       "url": "https://skinnyms.com/the-best-pilates-moves-for-a-flat-stomach/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1082,10 +920,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:15.351416"
+      "fetched_at": "2026-01-26T12:57:39.537111"
     },
     {
-      "id": "skinnyms_fitness_-6204256555568343427",
+      "id": "skinnyms_fitness_-2389367569477379708",
       "title": "The Best Move to Tighten Your Abs and Trim Your Waistline",
       "url": "https://skinnyms.com/the-one-easiest-way-to-tighten-your-abs/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1110,22 +948,16 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/09/The-One-Easiest-Way-to-Tighten-Your-Abs-Photo-1-750x500.jpg",
-          "alt": "easiest way to tighten your abs",
-          "title": "easiest way to tighten your abs",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/09/The-One-Easiest-Way-to-Tighten-Your-Abs-Photo-2.jpg",
           "alt": "V crunch",
           "title": "V crunch",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:16.443408"
+      "fetched_at": "2026-01-26T12:57:40.628655"
     },
     {
-      "id": "skinnyms_fitness_4647704851462109480",
+      "id": "skinnyms_fitness_-5776805652563493806",
       "title": "The Best 5 Minute Songs for your 5 Minute Workout",
       "url": "https://skinnyms.com/best-5-minute-songs-5-minute-workout/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1150,22 +982,16 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/02/The-Top-10-Workout-Playlists-On-Apple-Music-Right-Now-750x500.jpg",
-          "alt": "5 minute songs",
-          "title": "5 minute songs",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/02/The-Top-10-Workout-Playlists-On-Apple-Music-Right-Now.jpg",
           "alt": "5 minute songs",
           "title": "5 minute songs",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:17.550946"
+      "fetched_at": "2026-01-26T12:57:41.728057"
     },
     {
-      "id": "skinnyms_fitness_4100456773078075434",
+      "id": "skinnyms_fitness_8155668956843434361",
       "title": "21 Day Health Challenge",
       "url": "https://skinnyms.com/21-day-healthy-tasks-challenge/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1188,12 +1014,6 @@
           "alt": "21 Day Health Challenge",
           "title": "21 Day Health Challenge",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/04/21-Day-Healthy-Tasks-Challenge-Drinking-Water-1200x800.jpg",
-          "alt": "healthy smiling woman drinking water",
-          "title": "healthy smiling woman drinking water",
-          "is_main": false
         },
         {
           "url": "https://skinnyms.com/wp-content/uploads/2021/10/21-Day-Healthy-Tasks-Challenge-Pin-2.png",
@@ -1334,10 +1154,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:18.658676"
+      "fetched_at": "2026-01-26T12:57:42.836028"
     },
     {
-      "id": "skinnyms_fitness_886301538188684167",
+      "id": "skinnyms_fitness_6773281963269359792",
       "title": "How to Burn 1000 Calories | Our Guide to The Best Calorie Burning Moves",
       "url": "https://skinnyms.com/5-best-moves-burn-1000-calories/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1360,18 +1180,12 @@
           "alt": "How to Burn 1000 Calories | Our Guide to The Best Calorie Burning Moves",
           "title": "How to Burn 1000 Calories | Our Guide to The Best Calorie Burning Moves",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/05/Do-Anywhere-Bodyweight-Circuit-Workout-for-Increased-Fat-Loss-Burpee-Jump-1200x800.jpg",
-          "alt": "how to burn 100 calories in 10 minutes: burpees",
-          "title": "how to burn 100 calories in 10 minutes: burpees",
-          "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:19.760907"
+      "fetched_at": "2026-01-26T12:57:43.931333"
     },
     {
-      "id": "skinnyms_fitness_-603972170920807783",
+      "id": "skinnyms_fitness_-5153458828278323262",
       "title": "30-Day Walk off The Pounds Challenge",
       "url": "https://skinnyms.com/30-day-walk-off-the-pounds-challenge/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1432,10 +1246,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:20.867125"
+      "fetched_at": "2026-01-26T12:57:45.324217"
     },
     {
-      "id": "skinnyms_fitness_2563462575269679398",
+      "id": "skinnyms_fitness_-2573210113070656604",
       "title": "5 Proven Exercises for Toned Biceps",
       "url": "https://skinnyms.com/5-proven-exercises-for-toned-biceps/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1460,27 +1274,9 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/04/6-of-the-Greatest-Arm-Workouts-for-Women-Biceps-Curl-2-1200x800.jpg",
-          "alt": "woman performing exercise for biceps",
-          "title": "woman performing exercise for biceps",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/04/10-Minute-Toned-Arms-Workout-1-750x500.jpg",
-          "alt": "toned arms",
-          "title": "toned arms",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/04/10-Minute-Toned-Arms-Workout-1.jpg",
           "alt": "toned arms",
           "title": "toned arms",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2015/09/30-Day-Bicep-Tricep-Challenge-600x600.jpg",
-          "alt": "bicep exercises",
-          "title": "bicep exercises",
           "is_main": false
         },
         {
@@ -1496,7 +1292,7 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:07.636579"
+      "fetched_at": "2026-01-26T12:57:31.707976"
     },
     {
       "id": "womenshealth_5218030187386640789",
@@ -1713,7 +1509,7 @@
       "fetched_at": "2026-01-19T10:43:21.096129"
     },
     {
-      "id": "skinnyms_fitness_-4713127793856113645",
+      "id": "skinnyms_fitness_-6319014760182596601",
       "title": "12 Fun Games to Get Active as a Family",
       "url": "https://skinnyms.com/12-fun-games-to-get-active-as-a-family/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1738,18 +1534,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2012/03/Love-is-Family-Fitness-2-750x500.jpg",
-          "alt": "family exercising together",
-          "title": "family exercising together",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2013/06/7-Reasons-to-Go-Take-a-Hike-750x562.jpg",
-          "alt": "woman hiking outside",
-          "title": "woman hiking outside",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2013/06/7-Reasons-to-Go-Take-a-Hike.jpg",
           "alt": "woman hiking outside",
           "title": "woman hiking outside",
@@ -1762,10 +1546,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:08.725232"
+      "fetched_at": "2026-01-26T12:57:32.795892"
     },
     {
-      "id": "skinnyms_fitness_4475929246814927005",
+      "id": "skinnyms_fitness_-7470191949330194785",
       "title": "5 Moves to Get a Bubble Butt",
       "url": "https://skinnyms.com/5-exercises-to-get-a-bubble-butt/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1790,22 +1574,16 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2015/03/5-Moves-to-Get-a-Bubble-Butt-750x500.jpg",
-          "alt": "5 Moves to Get a Bubble Butt",
-          "title": "5 Moves to Get a Bubble Butt",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2016/11/5-Minute-Workout-for-a-Firmer-Butt.jpg",
           "alt": "single leg glute bridge",
           "title": "single leg glute bridge",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:21.976493"
+      "fetched_at": "2026-01-26T12:57:46.428074"
     },
     {
-      "id": "skinnyms_fitness_-4959648316243227568",
+      "id": "skinnyms_fitness_-7712171259898598801",
       "title": "7 Stand-up Exercises To Trim Your Waist",
       "url": "https://skinnyms.com/stand-up-exercises-to-trim-your-waist/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1830,22 +1608,16 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/03/7-Stand-up-Exercises-To-Trim-Your-Waist-1-750x500.jpg",
-          "alt": "Stand-up Exercises To Trim Your Waist",
-          "title": "Stand-up Exercises To Trim Your Waist",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/03/5-At-Home-Exercises-To-Get-Toned-Legs-2.jpg",
           "alt": "ab workout",
           "title": "ab workout",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:23.084246"
+      "fetched_at": "2026-01-26T12:57:47.528147"
     },
     {
-      "id": "skinnyms_fitness_6030961898196355511",
+      "id": "skinnyms_fitness_-1857181499415521111",
       "title": "Blast Ab Fat with These Medicine Ball Exercises to Lose Belly Fat",
       "url": "https://skinnyms.com/blast-ab-fat-with-this-medicine-ball-workout/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1870,21 +1642,9 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/08/Blast-Ab-Fat-with-this-Medicine-Ball-Workout-Photo-2-750x500.jpg",
-          "alt": "Blast Ab Fat with this Medicine Ball Workout",
-          "title": "Blast Ab Fat with this Medicine Ball Workout",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2014/11/H.I.I.T.-Medicine-Ball-Workout-600x333.jpg",
           "alt": "medicine ball exercises to lose belly fat",
           "title": "medicine ball exercises to lose belly fat",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2015/10/H.I.I.T-Medicine-Ball-Workout-750x500.jpg",
-          "alt": "medicine ball",
-          "title": "medicine ball",
           "is_main": false
         },
         {
@@ -1900,10 +1660,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:24.187726"
+      "fetched_at": "2026-01-26T12:57:48.618029"
     },
     {
-      "id": "skinnyms_fitness_-2601001378783882380",
+      "id": "skinnyms_fitness_-626122311855119809",
       "title": "Use This Workout Routine to Lose 10 Pounds in a Month",
       "url": "https://skinnyms.com/7-workouts-lose-10-pounds-30-days/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -1926,12 +1686,6 @@
           "alt": "Use This Workout Routine to Lose 10 Pounds in a Month",
           "title": "Use This Workout Routine to Lose 10 Pounds in a Month",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2016/03/20-Minute-Back-and-Shoulder-HIIT-Workout-750x500.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
         },
         {
           "url": "https://skinnyms.com/wp-content/uploads/2016/04/HIIT-Your-Butt-Workout.jpg",
@@ -1970,10 +1724,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:25.347148"
+      "fetched_at": "2026-01-26T12:57:49.757077"
     },
     {
-      "id": "skinnyms_fitness_-2984548625115743715",
+      "id": "skinnyms_fitness_7561227762231500320",
       "title": "10-Minute Kettlebell Arm Workout for Beginners",
       "url": "https://skinnyms.com/10-minute-kettlebell-arm-workout/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2004,10 +1758,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:26.449422"
+      "fetched_at": "2026-01-26T12:57:50.850008"
     },
     {
-      "id": "skinnyms_fitness_-5455151828893630127",
+      "id": "skinnyms_fitness_-1685333853993656901",
       "title": "Arms & Shoulder HIIT Workout",
       "url": "https://skinnyms.com/hiit-arms-and-shoulder-workout/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2032,10 +1786,10 @@
           "is_main": true
         }
       ],
-      "fetched_at": "2026-01-26T10:38:27.533104"
+      "fetched_at": "2026-01-26T12:57:52.044989"
     },
     {
-      "id": "skinnyms_fitness_-5927986180760879708",
+      "id": "skinnyms_fitness_-6149381889105854277",
       "title": "How to Burn Belly Fat for Absolute Beginners",
       "url": "https://skinnyms.com/burn-belly-fat-absolute-beginners/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2060,22 +1814,16 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2017/03/shutterstock_1890876118-1200x800.jpg",
-          "alt": "woman exercising",
-          "title": "woman exercising",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/02/15-Best-Flat-Belly-Tips1.jpg",
           "alt": "",
           "title": "",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:28.641846"
+      "fetched_at": "2026-01-26T12:57:53.151931"
     },
     {
-      "id": "skinnyms_fitness_2444927135376075119",
+      "id": "skinnyms_fitness_8273510471256629886",
       "title": "Beginner’s Total Body 30-Day Challenge",
       "url": "https://skinnyms.com/total-body-30-day-challenge/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2103,12 +1851,6 @@
           "url": "https://skinnyms.com/wp-content/uploads/2019/10/Beginners-Total-Body-30-Day-Challenge-Pin-2.png",
           "alt": "",
           "title": "",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2020/02/Want-to-Get-Rid-of-Bra-Bulge-and-Back-Fat-​Try-this-30-Day-Fat-Blasting-Challenge​-Photo-2-750x500.jpg",
-          "alt": "30 day challenge",
-          "title": "30 day challenge",
           "is_main": false
         },
         {
@@ -2148,10 +1890,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:29.736651"
+      "fetched_at": "2026-01-26T12:57:54.251616"
     },
     {
-      "id": "skinnyms_fitness_-1720380843800070799",
+      "id": "skinnyms_fitness_-508218646009031021",
       "title": "7-Day Weight Loss Workout Challenge for Beginners",
       "url": "https://skinnyms.com/7-day-weight-loss-workout-challenge-for-beginners/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2224,10 +1966,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:30.856507"
+      "fetched_at": "2026-01-26T12:57:55.378234"
     },
     {
-      "id": "skinnyms_fitness_8117314607417484634",
+      "id": "skinnyms_fitness_8325943070868706235",
       "title": "30-Minute Leg Workout Circuit for Goddess-Worthy Legs",
       "url": "https://skinnyms.com/30-minute-circuit-workout-for-athletic-looking-legs/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2252,12 +1994,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/12/30-Minute-Circuit-Workout-for-Athletic-Looking-Legs-Photo-1-750x500.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/08/7-Lower-Body-Exercises-for-Lean-Legs-Photo-Photo-2.jpg",
           "alt": "athletic-looking legs",
           "title": "athletic-looking legs",
@@ -2270,10 +2006,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:31.968025"
+      "fetched_at": "2026-01-26T12:57:56.479602"
     },
     {
-      "id": "skinnyms_fitness_8290903664782638824",
+      "id": "skinnyms_fitness_9127926604623535540",
       "title": "21-Day Body-Toning Workout Plan for Female Beginners",
       "url": "https://skinnyms.com/body-toning-workout-plan-for-beginners/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2316,21 +2052,9 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2018/08/Firm-Your-Back-Biceps-750x500.jpg",
-          "alt": "toning workout plan for female beginners",
-          "title": "toning workout plan for female beginners",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2018/08/Firm-Your-Back-Biceps.jpg",
           "alt": "toning workout plan for female beginners",
           "title": "toning workout plan for female beginners",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2020/06/Try-These-12-Techniques-to-Relax-and-De-Stress-At-Home-Photo-10-750x500.jpg",
-          "alt": "take a chill pill",
-          "title": "take a chill pill",
           "is_main": false
         },
         {
@@ -2340,33 +2064,15 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/11/HIIT-Your-Core-In-Under-10-minutes-Photo-1-750x500.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/11/HIIT-Your-Core-In-Under-10-minutes-Photo-1.jpg",
           "alt": "",
           "title": "",
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2020/09/kettlebell-shoulder-press-for-The-Best-Routine-for-Healthy-Shoulders-750x500.jpg",
-          "alt": "shoulders",
-          "title": "shoulders",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2020/09/kettlebell-shoulder-press-for-The-Best-Routine-for-Healthy-Shoulders.jpg",
           "alt": "shoulders",
           "title": "shoulders",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/08/7-Lower-Body-Exercises-for-Lean-Legs-Photo-Photo-2-750x500.jpg",
-          "alt": "leg exercises",
-          "title": "leg exercises",
           "is_main": false
         },
         {
@@ -2382,10 +2088,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:33.077627"
+      "fetched_at": "2026-01-26T12:57:57.594035"
     },
     {
-      "id": "skinnyms_fitness_-8800597465815780744",
+      "id": "skinnyms_fitness_913529548786666771",
       "title": "30-Day HIIT Challenge for Beginners",
       "url": "https://skinnyms.com/30-day-hiit-challenge/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2410,18 +2116,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2015/05/HIIT-Kettlebell-Fat-Blaster-1-600x400.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/09/15-Minute-No-Equipment-HIIT-Workout-photo-2-750x500.jpg",
-          "alt": "30 day hiit challenge for beginners",
-          "title": "30 day hiit challenge for beginners",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/09/15-Minute-No-Equipment-HIIT-Workout-photo-2.jpg",
           "alt": "30 day hiit challenge for beginners",
           "title": "30 day hiit challenge for beginners",
@@ -2434,10 +2128,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:34.227351"
+      "fetched_at": "2026-01-26T12:57:58.723600"
     },
     {
-      "id": "skinnyms_fitness_-7365089244352759563",
+      "id": "skinnyms_fitness_-4199164164561732433",
       "title": "Flat Belly Workout Plan",
       "url": "https://skinnyms.com/flat-belly-workout/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2462,12 +2156,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2014/03/Flat-Belly-Workout-Plan-1-750x500.jpg",
-          "alt": "flat belly workout",
-          "title": "flat belly workout",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2014/03/Flat-Belly-Workout-Plan-2.jpg",
           "alt": "",
           "title": "",
@@ -2480,10 +2168,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:35.329739"
+      "fetched_at": "2026-01-26T12:57:59.837550"
     },
     {
-      "id": "skinnyms_fitness_8766688685785684652",
+      "id": "skinnyms_fitness_-1820794915148285209",
       "title": "8-Minute Plank Challenge",
       "url": "https://skinnyms.com/8-minute-plank-challenge/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2520,10 +2208,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:36.425656"
+      "fetched_at": "2026-01-26T12:58:00.957097"
     },
     {
-      "id": "skinnyms_fitness_-1485485345810989237",
+      "id": "skinnyms_fitness_7384500960288303411",
       "title": "Beginner’s Workout for a Flat Stomach – Plus Core Strengthening",
       "url": "https://skinnyms.com/beginners-flat-abs-workout-plus-core-strengthening-2/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2548,12 +2236,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2016/12/7-Days-to-a-Flatter-Tummy-1-750x500.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2022/11/Example-Full-Body-Dumbbell-Workout-for-Women-1200x800.jpg",
           "alt": "beginner’s workout for a flat stomach",
           "title": "beginner’s workout for a flat stomach",
@@ -2566,10 +2248,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:37.526989"
+      "fetched_at": "2026-01-26T12:58:02.059975"
     },
     {
-      "id": "skinnyms_fitness_-8957316988899356676",
+      "id": "skinnyms_fitness_-2480241299426356678",
       "title": "Slim Down with the 6-Week Walk/Run Plan",
       "url": "https://skinnyms.com/slim-down-with-the-walkrun-plan/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2594,18 +2276,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2014/03/5K-Running-Guide-for-Absolute-Beginners2-600x400.jpg",
-          "alt": "Slim Down with the Walk/Run Plan",
-          "title": "Slim Down with the Walk/Run Plan",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/01/30-Day-Walk-off-The-Pounds-Challenge1-750x500.jpg",
-          "alt": "Walk/run plan",
-          "title": "Walk/run plan",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2019/01/30-Day-Walk-off-The-Pounds-Challenge1.jpg",
           "alt": "Walk/run plan",
           "title": "Walk/run plan",
@@ -2624,10 +2294,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:38.674397"
+      "fetched_at": "2026-01-26T12:58:03.208512"
     },
     {
-      "id": "skinnyms_fitness_-741328328861907429",
+      "id": "skinnyms_fitness_8909097134876693970",
       "title": "9 Ways to Get a Free Butt Lift",
       "url": "https://skinnyms.com/9-ways-to-get-a-butt-lift-for-free/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2650,12 +2320,6 @@
           "alt": "9 Ways to Get a Free Butt Lift",
           "title": "9 Ways to Get a Free Butt Lift",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/12/Beginners-Butt-Blasting-Workout-Photo-2-750x500.jpg",
-          "alt": "get in shape training program butt workout",
-          "title": "get in shape training program butt workout",
-          "is_main": false
         },
         {
           "url": "https://skinnyms.com/wp-content/uploads/2019/12/Beginners-Butt-Blasting-Workout-Photo-2.jpg",
@@ -2718,10 +2382,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:39.776998"
+      "fetched_at": "2026-01-26T12:58:04.305631"
     },
     {
-      "id": "skinnyms_fitness_8531768604128933971",
+      "id": "skinnyms_fitness_2753485861705092607",
       "title": "The Ultimate 7-Day Workout Plan for Beginners",
       "url": "https://skinnyms.com/the-ultimate-7-day-gym-plan-for-beginners/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2744,12 +2408,6 @@
           "alt": "The Ultimate 7-Day Workout Plan for Beginners",
           "title": "The Ultimate 7-Day Workout Plan for Beginners",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2021/06/Pec-Fly-Machine-Chest-Exercise-2-1200x800.jpg",
-          "alt": "The Ultimate 7-Day Gym Plan for Beginners will show you exactly what you need to do to get fit!",
-          "title": "The Ultimate 7-Day Gym Plan for Beginners will show you exactly what you need to do to get fit!",
-          "is_main": false
         },
         {
           "url": "https://skinnyms.com/wp-content/uploads/2021/12/The-Ultimate-7-Day-Gym-Plan-for-Beginners-Pin-1.png",
@@ -2812,10 +2470,10 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:40.905077"
+      "fetched_at": "2026-01-26T12:58:05.433156"
     },
     {
-      "id": "skinnyms_fitness_-8125742528362597139",
+      "id": "skinnyms_fitness_-2894140166788038863",
       "title": "Stay Consistent with a Get Ready for Summer Workout Plan",
       "url": "https://skinnyms.com/weekly-workout-plan-get-fit-summer/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2840,12 +2498,6 @@
           "is_main": true
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2017/05/Weekly-Workout-Plan-to-Get-Fit-for-Summer-Photo-1-750x500.jpg",
-          "alt": "This Weekly Workout Plan Will Help You Get in Tip-Top Shape for Summer!",
-          "title": "This Weekly Workout Plan Will Help You Get in Tip-Top Shape for Summer!",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2021/09/4-Week-Fit-and-Healthy-Summer-Workout-Plan-2-1200x800.jpg",
           "alt": "summer workout",
           "title": "summer workout",
@@ -2855,12 +2507,6 @@
           "url": "https://skinnyms.com/wp-content/uploads/2019/11/7-Best-Arm-Exercises-Photo-1.jpg",
           "alt": "toned arms for summer",
           "title": "toned arms for summer",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/04/8-minute-Plank-Challenge-1-750x500.jpg",
-          "alt": "abs and cardio",
-          "title": "abs and cardio",
           "is_main": false
         },
         {
@@ -2882,22 +2528,16 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2017/12/Heres-How-to-Prevent-Neck-Pain-When-Doing-Crunches-750x500.jpg",
-          "alt": "crunches",
-          "title": "crunches",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2017/12/Heres-How-to-Prevent-Neck-Pain-When-Doing-Crunches.jpg",
           "alt": "crunches",
           "title": "crunches",
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:42.008710"
+      "fetched_at": "2026-01-26T12:58:06.541590"
     },
     {
-      "id": "skinnyms_fitness_6701564378599287708",
+      "id": "skinnyms_fitness_769225147092386292",
       "title": "Top 10 Weight Watchers Workouts",
       "url": "https://skinnyms.com/top-10-weight-watchers-workouts/",
       "rss_feed_url": "https://skinnyms.com/category/fitness/",
@@ -2920,18 +2560,6 @@
           "alt": "Top 10 Weight Watchers Workouts",
           "title": "Top 10 Weight Watchers Workouts",
           "is_main": true
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2016/08/Top-10-Weight-Watchers-Workouts-750x500.jpg",
-          "alt": "",
-          "title": "",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2019/11/7-Weight-Loss-Rules-Backed-by-Science-1-750x500.jpg",
-          "alt": "weight loss tips",
-          "title": "weight loss tips",
-          "is_main": false
         },
         {
           "url": "https://skinnyms.com/wp-content/uploads/2019/11/7-Weight-Loss-Rules-Backed-by-Science-1.jpg",
@@ -2982,12 +2610,6 @@
           "is_main": false
         },
         {
-          "url": "https://skinnyms.com/wp-content/uploads/2016/03/6-Minute-Butt-Shaping-Workout-750x500.jpg",
-          "alt": "6-Minute Butt Shaping Workout",
-          "title": "6-Minute Butt Shaping Workout",
-          "is_main": false
-        },
-        {
           "url": "https://skinnyms.com/wp-content/uploads/2016/03/6-Minute-Butt-Shaping-Workout.jpg",
           "alt": "6-Minute Butt Shaping Workout",
           "title": "6-Minute Butt Shaping Workout",
@@ -2997,12 +2619,6 @@
           "url": "https://skinnyms.com/wp-content/uploads/2015/12/3-Moves-for-Total-Body-Toning-600x400.jpg",
           "alt": "3 Moves for Total Body Toning",
           "title": "3 Moves for Total Body Toning",
-          "is_main": false
-        },
-        {
-          "url": "https://skinnyms.com/wp-content/uploads/2016/03/2-Move-Fat-Burning-HIIT-Workout-750x500.jpg",
-          "alt": "weight watchers workouts",
-          "title": "weight watchers workouts",
           "is_main": false
         },
         {
@@ -3018,7 +2634,7 @@
           "is_main": false
         }
       ],
-      "fetched_at": "2026-01-26T10:38:43.097929"
+      "fetched_at": "2026-01-26T12:58:07.638761"
     },
     {
       "id": "skinnyms_fitness_2649241943304554955",
