@@ -841,11 +841,16 @@ def сгенерировать_html_страницу(пост):
     изображение = главное_изображение['url'] if главное_изображение else изображение_url
     
     # Создаём slug для URL
-    # Если в посте уже есть URL, извлекаем slug из него
+    # ✅ КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Если в посте уже есть URL, извлекаем slug из него
+    # Это гарантирует, что slug совпадает с тем, что был сохранен в blog-posts.json
     существующий_url = пост.get('url', '')
     if существующий_url and '/blog/' in существующий_url:
         # Извлекаем slug из URL (например: /blog/trenirovka-tabata-sekretnyy-klyuch-k-rezultatu.html)
-        slug = существующий_url.split('/blog/')[-1].replace('.html', '')
+        # Или: https://www.tabatatimer.ru/blog/30-minute-leg-workout-circuit-for-goddess-worthy-l.html
+        slug = существующий_url.split('/blog/')[-1].replace('.html', '').strip()
+        if not slug:
+            # Если slug пустой, генерируем из заголовка
+            slug = создать_slug(заголовок, post_id)
     else:
         # Генерируем slug из заголовка
         slug = создать_slug(заголовок, post_id)
