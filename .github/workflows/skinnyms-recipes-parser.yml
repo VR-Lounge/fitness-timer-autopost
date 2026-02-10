@@ -1,27 +1,33 @@
-name: 💅 Парсер Women's Health с рерайтингом
+# Workflow «Рецепты и питание» — по образцу стабильного (11:00 МСК).
+# Только рецепты и здоровое питание из SkinnyMs, публикация на сайт + Telegram.
+# Telegram: фото блюда + структурированный пост (⏱️ время, 🛒 продукты с ценами по сетям России
+#   Пятёрочка/Магнит/Перекрёсток/Ашан/Метро/ВкусВилл/Дикси, 📝 способ, 📊 нутриенты, 🔬 польза, 💡 лайфхак).
+# На сайт: подробная статья с тем же тоном (жизненный, позитивный, нутрициолог).
+# Запуск: 17:25 МСК (14:25 UTC) 1 раз в день.
+
+name: 🍽️ Рецепты и питание (SkinnyMs)
 
 on:
   schedule:
-    # Запускается 1 раз в день для публикации (сайт + Telegram)
-    - cron: '0 8 * * *'   # 08:00 UTC (11:00 МСК) - девушки, НА САЙТ (HTML) - утро
+    - cron: '25 14 * * *'   # 14:25 UTC (17:25 МСК) — рецепты и питание, НА САЙТ + Telegram
   workflow_dispatch:
 
 jobs:
   parse-and-publish:
-    name: Парсинг и публикация статей для девушек
+    name: Парсинг и публикация рецептов и здорового питания
     runs-on: ubuntu-latest
     permissions:
       contents: write
       actions: read
       checks: read
       pull-requests: read
-    
+
     steps:
       - name: Клонирование репозитория fitness-timer-autopost
         uses: actions/checkout@v4
         with:
           path: fitness-timer-autopost
-      
+
       - name: Клонирование репозитория tabatatimer-ru (public_html)
         uses: actions/checkout@v4
         with:
@@ -29,13 +35,13 @@ jobs:
           path: public_html
           token: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-      
+
       - name: Установка Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-      
+
       - name: Установка зависимостей
         working-directory: fitness-timer-autopost
         run: |
@@ -46,7 +52,7 @@ jobs:
         working-directory: fitness-timer-autopost
         run: |
           pip install awscli
-      
+
       - name: Восстановление состояния (cache)
         uses: actions/cache/restore@v4
         with:
@@ -56,35 +62,17 @@ jobs:
             fitness-timer-autopost/content_library.json
             fitness-timer-autopost/.telegram_recent.json
             fitness-timer-autopost/.publication_logs.json
+            fitness-timer-autopost/.skinnyms_queue.json
           key: womenshealth-state-${{ github.run_id }}
           restore-keys: |
             womenshealth-state-
-      
+
       - name: Создание структуры директорий
         run: |
           mkdir -p public_html/blog
           echo "✅ Структура директорий создана"
-      
-      - name: Определение режима публикации
-        id: set_publish_flag
-        run: |
-          # Для workflow_dispatch всегда публикуем на сайт
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "PUBLISH_TO_BLOG=true" >> $GITHUB_OUTPUT
-            echo "📝 Режим: опубликовать на сайт + Telegram (workflow_dispatch)"
-          else
-            # Для schedule: публикуем на сайт только при запусках 08:00 и 20:00 UTC
-            HOUR_UTC=$(date -u +%H)
-            if [ "$HOUR_UTC" = "08" ] || [ "$HOUR_UTC" = "20" ]; then
-              echo "PUBLISH_TO_BLOG=true" >> $GITHUB_OUTPUT
-              echo "📝 Режим: опубликовать на сайт + Telegram (schedule)"
-            else
-              echo "PUBLISH_TO_BLOG=false" >> $GITHUB_OUTPUT
-              echo "📱 Режим: только Telegram (без публикации на сайт)"
-            fi
-          fi
-      
-      - name: Запуск парсера Women's Health
+
+      - name: Запуск парсера рецептов (SkinnyMs) и публикация
         working-directory: fitness-timer-autopost
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -92,10 +80,9 @@ jobs:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
-          # Используем значение из шага выше (для workflow_dispatch всегда true)
-          PUBLISH_TO_BLOG: ${{ steps.set_publish_flag.outputs.PUBLISH_TO_BLOG || 'true' }}
-          SKINNYMS_ONLY: "true"
-          SKINNYMS_CATEGORIES: "fitness,recipes"
+          PUBLISH_TO_BLOG: "true"
+          RECIPES_ONLY: "true"
+          SKINNYMS_CATEGORIES: "recipes"
           SKINNYMS_MAX_ARTICLES_PER_RUN: "40"
         run: |
           python3 skinnyms_parser.py
@@ -115,7 +102,7 @@ jobs:
             if git diff --cached --quiet; then
               echo "ℹ️ Библиотека не изменилась"
             else
-              git commit -m "📚 Обновление библиотеки контента $(date +'%Y-%m-%d %H:%M:%S')" || echo "⚠️ Нет изменений для коммита"
+              git commit -m "📚 Рецепты: обновление библиотеки контента $(date +'%Y-%m-%d %H:%M:%S')" || echo "⚠️ Нет изменений для коммита"
               if git push origin main; then
                 echo "✅ Библиотека контента отправлена в fitness-timer-autopost"
               else
@@ -125,12 +112,12 @@ jobs:
           else
             echo "ℹ️ content_library.json не найден, пропускаю коммит"
           fi
-      
+
       - name: Генерация HTML страниц для блога
         working-directory: fitness-timer-autopost
         run: |
           python3 generate_blog_post_page.py
-      
+
       - name: Загрузка файлов блога на Яндекс Cloud
         working-directory: fitness-timer-autopost
         env:
@@ -139,7 +126,7 @@ jobs:
         run: |
           chmod +x upload_blog_to_yandex.sh
           ./upload_blog_to_yandex.sh || echo "⚠️ Загрузка на Яндекс Cloud пропущена (переменные не настроены)"
-      
+
       - name: Коммит изменений в репозиторий tabatatimer-ru
         working-directory: public_html
         env:
@@ -147,22 +134,21 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Настраиваем remote с токеном для push (используем PAT если доступен, иначе GITHUB_TOKEN)
+
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VR-Lounge/tabatatimer-ru.git
-          
+
           if [ -n "$(git status --porcelain)" ]; then
             git add blog-posts.json blog/*.html sitemap.xml robots.txt images/blog/ 2>/dev/null || true
-            git commit -m "🤖 Автообновление: новые посты блога $(date +'%Y-%m-%d %H:%M:%S')" || echo "⚠️ Нет изменений для коммита"
+            git commit -m "🤖 Рецепты: автообновление блога $(date +'%Y-%m-%d %H:%M:%S')" || echo "⚠️ Нет изменений для коммита"
             if git push origin main; then
               echo "✅ Изменения успешно отправлены в tabatatimer-ru"
             else
-              echo "⚠️ Не удалось запушить изменения в tabatatimer-ru (используется Яндекс Cloud для загрузки файлов)"
+              echo "⚠️ Не удалось запушить изменения в tabatatimer-ru"
             fi
           else
             echo "ℹ️ Нет изменений для коммита"
           fi
-      
+
       - name: Сохранение состояния (cache)
         uses: actions/cache/save@v4
         if: always()
@@ -173,15 +159,17 @@ jobs:
             fitness-timer-autopost/content_library.json
             fitness-timer-autopost/.telegram_recent.json
             fitness-timer-autopost/.publication_logs.json
+            fitness-timer-autopost/.skinnyms_queue.json
           key: womenshealth-state-${{ github.run_id }}
-      
+
       - name: Логирование результата
         if: always()
         working-directory: fitness-timer-autopost
         run: |
-          echo "📊 Результат выполнения парсера:"
+          echo "📊 Результат выполнения парсера рецептов:"
+          if [ -f .skinnyms_queue.json ]; then
+            echo "✅ Состояние SkinnyMs сохранено"
+          fi
           if [ -f .womenshealth_processed.json ]; then
-            echo "✅ Состояние сохранено"
-          else
-            echo "⚠️ Состояние не найдено"
+            echo "✅ Состояние публикации сохранено"
           fi

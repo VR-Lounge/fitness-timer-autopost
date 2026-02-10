@@ -106,14 +106,14 @@ def extract_img_url(img) -> str:
     return img.get("src", "")
 
 
-def collect_article_links(soup: BeautifulSoup) -> List[str]:
+def collect_article_links(soup: BeautifulSoup, base_url: str = "https://skinnyms.com/") -> List[str]:
     links = []
     for a in soup.select("h2.entry-title a, h3.entry-title a, .entry-title a, .post-title a"):
         href = a.get("href")
         if not href:
             continue
         if "skinnyms.com" not in href:
-            href = urljoin(BASE_CATEGORY_URL, href)
+            href = urljoin(base_url, href)
         if "/category/" in href:
             continue
         links.append(normalize_url(href))
@@ -216,7 +216,7 @@ def main() -> None:
             soup = fetch_page(page_url)
             if not soup:
                 continue
-            links = collect_article_links(soup)
+            links = collect_article_links(soup, base_url)
             for link in links:
                 if link not in state["seen_urls"]:
                     state["pending"].append({
