@@ -14,7 +14,7 @@ import re
 import html
 from pathlib import Path
 from datetime import datetime
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 # Импортируем функцию загрузки изображений
 try:
@@ -90,23 +90,94 @@ MOTIVATION_NUTRITION = [
     'Здоровый выбор каждый день.',
 ]
 
-# Ключевые слова в alt/title/url, по которым считаем изображение «про фитнес/тренировки», а не про еду
+# Ключевые слова в alt/title/url — про тренировки/зал (НЕ включать общие фразы про питание из шаблонов alt,
+# иначе все картинки рецептов помечаются как «фитнес» и в hero попадает не то фото).
 FITNESS_IMAGE_KEYWORDS = (
-    'тренировк', 'фитнес', 'workout', 'exercise', 'yoga', 'gym', 'pull-up', 'pullup',
-    'здоровые продукты для фитнеса', 'правильное питание для тренировок', 'белок, сложные углеводы',
-    'что есть и когда', 'person', 'people', 'woman exercising', 'man exercising', 'спортсмен'
+    'тренировк', 'workout', 'exercise', 'yoga', 'gym', 'pull-up', 'pullup',
+    'woman exercising', 'man exercising', 'спортсмен', 'dumbbell', 'гантел', 'штанг',
+    'jumping jack', 'plank', 'планк', 'присед', 'squat', 'cardio', 'кардио',
 )
 
+# Имена файлов с сайта рецептов часто содержат эти фрагменты (англ. названия блюд)
+FOOD_FILENAME_HINTS = re.compile(
+    r'recipe|crock|slow-cooker|slow_cooker|dinner|meal|pasta|soup|salad|'
+    r'chicken|turkey|beef|fish|smoothie|bowl|cups|lasagna|penne|stew|'
+    r'casserole|oatmeal|chips|lettuce|low-carb|lowcarb|keto|bake|skillet|'
+    r'instant-pot|multicook|buffalo|taco|wrap|bbq|gumbo|roll|tea|sweet',
+    re.I,
+)
+
+
+def url_из_стоковой_фитнес_коллекции(url: str) -> bool:
+    """Локальные стоки Fitness | Woman / Fitness | Man — не использовать как hero рецепта."""
+    if not url:
+        return False
+    u = unquote(url).lower().replace('\\', '/')
+    if '/images/fitness' in u and ('woman' in u or 'man' in u):
+        return True
+    return False
+
+
 def изображение_похоже_на_фитнес(img_dict):
-    """True, если по alt/title/url изображение скорее про тренировки, чем про блюдо."""
+    """True, если изображение скорее про тренировку/сток зала, а не про блюдо."""
     if not img_dict:
+        return False
+    url = (img_dict.get('url') or '')
+    if url_из_стоковой_фитнес_коллекции(url):
+        return True
+    u_low = unquote(url).lower()
+    # Файл скачанного фото рецепта с типичным англ. именем блюда — не считать фитнес-фото
+    if '/images/blog/' in url.lower() and FOOD_FILENAME_HINTS.search(u_low):
         return False
     text = ' '.join([
         (img_dict.get('alt') or ''),
         (img_dict.get('title') or ''),
-        (img_dict.get('url') or '')
+        url,
     ]).lower()
     return any(k in text for k in FITNESS_IMAGE_KEYWORDS)
+
+
+def _score_recipe_image_for_hero(img_dict):
+    """Меньше = лучше кандидат на главное фото рецепта."""
+    url = (img_dict.get('url') or '')
+    name = unquote(url).split('/')[-1].lower()
+    if url_из_стоковой_фитнес_коллекции(url):
+        return (3000,)
+    if '/images/blog/' not in url.lower():
+        return (2000,)
+    if FOOD_FILENAME_HINTS.search(name):
+        return (0,)
+    # типичный паттерн: ..._0_abcd1234_Dish-Name.jpg — низкий индекс вложения
+    if re.search(r'_0_[a-f0-9]{6,}_', name, re.I):
+        return (1,)
+    if re.search(r'_1_[a-f0-9]{6,}_', name, re.I):
+        return (2,)
+    if re.search(r'_2_[a-f0-9]{6,}_', name, re.I):
+        return (3,)
+    # короткое имя вида skinnyms_recipes_*_*_65.jpg — часто служебное/не блюдо
+    if re.match(r'^skinnyms_recipes_\d+_[a-f0-9]+_\d+\.jpe?g$', name, re.I):
+        return (500,)
+    if изображение_похоже_на_фитнес(img_dict):
+        return (400,)
+    return (100,)
+
+
+def выбрать_главное_изображение_для_рецепта(обработанные_изображения):
+    """Hero и превью: сток Fitness | Woman/Man исключаем; приоритет — файлы с именем блюда и индексом _0_."""
+    if not обработанные_изображения:
+        return None
+    scored = sorted(
+        обработанные_изображения,
+        key=lambda im: _score_recipe_image_for_hero(im),
+    )
+    best = scored[0]
+    # Если лучший всё ещё явный мусор — взять первое не-сток из /images/blog/
+    if _score_recipe_image_for_hero(best)[0] >= 400:
+        for im in обработанные_изображения:
+            u = im.get('url') or ''
+            if '/images/blog/' in u.lower() and not url_из_стоковой_фитнес_коллекции(u):
+                return im
+    return best
 
 
 def _без_упоминания_источника(текст):
@@ -916,7 +987,7 @@ def сгенерировать_html_страницу(пост):
         }]
     
     # Главное изображение для Open Graph и Schema.org (первое или помеченное как главное)
-    # Для постов о питании/рецептах: не показывать фото с тренирующимися — брать первое «про еду»
+    # Для постов о питании/рецептах: не сток Fitness | Woman, не служебный кадр — фото блюда из галереи
     источник = (пост.get('source') or '').lower()
     теги_lower = [str(t).strip().lower() for t in (теги or [])]
     пост_про_еду = (
@@ -925,10 +996,7 @@ def сгенерировать_html_страницу(пост):
     )
     главное_изображение = None
     if пост_про_еду and обработанные_изображения:
-        for img_dict in обработанные_изображения:
-            if not изображение_похоже_на_фитнес(img_dict):
-                главное_изображение = img_dict
-                break
+        главное_изображение = выбрать_главное_изображение_для_рецепта(обработанные_изображения)
     if not главное_изображение:
         for img_dict in обработанные_изображения:
             if img_dict.get('is_main', False):
@@ -936,7 +1004,28 @@ def сгенерировать_html_страницу(пост):
                 break
     if not главное_изображение and обработанные_изображения:
         главное_изображение = обработанные_изображения[0]
-    
+
+    # Синхронизируем порядок images[] и post.image с выбранным hero (превью + модалка на blog.html)
+    if пост_про_еду and все_изображения_поста and главное_изображение:
+        imgs = пост.get('images')
+        if imgs and isinstance(imgs, list) and len(imgs) > 0:
+
+            def _norm_u(u):
+                return (u or '').split('?')[0].rstrip('/').lower()
+
+            gurl = _norm_u(главное_изображение.get('url'))
+            ix = next((i for i, x in enumerate(imgs) if _norm_u(x.get('url')) == gurl), None)
+            if ix is not None and ix > 0:
+                row = imgs.pop(ix)
+                imgs.insert(0, row)
+                пост['_blog_json_dirty'] = True
+            for i, im in enumerate(imgs):
+                im['is_main'] = (i == 0)
+            first_u = imgs[0].get('url')
+            if first_u and _norm_u(пост.get('image')) != _norm_u(first_u):
+                пост['image'] = first_u
+                пост['_blog_json_dirty'] = True
+
     изображение = главное_изображение['url'] if главное_изображение else изображение_url
     
     # Создаём slug для URL
@@ -1798,18 +1887,18 @@ def сгенерировать_страницы_для_всех_постов():
         except Exception as e:
             print(f"❌ Ошибка создания страницы для поста {пост.get('id', 'unknown')}: {e}")
     
-    # Обновляем post.image в blog-posts.json, чтобы на странице списка блога (blog.html) отображалось то же главное фото
+    # Сохраняем blog-posts.json, если менялись post.image / порядок images (рецепты) или сверка с HTML
+    json_dirty = any(пост.pop('_blog_json_dirty', False) for пост in data['posts'])
     if обновления_изображений:
-        обновлено = 0
         for пост in data['posts']:
             pid = пост.get('id')
             if pid and pid in обновления_изображений and пост.get('image') != обновления_изображений[pid]:
                 пост['image'] = обновления_изображений[pid]
-                обновлено += 1
-        if обновлено:
-            with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"✅ В blog-posts.json обновлено главное изображение у {обновлено} постов (для списка блога)")
+                json_dirty = True
+    if json_dirty:
+        with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print("✅ blog-posts.json обновлён (превью/модалка и порядок фото для рецептов)")
     
     print(f"\n✅ Сгенерировано страниц: {сгенерировано}/{len(посты)}")
     
