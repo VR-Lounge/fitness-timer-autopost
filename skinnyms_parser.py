@@ -194,11 +194,31 @@ def main() -> None:
             "base_url": "https://skinnyms.com/category/recipes/",
             "source": "skinnyms_recipes",
             "keywords": ["recipes", "healthy", "meal", "nutrition"]
+        },
+        "meal-planning": {
+            "base_url": "https://skinnyms.com/category/meal-planning/",
+            "source": "skinnyms_recipes",
+            "keywords": ["meal", "planning", "diet", "nutrition", "healthy eating"]
         }
     }
 
+    # Источники, которые считаются «рецепты/питание» (для workflow только рецептов)
+    recipes_sources = {"skinnyms_recipes"}
+
     state = load_state()
     library = load_library()
+
+    # Если в этом запуске только категории рецептов/питания — обрабатываем только их,
+    # чтобы не тянуть тренировки из общего кэша (womenshealth-state).
+    only_recipe_cats = all(
+        category_map.get(c, {}).get("source") in recipes_sources
+        for c in categories
+    )
+    if only_recipe_cats and state.get("pending"):
+        before = len(state["pending"])
+        state["pending"] = [p for p in state["pending"] if p.get("source") in recipes_sources]
+        if before != len(state["pending"]):
+            print(f"📌 В очереди оставлены только рецепты/питание: {len(state['pending'])} (убрано {before - len(state['pending'])} нерелевантных)")
 
     for category in categories:
         cfg = category_map.get(category)
@@ -250,6 +270,18 @@ def main() -> None:
         for idx, img in enumerate(parsed["images"][:10], 1):
             print(f"   {idx}. {img.get('url','')}")
 
+        # Для рецептов/питания: первым должно быть фото блюда из контента, а не og:image (часто фитнес)
+        images_for_library = parsed["images"]
+        if source == "skinnyms_recipes" and len(parsed["images"]) > 1:
+            from_content = [i for i in parsed["images"] if not i.get("is_main")]
+            from_og = [i for i in parsed["images"] if i.get("is_main")]
+            if from_content:
+                images_for_library = from_content + from_og
+                images_for_library[0]["is_main"] = True
+                for i in images_for_library[1:]:
+                    i["is_main"] = False
+                print(f"🍽️ Рецепт: первым изображением поставлено фото из контента (еда)")
+
         item = build_library_item(
             title=parsed["title"],
             url=parsed["url"],
@@ -259,7 +291,7 @@ def main() -> None:
             summary_ru="",
             relevance_score=85,
             content_excerpt=parsed["content_excerpt"],
-            images=parsed["images"]
+            images=images_for_library
         )
         upsert_item(library, item)
         processed += 1

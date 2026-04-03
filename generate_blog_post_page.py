@@ -90,6 +90,36 @@ MOTIVATION_NUTRITION = [
     'Здоровый выбор каждый день.',
 ]
 
+# Ключевые слова в alt/title/url, по которым считаем изображение «про фитнес/тренировки», а не про еду
+FITNESS_IMAGE_KEYWORDS = (
+    'тренировк', 'фитнес', 'workout', 'exercise', 'yoga', 'gym', 'pull-up', 'pullup',
+    'здоровые продукты для фитнеса', 'правильное питание для тренировок', 'белок, сложные углеводы',
+    'что есть и когда', 'person', 'people', 'woman exercising', 'man exercising', 'спортсмен'
+)
+
+def изображение_похоже_на_фитнес(img_dict):
+    """True, если по alt/title/url изображение скорее про тренировки, чем про блюдо."""
+    if not img_dict:
+        return False
+    text = ' '.join([
+        (img_dict.get('alt') or ''),
+        (img_dict.get('title') or ''),
+        (img_dict.get('url') or '')
+    ]).lower()
+    return any(k in text for k in FITNESS_IMAGE_KEYWORDS)
+
+
+def _без_упоминания_источника(текст):
+    """Убирает из строки упоминания внутреннего источника (не для публичного контента)."""
+    if not текст or not isinstance(текст, str):
+        return текст or ''
+    текст = re.sub(r'skinnyms_recipes?\s*\|?\s*', 'recipes ', текст, flags=re.I)
+    текст = re.sub(r'skinnyms_fitness\s*\|?\s*', 'fitness ', текст, flags=re.I)
+    текст = re.sub(r'skinnyms\w*', '', текст, flags=re.I)
+    текст = re.sub(r'\s+', ' ', текст).strip()
+    return текст if текст else ''
+
+
 def выбрать_мотивационную_фразу(теги, заголовок):
     """Выбирает мотивационную фразу по контексту статьи (теги). Детерминированно по заголовку."""
     теги_lower = [str(t).strip().lower() for t in (теги or [])]
@@ -286,8 +316,8 @@ def создать_галерею_изображений(изображения,
         if not img_url:
             continue
             
-        img_alt = img_dict.get('alt', '') or f"{заголовок} - фото {idx + 1}"
-        img_title = img_dict.get('title', '') or f"{заголовок} - изображение {idx + 1}"
+        img_alt = _без_упоминания_источника(img_dict.get('alt', '') or f"{заголовок} - фото {idx + 1}")
+        img_title = _без_упоминания_источника(img_dict.get('title', '') or f"{заголовок} - изображение {idx + 1}")
         
         # Создаём уникальные alt и title для каждого изображения
         alt, title = создать_уникальный_alt_для_изображения(заголовок, теги, idx + 1)
@@ -314,8 +344,8 @@ def создать_галерею_изображений(изображения,
     for img_dict in все_изображения_для_галереи:
         img_url = img_dict.get('url', '')
         if img_url:
-            img_alt = img_dict.get('alt', '') or f"{заголовок} - фото"
-            img_title = img_dict.get('title', '') or f"{заголовок} - изображение"
+            img_alt = _без_упоминания_источника(img_dict.get('alt', '') or f"{заголовок} - фото")
+            img_title = _без_упоминания_источника(img_dict.get('title', '') or f"{заголовок} - изображение")
             # Экранируем для JavaScript
             img_alt = img_alt.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
             img_title = img_title.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
@@ -886,11 +916,24 @@ def сгенерировать_html_страницу(пост):
         }]
     
     # Главное изображение для Open Graph и Schema.org (первое или помеченное как главное)
+    # Для постов о питании/рецептах: не показывать фото с тренирующимися — брать первое «про еду»
+    источник = (пост.get('source') or '').lower()
+    теги_lower = [str(t).strip().lower() for t in (теги or [])]
+    пост_про_еду = (
+        источник in ('recipes', 'skinnyms_recipes')  # skinnyms_recipes — для старых постов
+        or any(t in теги_lower for t in ('питание', 'рецепт', 'рецепты', 'диета', 'диеты'))
+    )
     главное_изображение = None
-    for img_dict in обработанные_изображения:
-        if img_dict.get('is_main', False):
-            главное_изображение = img_dict
-            break
+    if пост_про_еду and обработанные_изображения:
+        for img_dict in обработанные_изображения:
+            if not изображение_похоже_на_фитнес(img_dict):
+                главное_изображение = img_dict
+                break
+    if not главное_изображение:
+        for img_dict in обработанные_изображения:
+            if img_dict.get('is_main', False):
+                главное_изображение = img_dict
+                break
     if not главное_изображение and обработанные_изображения:
         главное_изображение = обработанные_изображения[0]
     
@@ -1645,7 +1688,7 @@ def сгенерировать_html_страницу(пост):
 </body>
 </html>"""
     
-    return html, slug
+    return html, slug, изображение
 
 def обновить_sitemap():
     """Обновляет sitemap.xml со всеми статьями блога"""
@@ -1740,18 +1783,33 @@ def сгенерировать_страницы_для_всех_постов():
     USED_SLUGS.clear()
     
     сгенерировано = 0
+    обновления_изображений = {}  # post_id -> URL главного изображения (для списка блога)
     for пост in посты:
         try:
-            html, slug = сгенерировать_html_страницу(пост)
+            html, slug, изображение_использовано = сгенерировать_html_страницу(пост)
             файл = BLOG_POSTS_DIR / f"{slug}.html"
             
             with open(файл, 'w', encoding='utf-8') as f:
                 f.write(html)
             
+            обновления_изображений[пост.get('id')] = изображение_использовано
             сгенерировано += 1
             print(f"✅ Создана страница: {slug}.html")
         except Exception as e:
             print(f"❌ Ошибка создания страницы для поста {пост.get('id', 'unknown')}: {e}")
+    
+    # Обновляем post.image в blog-posts.json, чтобы на странице списка блога (blog.html) отображалось то же главное фото
+    if обновления_изображений:
+        обновлено = 0
+        for пост in data['posts']:
+            pid = пост.get('id')
+            if pid and pid in обновления_изображений and пост.get('image') != обновления_изображений[pid]:
+                пост['image'] = обновления_изображений[pid]
+                обновлено += 1
+        if обновлено:
+            with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            print(f"✅ В blog-posts.json обновлено главное изображение у {обновлено} постов (для списка блога)")
     
     print(f"\n✅ Сгенерировано страниц: {сгенерировано}/{len(посты)}")
     

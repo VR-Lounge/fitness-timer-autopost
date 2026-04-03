@@ -1,11 +1,9 @@
-# Workflow «Рецепты и питание» — по образцу стабильного (11:00 МСК).
-# Только рецепты и здоровое питание из SkinnyMs, публикация на сайт + Telegram.
-# Telegram: фото блюда + структурированный пост (⏱️ время, 🛒 продукты с ценами по сетям России
-#   Пятёрочка/Магнит/Перекрёсток/Ашан/Метро/ВкусВилл/Дикси, 📝 способ, 📊 нутриенты, 🔬 польза, 💡 лайфхак).
-# На сайт: подробная статья с тем же тоном (жизненный, позитивный, нутрициолог).
-# Запуск: 17:25 МСК (14:25 UTC) 1 раз в день.
+# Workflow «Рецепты и питание» — публикация на сайт + Telegram.
+# Контент: рецепты и здоровое питание (источник только для парсинга, в публичных данных не упоминается).
+# Telegram: фото блюда + структурированный пост (⏱️ время, 🛒 продукты с ценами по сетям России и т.д.).
+# На сайт: полная статья. Запуск: 17:25 МСК (14:25 UTC) 1 раз в день.
 
-name: 🍽️ Рецепты и питание (SkinnyMs)
+name: 🍽️ Рецепты и питание
 
 on:
   schedule:
@@ -63,16 +61,16 @@ jobs:
             fitness-timer-autopost/.telegram_recent.json
             fitness-timer-autopost/.publication_logs.json
             fitness-timer-autopost/.skinnyms_queue.json
-          key: womenshealth-state-${{ github.run_id }}
+          key: recipes-state-${{ github.run_id }}
           restore-keys: |
-            womenshealth-state-
+            recipes-state-
 
       - name: Создание структуры директорий
         run: |
           mkdir -p public_html/blog
           echo "✅ Структура директорий создана"
 
-      - name: Запуск парсера рецептов (SkinnyMs) и публикация
+      - name: Запуск парсера рецептов и публикация
         working-directory: fitness-timer-autopost
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -82,7 +80,7 @@ jobs:
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
           PUBLISH_TO_BLOG: "true"
           RECIPES_ONLY: "true"
-          SKINNYMS_CATEGORIES: "recipes"
+          SKINNYMS_CATEGORIES: "recipes,meal-planning"
           SKINNYMS_MAX_ARTICLES_PER_RUN: "40"
         run: |
           python3 skinnyms_parser.py
@@ -160,16 +158,13 @@ jobs:
             fitness-timer-autopost/.telegram_recent.json
             fitness-timer-autopost/.publication_logs.json
             fitness-timer-autopost/.skinnyms_queue.json
-          key: womenshealth-state-${{ github.run_id }}
+          key: recipes-state-${{ github.run_id }}
 
       - name: Логирование результата
         if: always()
         working-directory: fitness-timer-autopost
         run: |
           echo "📊 Результат выполнения парсера рецептов:"
-          if [ -f .skinnyms_queue.json ]; then
-            echo "✅ Состояние SkinnyMs сохранено"
-          fi
           if [ -f .womenshealth_processed.json ]; then
             echo "✅ Состояние публикации сохранено"
           fi

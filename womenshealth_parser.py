@@ -49,6 +49,18 @@ from content_library import load_library, save_library, upsert_item, build_libra
 from telegram_dedup import is_duplicate as telegram_is_duplicate, record_post as telegram_record_post
 from publication_logger import логировать_публикацию
 
+
+def _без_упоминания_источника(текст):
+    """Убирает из строки любые упоминания внутреннего источника (для публичных alt/title/мета)."""
+    if not текст or not isinstance(текст, str):
+        return текст or ''
+    текст = re.sub(r'skinnyms_recipes?\s*\|?\s*', 'recipes ', текст, flags=re.I)
+    текст = re.sub(r'skinnyms_fitness\s*\|?\s*', 'fitness ', текст, flags=re.I)
+    текст = re.sub(r'skinnyms\w*', '', текст, flags=re.I)
+    текст = re.sub(r'\s+', ' ', текст).strip()
+    return текст if текст else ''
+
+
 # Импортируем функцию адаптации заголовка
 try:
     from generate_blog_post_page import адаптировать_заголовок_для_русской_аудитории
@@ -1885,11 +1897,13 @@ def сохранить_пост_в_блог(текст, изображение_u
                 else:
                     print(f"  ✅ Изображение {idx + 1} загружено: {локальное_img_url[:60]}...")
                 
-                # Сохраняем изображение с alt и title (используем русский заголовок)
+                # Сохраняем изображение с alt и title (без упоминаний внутренних источников в публичном контенте)
+                alt = img_dict.get('alt', '') or f"{заголовок_русский} - фото {idx + 1}"
+                title = img_dict.get('title', '') or f"{заголовок_русский} - изображение {idx + 1}"
                 обработанные_изображения.append({
                     'url': локальное_img_url,
-                    'alt': img_dict.get('alt', '') or f"{заголовок_русский} - фото {idx + 1}",
-                    'title': img_dict.get('title', '') or f"{заголовок_русский} - изображение {idx + 1}",
+                    'alt': _без_упоминания_источника(alt),
+                    'title': _без_упоминания_источника(title),
                     'is_main': img_dict.get('is_main', False) and idx == 0
                 })
             
@@ -2338,8 +2352,8 @@ def главная():
             else:
                 print("✅ Источник: skinnyms.com - проверка рекламных маркеров в расширенной статье пропущена")
         
-        # Создаём post_id заранее, чтобы можно было добавить ссылку в пост
-        источник_блог = 'skinnyms_recipes' if RECIPES_ONLY else 'womenshealth'
+        # Создаём post_id заранее (только публичные названия: recipes, womenshealth — без упоминаний источников парсинга)
+        источник_блог = 'recipes' if RECIPES_ONLY else 'womenshealth'
         post_id = f"{источник_блог}_{int(time.time())}"
         
         # Получаем все релевантные изображения
