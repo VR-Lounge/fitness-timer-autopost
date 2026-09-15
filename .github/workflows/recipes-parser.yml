@@ -22,16 +22,17 @@ jobs:
 
     steps:
       - name: Клонирование репозитория fitness-timer-autopost
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: fitness-timer-autopost
 
       - name: Клонирование репозитория tabatatimer-ru (public_html)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: VR-Lounge/tabatatimer-ru
           path: public_html
-          token: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
+          # Публичный репозиторий: не подставлять битый PAT поверх GITHUB_TOKEN
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Установка Python
@@ -90,7 +91,7 @@ jobs:
         if: always()
         working-directory: fitness-timer-autopost
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f content_library.json ]; then
             git config user.name "github-actions[bot]"
@@ -122,14 +123,23 @@ jobs:
           YANDEX_ACCESS_KEY_ID: ${{ secrets.YANDEX_ACCESS_KEY_ID }}
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
         run: |
+          if [ -z "$YANDEX_ACCESS_KEY_ID" ] || [ -z "$YANDEX_SECRET_ACCESS_KEY" ]; then
+            echo "❌ Секреты YANDEX_ACCESS_KEY_ID / YANDEX_SECRET_ACCESS_KEY не заданы"
+            exit 1
+          fi
           chmod +x upload_blog_to_yandex.sh
-          ./upload_blog_to_yandex.sh || echo "⚠️ Загрузка на Яндекс Cloud пропущена (переменные не настроены)"
+          ./upload_blog_to_yandex.sh
 
       - name: Коммит изменений в репозиторий tabatatimer-ru
         working-directory: public_html
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_CROSS_REPO || secrets.GITHUB_TOKEN }}
+          # Cross-repo push: PAT (если задан), иначе GITHUB_TOKEN не сможет писать в другой репозиторий
+          GITHUB_TOKEN: ${{ secrets.PAT_CROSS_REPO }}
         run: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "⚠️ PAT_CROSS_REPO не задан — пропускаю push в tabatatimer-ru (файлы уже на Yandex Cloud)"
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -141,7 +151,8 @@ jobs:
             if git push origin main; then
               echo "✅ Изменения успешно отправлены в tabatatimer-ru"
             else
-              echo "⚠️ Не удалось запушить изменения в tabatatimer-ru"
+              echo "❌ Не удалось запушить изменения в tabatatimer-ru"
+              exit 1
             fi
           else
             echo "ℹ️ Нет изменений для коммита"
