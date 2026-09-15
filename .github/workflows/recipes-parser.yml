@@ -34,6 +34,8 @@ jobs:
           # Публичный репозиторий: не подставлять битый PAT поверх GITHUB_TOKEN
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
+          # Иначе git push потом ходит с Authorization github-actions[bot] и получает 403
+          persist-credentials: false
 
       - name: Установка Python
         uses: actions/setup-python@v5
@@ -142,6 +144,8 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Снимаем Authorization от actions/checkout (GITHUB_TOKEN бота)
+          git config --unset-all http.https://github.com/.extraheader || true
 
           git remote set-url origin https://x-access-token:${CROSS_REPO_TOKEN}@github.com/VR-Lounge/tabatatimer-ru.git
 
