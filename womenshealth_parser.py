@@ -48,6 +48,8 @@ from topic_balance import выбрать_статью_для_баланса
 from content_library import load_library, save_library, upsert_item, build_library_item, prune_library, normalize_images
 from telegram_dedup import is_duplicate as telegram_is_duplicate, record_post as telegram_record_post
 from publication_logger import логировать_публикацию
+from recipe_content_filters import blocked_recipe_not_for_humans
+from http_fetch import fetch_url, is_host_blocked, probe_skinnyms_availability, RSS_HEADERS, BROWSER_HEADERS
 
 
 def _без_упоминания_источника(текст):
@@ -144,8 +146,9 @@ WOMENSHEALTH_RSS_FEEDS = [
     
     # НОВЫЕ ПРОВЕРЕННЫЕ ФИДЫ (41-58) - добавлены после тестирования
     # ТОП-ПРИОРИТЕТ (100% релевантность)
-    'https://skinnyms.com/category/fitness/feed/',  # Skinny Ms - программы тренировок, меню, фитнес-планы, HIIT
-    'https://blog.myfitnesspal.com/feed/',  # MyFitnessPal Blog - похудение, питание, рецепты, фитнес, калории
+    # SkinnyMS / MyFitnessPal: Cloudflare challenge с IP датацентров (GitHub Actions) — soft-skip
+    # 'https://skinnyms.com/category/fitness/feed/',
+    # 'https://blog.myfitnesspal.com/feed/',
     'https://www.nataliejillfitness.com/feed/',  # Natalie Jill Fitness - функциональные тренировки, похудение, безглютеновое питание
     'https://lauralondonfitness.com/feed/',  # Laura London Fitness - фитнес для мам 40+, трансформация тела, мотивация
     'https://www.behealthynow.co.uk/feed/',  # Be Healthy Now - здоровое питание, рецепты, питание, фитнес, натуральная красота
@@ -168,6 +171,26 @@ WOMENSHEALTH_RSS_FEEDS = [
     # НИЗКАЯ РЕЛЕВАНТНОСТЬ (40% релевантность, но рабочие)
     'https://lovesweatfitness.com/blogs/news.atom',  # Love Sweat Fitness - тренировки дома, программы, челленджи, рецепты, мотивация
     'https://gethealthyu.com/feed/',  # Get Healthy U - фитнес для женщин 40+, тренировки, питание, здоровый образ жизни
+]
+
+# RSS для workflow «Рецепты и питание», когда SkinnyMS недоступен (Cloudflare)
+RECIPES_RSS_FEEDS = [
+    'https://sarahfit.com/feed/',
+    'https://jessicasepel.com/feed',
+    'https://realmomnutrition.com/feed',
+    'https://abbylangernutrition.com/feed',
+    'https://sharonpalmer.com/feed',
+    'https://www.behealthynow.co.uk/feed/',
+    'https://nourishinglab.com/feed/',
+    'https://fitnessista.com/feed/',
+    'https://nourishmovelove.com/feed/',
+]
+
+RECIPE_RELEVANT_KEYWORDS = [
+    'recipe', 'recipes', 'meal', 'meal prep', 'nutrition', 'diet', 'healthy eating',
+    'ingredient', 'cook', 'cooking', 'bake', 'breakfast', 'lunch', 'dinner', 'snack',
+    'protein', 'smoothie', 'salad', 'soup', 'calorie', 'macros', 'food',
+    'рецепт', 'питание', 'завтрак', 'ужин', 'обед', 'ингредиент',
 ]
 
 # ЧЕРНЫЙ СПИСОК: URL статей, которые НЕ должны использоваться
@@ -449,11 +472,11 @@ def уже_обработана(article_url):
 def парсить_rss_feed(rss_url):
     """Парсит RSS фид и возвращает список статей (поддерживает RSS 2.0, Atom, FeedBurner)"""
     try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        response = requests.get(rss_url, headers=headers, timeout=30)
-        response.raise_for_status()
+        response = fetch_url(rss_url, retries=2, timeout=30, headers=RSS_HEADERS)
+        if not response:
+            print(f"❌ Ошибка запроса RSS {rss_url}: blocked or empty response")
+            return []
+        # content below continues with response.content
         
         # Парсим XML
         try:
@@ -580,15 +603,16 @@ def парсить_rss_feed(rss_url):
 def проверить_релевантность(статья):
     """Проверяет, релевантна ли статья по ключевым словам"""
     текст_для_проверки = (статья.get('title', '') + ' ' + статья.get('description', '')).lower()
-    
+    keywords = RECIPE_RELEVANT_KEYWORDS if RECIPES_ONLY else RELEVANT_KEYWORDS
+
     найденные_ключевые_слова = []
-    for ключевое_слово in RELEVANT_KEYWORDS:
+    for ключевое_слово in keywords:
         if ключевое_слово.lower() in текст_для_проверки:
             найденные_ключевые_слова.append(ключевое_слово)
-    
+
     # Считаем релевантной, если найдено хотя бы одно ключевое слово
     релевантна = len(найденные_ключевые_слова) > 0
-    
+
     return релевантна, найденные_ключевые_слова
 
 def получить_последние_использованные_источники(n=4):
@@ -925,6 +949,9 @@ def получить_кандидаты_из_библиотеки(лимит=20,
         url = item.get("url", "")
         if not url:
             continue
+        # SkinnyMS HTML/CDN за Cloudflare — live fetch и картинки с GHA недоступны
+        if 'skinnyms.com' in url.lower() or is_host_blocked(url):
+            continue
         if source_filter and (source_filter == "skinnyms" or source_filter == "skinnyms_recipes"):
             if url in опубликованные_urls:
                 пропущено_публиковано += 1
@@ -940,8 +967,11 @@ def получить_кандидаты_из_библиотеки(лимит=20,
             "title": item.get("title", ""),
             "link": url,
             "rss_feed_url": item.get("rss_feed_url", ""),
-            "description": "",
-            "keywords": item.get("keywords", [])
+            "description": item.get("content_excerpt") or item.get("summary_ru") or "",
+            "keywords": item.get("keywords", []),
+            "content_excerpt": item.get("content_excerpt") or "",
+            "images": item.get("images") or [],
+            "from_library": True,
         })
     print(f"📚 Библиотека: всего {len(items)}, кандидатов {len(кандидаты)}")
     if пропущено_обработано or пропущено_публиковано or пропущено_без_фото:
@@ -951,11 +981,13 @@ def получить_кандидаты_из_библиотеки(лимит=20,
 def парсить_статью(url):
     """Парсит полный текст статьи и изображения с сайта"""
     try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-        response = requests.get(url, headers=headers, timeout=30)
-        response.raise_for_status()
+        if is_host_blocked(url):
+            print(f"❌ Хост заблокирован, пропуск: {url}")
+            return None
+        response = fetch_url(url, retries=2, timeout=30, headers=BROWSER_HEADERS)
+        if not response:
+            print(f"❌ Ошибка парсинга статьи {url}: fetch failed")
+            return None
         
         soup = BeautifulSoup(response.content, 'html.parser')
         
@@ -1802,9 +1834,27 @@ def сохранить_пост_в_блог(текст, изображение_u
             )
             if not локальное_изображение_url:
                 if is_skinnyms:
-                    # Для skinnyms.com используем оригинальный URL, если загрузка не удалась
-                    print("⚠️ Не удалось загрузить главное изображение, использую оригинальный URL")
-                    локальное_изображение_url = изображение_для_скачивания
+                    # CDN SkinnyMS тоже под Cloudflare — мёртвый URL в Telegram не сработает
+                    print("⚠️ Не удалось загрузить изображение SkinnyMS, ищу в коллекции...")
+                    из_коллекции = получить_релевантное_изображение_для_статьи(
+                        заголовок_русский,
+                        текст_для_анализа,
+                        теги,
+                        использованные_изображения
+                    )
+                    if из_коллекции and из_коллекции.get('url'):
+                        локальное_изображение_url = скачать_и_загрузить_изображение(
+                            из_коллекции['url'],
+                            post_id,
+                            заголовок=заголовок_русский,
+                            текст=расширенный_текст[:1000] if расширенный_текст else '',
+                            теги=теги,
+                            использованные_urls=все_использованные_urls,
+                            строгий_фильтр=False,
+                        ) or из_коллекции['url']
+                    if not локальное_изображение_url:
+                        print("❌ Нет изображения после fallback коллекции (SkinnyMS)")
+                        return False
                 else:
                     print("❌ Нет подходящего изображения для публикации (фильтр)")
                     return False
@@ -2068,13 +2118,25 @@ def главная():
     processed = загрузить_обработанные_статьи()
     print(f"📋 Уже обработано статей: {len(processed['articles'])}")
     
-    # Парсим RSS фиды (можно отключить)
+    # Парсим RSS фиды (можно отключить только для чистого SKINNYMS_ONLY без рецептов)
     все_статьи = []
     успешно_обработанных_фидов = 0
     ошибок_фидов = 0
-    
-    if not SKINNYMS_ONLY and not RECIPES_ONLY:
-        for rss_url in WOMENSHEALTH_RSS_FEEDS:
+
+    # Probe SkinnyMS один раз — чтобы не тратить попытки на library/skinnyms URLs
+    probe_skinnyms_availability()
+
+    feeds_to_parse = []
+    if SKINNYMS_ONLY and not RECIPES_ONLY:
+        print("⚠️ SKINNYMS_ONLY=true: RSS парсинг отключён")
+    elif RECIPES_ONLY:
+        feeds_to_parse = list(RECIPES_RSS_FEEDS)
+        print(f"🍽️ RECIPES_ONLY: парсим {len(feeds_to_parse)} recipe/nutrition RSS (SkinnyMS soft-skip при CF)")
+    else:
+        feeds_to_parse = list(WOMENSHEALTH_RSS_FEEDS)
+
+    if feeds_to_parse:
+        for rss_url in feeds_to_parse:
             # Пропускаем закомментированные фиды
             if rss_url.strip().startswith('#'):
                 continue
@@ -2118,12 +2180,8 @@ def главная():
         print(f"\n📊 Статистика парсинга RSS фидов:")
         print(f"   ✅ Успешно обработано фидов: {успешно_обработанных_фидов}")
         print(f"   ❌ Ошибок при парсинге: {ошибок_фидов}")
-    else:
-        if RECIPES_ONLY:
-            print("⚠️ RECIPES_ONLY=true: только рецепты и питание из библиотеки (RSS отключён)")
-        else:
-            print("⚠️ SKINNYMS_ONLY=true: RSS парсинг отключён")
-    
+    elif not SKINNYMS_ONLY:
+        print("⚠️ Список RSS фидов пуст")    
     # Удаляем дубликаты по URL
     уникальные_статьи = {}
     for статья in все_статьи:
@@ -2211,9 +2269,10 @@ def главная():
     
     print()
     
-    # Пополняем библиотеку релевантным контентом
-    if not SKINNYMS_ONLY and not RECIPES_ONLY:
-        пополнить_библиотеку_релевантными(релевантные, источник='womenshealth')
+    # Пополняем библиотеку релевантным контентом (в т.ч. из recipe RSS)
+    if not SKINNYMS_ONLY:
+        источник_lib = 'recipes' if RECIPES_ONLY else 'womenshealth'
+        пополнить_библиотеку_релевантными(релевантные, источник=источник_lib)
     
     # УЛУЧШЕНИЕ: Выбираем статью с лучшим балансом тематик
     текущий_час_utc = datetime.utcnow().strftime('%H')
@@ -2230,10 +2289,14 @@ def главная():
     # Обрабатываем статьи до тех пор, пока не найдём уникальный контент с качественными фото
     обработано = 0
     
-    # Сначала берём кандидатов из библиотеки, потом — из RSS
-    source_filter = "skinnyms_recipes" if RECIPES_ONLY else ("skinnyms" if SKINNYMS_ONLY else None)
+    # Сначала RSS/релевантные, потом библиотека (без skinnyms.com — они CF-blocked)
+    # Для RECIPES_ONLY библиотека skinnyms больше не даёт live-контент; RSS — основной путь
+    source_filter = None if (RECIPES_ONLY or not SKINNYMS_ONLY) else ("skinnyms" if SKINNYMS_ONLY else None)
+    if RECIPES_ONLY:
+        # Не тянем старые skinnyms_recipes из библиотеки (картинки/HTML 403)
+        source_filter = "recipes"
     статьи_из_библиотеки = получить_кандидаты_из_библиотеки(лимит=20, source_filter=source_filter)
-    статьи_для_обработки = статьи_из_библиотеки + релевантные
+    статьи_для_обработки = релевантные + статьи_из_библиотеки
     максимальное_количество_попыток = min(40, len(статьи_для_обработки))  # Ищем качественный контент среди большего числа статей
     статьи_для_обработки = статьи_для_обработки[:максимальное_количество_попыток]
     
@@ -2255,6 +2318,14 @@ def главная():
         # Парсим полный текст и изображения
         print("📥 Парсинг статьи...")
         parsed = парсить_статью(статья['link'])
+
+        # Fallback: контент из библиотеки, если live fetch недоступен
+        if (not parsed or not parsed.get('content')) and статья.get('content_excerpt'):
+            print("📚 Использую content_excerpt из библиотеки (live fetch недоступен)")
+            parsed = {
+                'content': статья.get('content_excerpt') or '',
+                'images': статья.get('images') or [],
+            }
         
         if not parsed or not parsed['content']:
             print("❌ Не удалось получить контент статьи, пробуем следующую...\n")
@@ -2312,6 +2383,14 @@ def главная():
         except Exception as e:
             print(f"⚠️ Не удалось создать русский заголовок: {e}, использую оригинальный")
             заголовок_русский_для_рерайта = заголовок_для_рерайта
+
+        if RECIPES_ONLY and blocked_recipe_not_for_humans(
+            заголовок_русский_для_рерайта,
+            оригинальный_заголовок_статьи,
+            статья.get('link') or '',
+        ):
+            print("⏭️ RECIPES_ONLY: статья в списке исключений (не еда для людей), пропускаю")
+            continue
         
         рерайт_telegram = рерайтить_через_deepseek(parsed['content'], заголовок_русский_для_рерайта)
         

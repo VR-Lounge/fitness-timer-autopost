@@ -83,10 +83,11 @@ jobs:
           YANDEX_SECRET_ACCESS_KEY: ${{ secrets.YANDEX_SECRET_ACCESS_KEY }}
           PUBLISH_TO_BLOG: "true"
           RECIPES_ONLY: "true"
+          SKINNYMS_ONLY: "false"
           SKINNYMS_CATEGORIES: "recipes,meal-planning"
-          SKINNYMS_MAX_ARTICLES_PER_RUN: "40"
+          SKINNYMS_MAX_ARTICLES_PER_RUN: "10"
         run: |
-          python3 skinnyms_parser.py
+          python3 skinnyms_parser.py || echo "⚠️ skinnyms_parser soft-skip / non-fatal"
           python3 womenshealth_parser.py
 
       - name: Коммит библиотеки релевантного контента

@@ -14,20 +14,14 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import urlparse, urljoin
 
-import requests
 from bs4 import BeautifulSoup
 
 from content_library import load_library, save_library, upsert_item, build_library_item, normalize_images
+from recipe_content_filters import blocked_recipe_not_for_humans
+from http_fetch import fetch_url, is_host_blocked, probe_skinnyms_availability
 
 
 STATE_FILE = Path(".skinnyms_queue.json")
-
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Referer": "https://skinnyms.com/"
-}
 
 BLOCKED_IMAGE_URLS = {
     "https://skinnyms.com/wp-content/uploads/2024/11/Skinny-Ms-Graphics-Horizontal.png"
@@ -53,16 +47,18 @@ def save_state(state: Dict) -> None:
 
 
 def fetch_page(url: str, retries: int = 3) -> Optional[BeautifulSoup]:
-    for i in range(retries):
-        try:
-            resp = requests.get(url, headers=HEADERS, timeout=20)
-            resp.raise_for_status()
-            return BeautifulSoup(resp.text, "html.parser")
-        except Exception as e:
-            print(f"⚠️ Ошибка при загрузке {url}: {e}")
-            if i < retries - 1:
-                time.sleep(2)
-    return None
+    if is_host_blocked(url):
+        return None
+    resp = fetch_url(
+        url,
+        retries=retries,
+        timeout=20,
+        referer="https://skinnyms.com/",
+    )
+    if not resp:
+        print(f"⚠️ Ошибка при загрузке {url}: blocked or HTTP error")
+        return None
+    return BeautifulSoup(resp.text, "html.parser")
 
 
 def normalize_url(url: str) -> str:
@@ -184,6 +180,14 @@ def main() -> None:
     max_articles = int(os.getenv("SKINNYMS_MAX_ARTICLES_PER_RUN", "20"))
     categories_env = os.getenv("SKINNYMS_CATEGORIES", "fitness,recipes")
     categories = [c.strip() for c in categories_env.split(",") if c.strip()]
+
+    # Cloudflare challenge на skinnyms.com часто блокирует IP датацентров (GitHub Actions).
+    # Не долбим десятки страниц — один probe и soft-skip.
+    if not probe_skinnyms_availability():
+        print("⏭️ SkinnyMS soft-skip: HTML/RSS недоступны. Библиотека не пополняется из этого источника.")
+        print("✅ Выход без ошибки — полагаемся на Women's Health / recipe RSS fallback.")
+        return
+
     category_map = {
         "fitness": {
             "base_url": "https://skinnyms.com/category/fitness/",
@@ -231,11 +235,20 @@ def main() -> None:
         end_page = min(max_pages, start_page + pages_per_run - 1)
 
         print(f"🔎 {category}: страницы {start_page}-{end_page} из {max_pages}")
+        consecutive_fails = 0
         for page in range(start_page, end_page + 1):
+            if is_host_blocked("skinnyms.com"):
+                print("⏭️ SkinnyMS снова заблокирован mid-run — прекращаю сканирование страниц")
+                break
             page_url = base_url if page == 1 else f"{base_url}page/{page}/"
             soup = fetch_page(page_url)
             if not soup:
+                consecutive_fails += 1
+                if consecutive_fails >= 2 or is_host_blocked("skinnyms.com"):
+                    print(f"⏭️ Прерываю категорию {category} после {consecutive_fails} неудачных загрузок")
+                    break
                 continue
+            consecutive_fails = 0
             links = collect_article_links(soup, base_url)
             for link in links:
                 if link not in state["seen_urls"]:
@@ -265,6 +278,10 @@ def main() -> None:
         state["seen_urls"].append(url)
         if not parsed:
             continue
+        if source == "skinnyms_recipes":
+            if blocked_recipe_not_for_humans(parsed.get("title") or "", "", url or ""):
+                print(f"⏭️ Пропуск рецепта (не для людей): {parsed.get('title', '')[:70]}...")
+                continue
         print(f"✅ Заголовок: {parsed['title']}")
         print(f"🖼️  Изображений: {len(parsed['images'])}")
         for idx, img in enumerate(parsed["images"][:10], 1):

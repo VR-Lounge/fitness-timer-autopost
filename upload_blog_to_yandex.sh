@@ -9,15 +9,14 @@ BUCKET_NAME="www.tabatatimer.ru"
 ENDPOINT_URL="https://storage.yandexcloud.net"
 
 # Определяем путь к public_html
-# В GitHub Actions репозиторий клонируется в fitness-timer-autopost, а public_html - отдельно
+# ВАЖНО: сначала public_html рядом с этой папкой (…/С MediaPipe/public_html), иначе
+# срабатывал бы …/TABATATIMER.RU/public_html — другая копия сайта без свежей генерации блога.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# В GitHub Actions структура: fitness-timer-autopost/ и public_html/ на одном уровне
-if [ -d "$(dirname "$SCRIPT_DIR")/../public_html" ]; then
-    # Мы в fitness-timer-autopost, public_html на уровень выше (в родительской директории)
-    SOURCE_DIR="$(dirname "$SCRIPT_DIR")/../public_html"
-elif [ -d "$SCRIPT_DIR/../public_html" ]; then
-    # Мы в fitness-timer-autopost, public_html на уровень выше
+# Типичная структура репозитория: fitness-timer-autopost/ и public_html/ — соседи
+if [ -d "$SCRIPT_DIR/../public_html" ]; then
     SOURCE_DIR="$SCRIPT_DIR/../public_html"
+elif [ -d "$(dirname "$SCRIPT_DIR")/../public_html" ]; then
+    SOURCE_DIR="$(dirname "$SCRIPT_DIR")/../public_html"
 elif [ -d "../public_html" ]; then
     # public_html на уровень выше от текущей директории
     SOURCE_DIR="../public_html"

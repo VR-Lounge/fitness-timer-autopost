@@ -103,9 +103,31 @@ FOOD_FILENAME_HINTS = re.compile(
     r'recipe|crock|slow-cooker|slow_cooker|dinner|meal|pasta|soup|salad|'
     r'chicken|turkey|beef|fish|smoothie|bowl|cups|lasagna|penne|stew|'
     r'casserole|oatmeal|chips|lettuce|low-carb|lowcarb|keto|bake|skillet|'
-    r'instant-pot|multicook|buffalo|taco|wrap|bbq|gumbo|roll|tea|sweet',
+    r'instant-pot|multicook|buffalo|taco|wrap|bbq|gumbo|roll|tea|sweet|'
+    r'quinoa|meatball|vegetarian|fajita|shrimp|dip|lobster|brownie|paella|'
+    r'cordon|apple|cinnamon|gumbo|nut|broccoli|banana|meatballs|pesto|basil|breakfast',
     re.I,
 )
+
+# В basename с CDN (womenshealth_* и др.) часто остаются англ. slug'и вроде Woman-Holding-Dumbbells —
+# индекс _0_ тогда ошибочно считался «главным кадром рецепта».
+WORKOUT_FILENAME_HINTS = re.compile(
+    r'(?i)(gymshark|woman-holding|man-holding|woman-doing|man-doing|woman-exercising|man-exercising|'
+    r'dumbbell|in-gym|in-the-gym|workout-challenge|hiit-workout|jumping-rope|squat-challenge|'
+    r'fitness-levels|lunges-in|with-dumbbell|gym-floor|cardio-workout|pull-up|pullup)',
+)
+
+
+def _filename_ends_with_numeric_pipeline_junk(name: str) -> bool:
+    """skinnyms_recipes_*_*_123.jpg или recipes_<id>_*_*_31.jpg — служебный кадр без имени блюда в basename."""
+    base = unquote(name).split('/')[-1].lower()
+    if 'skinnyms_recipes' not in base and not re.match(r'^recipes_\d+_', base):
+        return False
+    last_seg = base.rsplit('_', 1)[-1]
+    stem = last_seg.rsplit('.', 1)[0] if '.' in last_seg else last_seg
+    if re.search(r'[a-zа-яё]{2,}', stem, re.I):
+        return False
+    return bool(stem.isdigit() and 1 <= len(stem) <= 4)
 
 
 def url_из_стоковой_фитнес_коллекции(url: str) -> bool:
@@ -140,13 +162,27 @@ def изображение_похоже_на_фитнес(img_dict):
 def _score_recipe_image_for_hero(img_dict):
     """Меньше = лучше кандидат на главное фото рецепта."""
     url = (img_dict.get('url') or '')
+    alt_l = (img_dict.get('alt') or '').lower()
+    ttl_l = (img_dict.get('title') or '').lower()
+    blob_meta = f'{alt_l} {ttl_l}'
+    # Служебные подписи к общим стокам (мужик в зале и т.д.), даже если basename похож на «нормальный»
+    if 'спортивное питание' in blob_meta and 'продукты для энергии' in blob_meta:
+        return (920,)
+    if 'фото тренировки и фитнеса' in blob_meta or 'профессиональное фото тренировки' in blob_meta:
+        return (920,)
+    if 'питание до и после тренировки' in blob_meta and 'оптимальный рацион' in blob_meta:
+        return (920,)
     name = unquote(url).split('/')[-1].lower()
     if url_из_стоковой_фитнес_коллекции(url):
         return (3000,)
     if '/images/blog/' not in url.lower():
         return (2000,)
+    if _filename_ends_with_numeric_pipeline_junk(name):
+        return (850,)
     if FOOD_FILENAME_HINTS.search(name):
         return (0,)
+    if WORKOUT_FILENAME_HINTS.search(name):
+        return (420,)
     # типичный паттерн: ..._0_abcd1234_Dish-Name.jpg — низкий индекс вложения
     if re.search(r'_0_[a-f0-9]{6,}_', name, re.I):
         return (1,)
@@ -155,7 +191,7 @@ def _score_recipe_image_for_hero(img_dict):
     if re.search(r'_2_[a-f0-9]{6,}_', name, re.I):
         return (3,)
     # короткое имя вида skinnyms_recipes_*_*_65.jpg — часто служебное/не блюдо
-    if re.match(r'^skinnyms_recipes_\d+_[a-f0-9]+_\d+\.jpe?g$', name, re.I):
+    if re.match(r'^(?:skinnyms_recipes|recipes)_\d+_[a-f0-9]+_\d+\.jpe?g$', name, re.I):
         return (500,)
     if изображение_похоже_на_фитнес(img_dict):
         return (400,)
@@ -170,14 +206,59 @@ def выбрать_главное_изображение_для_рецепта(�
         обработанные_изображения,
         key=lambda im: _score_recipe_image_for_hero(im),
     )
-    best = scored[0]
-    # Если лучший всё ещё явный мусор — взять первое не-сток из /images/blog/
-    if _score_recipe_image_for_hero(best)[0] >= 400:
-        for im in обработанные_изображения:
-            u = im.get('url') or ''
-            if '/images/blog/' in u.lower() and not url_из_стоковой_фитнес_коллекции(u):
-                return im
-    return best
+    return scored[0]
+
+
+def пост_рецептный_для_hero(пост) -> bool:
+    """
+    True — применять выбор hero-кадра еды и синхронизацию images[]/post.image.
+    Учитываем id вида recipes_* / skinnyms_recipes_* (пайплайн «Рецепты»), даже если source в JSON устарел.
+    """
+    if not пост:
+        return False
+    pid = str(пост.get('id') or '')
+    if pid.startswith('recipes_') or pid.startswith('skinnyms_recipes_'):
+        return True
+    источник = (пост.get('source') or '').lower()
+    if источник in ('recipes', 'skinnyms_recipes'):
+        return True
+    теги_lower = [str(t).strip().lower() for t in (пост.get('tags') or [])]
+    return any(t in теги_lower for t in ('рецепт', 'рецепты'))
+
+
+def применить_синхронизацию_hero_рецепта(пост):
+    """
+    Ставит лучший кадр еды первым в images[] и в post.image (лента blog.html, модалка, OG из JSON).
+    Вызывать для постов с source recipes/skinnyms_recipes или тегами рецепт/рецепты.
+    Возвращает True, если данные поста изменились.
+    """
+    imgs = пост.get('images')
+    if not пост_рецептный_для_hero(пост) or not imgs or not isinstance(imgs, list):
+        return False
+    главное_изображение = выбрать_главное_изображение_для_рецепта(imgs)
+    if not главное_изображение:
+        return False
+
+    def _norm_u(u):
+        return (u or '').split('?')[0].rstrip('/').lower()
+
+    gurl = _norm_u(главное_изображение.get('url'))
+    ix = next((i for i, x in enumerate(imgs) if _norm_u(x.get('url')) == gurl), None)
+    dirty = False
+    if ix is not None and ix > 0:
+        row = imgs.pop(ix)
+        imgs.insert(0, row)
+        dirty = True
+    for i, im in enumerate(imgs):
+        want = (i == 0)
+        if im.get('is_main') != want:
+            im['is_main'] = want
+            dirty = True
+    first_u = imgs[0].get('url')
+    if first_u and _norm_u(пост.get('image')) != _norm_u(first_u):
+        пост['image'] = first_u
+        dirty = True
+    return dirty
 
 
 def _без_упоминания_источника(текст):
@@ -361,7 +442,11 @@ def создать_галерею_изображений(изображения,
         return ''  # Если нет изображений, галерея не нужна
     
     # Первое изображение уже в шапке статьи — в галерею не включаем, иначе дубль в DOM
-    все_изображения_для_галереи = изображения[1:]
+    # Остальные сортируем по скору: сначала кадры блюда, служебные _22.jpg — в конец
+    все_изображения_для_галереи = sorted(
+        изображения[1:],
+        key=lambda im: _score_recipe_image_for_hero(im),
+    )
     
     if not все_изображения_для_галереи:
         return ''
@@ -988,15 +1073,8 @@ def сгенерировать_html_страницу(пост):
     
     # Главное изображение для Open Graph и Schema.org (первое или помеченное как главное)
     # Для постов о питании/рецептах: не сток Fitness | Woman, не служебный кадр — фото блюда из галереи
-    источник = (пост.get('source') or '').lower()
-    теги_lower = [str(t).strip().lower() for t in (теги or [])]
-    # Только реальные рецепты из пайплайна рецептов или явный тег «рецепт».
-    # Не используем «питание»/«диеты» — иначе статьи WH про режим питания при тренировках
-    # ошибочно получают логику «фото блюда» при том, что hero — сток Fitness | Woman.
-    пост_про_еду = (
-        источник in ('recipes', 'skinnyms_recipes')
-        or any(t in теги_lower for t in ('рецепт', 'рецепты'))
-    )
+    # Рецептный пайплайн: source recipes / skinnyms_recipes, теги рецепт(ы), либо id recipes_* (см. пост_рецептный_для_hero).
+    пост_про_еду = пост_рецептный_для_hero(пост)
     главное_изображение = None
     if пост_про_еду and обработанные_изображения:
         главное_изображение = выбрать_главное_изображение_для_рецепта(обработанные_изображения)
@@ -1010,24 +1088,8 @@ def сгенерировать_html_страницу(пост):
 
     # Синхронизируем порядок images[] и post.image с выбранным hero (превью + модалка на blog.html)
     if пост_про_еду and все_изображения_поста and главное_изображение:
-        imgs = пост.get('images')
-        if imgs and isinstance(imgs, list) and len(imgs) > 0:
-
-            def _norm_u(u):
-                return (u or '').split('?')[0].rstrip('/').lower()
-
-            gurl = _norm_u(главное_изображение.get('url'))
-            ix = next((i for i, x in enumerate(imgs) if _norm_u(x.get('url')) == gurl), None)
-            if ix is not None and ix > 0:
-                row = imgs.pop(ix)
-                imgs.insert(0, row)
-                пост['_blog_json_dirty'] = True
-            for i, im in enumerate(imgs):
-                im['is_main'] = (i == 0)
-            first_u = imgs[0].get('url')
-            if first_u and _norm_u(пост.get('image')) != _norm_u(first_u):
-                пост['image'] = first_u
-                пост['_blog_json_dirty'] = True
+        if применить_синхронизацию_hero_рецепта(пост):
+            пост['_blog_json_dirty'] = True
 
     изображение = главное_изображение['url'] if главное_изображение else изображение_url
     
@@ -1873,6 +1935,16 @@ def сгенерировать_страницы_для_всех_постов():
     
     посты = data.get('posts', [])
     print(f"📝 Найдено постов: {len(посты)}")
+
+    # Сначала нормализуем JSON для рецептов: иначе лента/модалка читают старый post.image до генерации HTML
+    json_hero_dirty = False
+    for пост in посты:
+        if применить_синхронизацию_hero_рецепта(пост):
+            json_hero_dirty = True
+    if json_hero_dirty:
+        with open(BLOG_POSTS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print("✅ blog-posts.json: синхронизированы hero для рецептов (images[0], image)")
 
     # Сбрасываем кеши slug для корректной уникальности
     SLUG_CACHE.clear()
