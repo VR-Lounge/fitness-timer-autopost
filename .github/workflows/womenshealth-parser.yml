@@ -149,17 +149,17 @@ jobs:
       - name: Коммит изменений в репозиторий tabatatimer-ru
         working-directory: public_html
         env:
-          # Cross-repo push: только PAT (GITHUB_TOKEN другого репо не пишет сюда)
-          GITHUB_TOKEN: ${{ secrets.PAT_CROSS_REPO }}
+          # Нельзя называть GITHUB_TOKEN — runner подменяет его токеном github-actions[bot]
+          CROSS_REPO_TOKEN: ${{ secrets.PAT_CROSS_REPO }}
         run: |
-          if [ -z "$GITHUB_TOKEN" ]; then
+          if [ -z "$CROSS_REPO_TOKEN" ]; then
             echo "⚠️ PAT_CROSS_REPO не задан — пропускаю push в tabatatimer-ru (файлы уже на Yandex Cloud)"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/VR-Lounge/tabatatimer-ru.git
+          git remote set-url origin https://x-access-token:${CROSS_REPO_TOKEN}@github.com/VR-Lounge/tabatatimer-ru.git
           
           if [ -n "$(git status --porcelain)" ]; then
             git add blog-posts.json blog/*.html sitemap.xml robots.txt images/blog/ 2>/dev/null || true
