@@ -1831,6 +1831,9 @@ def обновить_sitemap():
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
 '''
     
+    from datetime import date
+    today = date.today().isoformat()
+
     for url in sitemap_entries:
         # Определяем приоритет и частоту обновления
         if url == 'https://www.tabatatimer.ru/':
@@ -1845,6 +1848,7 @@ def обновить_sitemap():
         
         sitemap_xml += f'''   <url>
       <loc>{url}</loc>
+      <lastmod>{today}</lastmod>
       <changefreq>{changefreq}</changefreq>
       <priority>{priority}</priority>
    </url>
